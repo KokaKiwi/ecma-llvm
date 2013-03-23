@@ -3,6 +3,7 @@ A small pseudo-ECMAScript (more Javascript) compiler.
 It's not targeted to be a fully-featured JS compiler, it's more a test of the LLVM library.
 
 Requirements:
+- CMake (Building tools): http://www.cmake.org/
 - LLVM libraries (LLVM IR code generation): http://llvm.org/
 - Ragel (Lexer generating): http://www.complang.org/ragel/
 - Lemon (Parsing generating): http://www.hwaci.com/sw/lemon/

@@ -15,6 +15,7 @@ set(EcmaCompiler_SOURCES
     gen/stmt/expression.cpp
     gen/stmt/return.cpp
     gen/stmt/decl/variables.cpp
+    gen/stmt/decl/function.cpp
     gen/expr/assignment.cpp
     gen/expr/binary.cpp
     gen/expr/unary.cpp

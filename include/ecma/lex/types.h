@@ -5,8 +5,9 @@ ECMA_AUTO_LEXEME(Newline)
 
 ECMA_LEXEME(Var)
 ECMA_LEXEME(Null)
-ECMA_LEXEME(Undefined)
 ECMA_LEXEME(Return)
+ECMA_LEXEME(Function)
+ECMA_LEXEME(Undefined)
 
 ECMA_LEXEME(Assign)
 ECMA_LEXEME(Plus)

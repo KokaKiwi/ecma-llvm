@@ -1,0 +1,114 @@
+%token_prefix       ECMA_LEXEME_TYPE_
+%token_type         { lex::Lexeme * }
+%extra_argument     { parser::Parser *parser }
+%name               EcmaParse
+
+%include {
+    #include <cassert>
+    #include <cstdio>
+    #include <vector>
+    #include "ecma/lex/lexeme.h"
+    #include "ecma/parser/parser.h"
+
+    #include "ecma/ast/node.h"
+    #include "ecma/ast/expression.h"
+    #include "ecma/ast/statement.h"
+    #include "ecma/ast/stmt/block.h"
+    #include "ecma/ast/stmt/expression.h"
+    #include "ecma/ast/stmt/return.h"
+    #include "ecma/ast/stmt/decl/variables.h"
+    #include "ecma/ast/expr/unary.h"
+    #include "ecma/ast/expr/binary.h"
+    #include "ecma/ast/expr/assignment.h"
+    #include "ecma/ast/expr/literal/identifier.h"
+    #include "ecma/ast/expr/literal/number.h"
+    #include "ecma/ast/expr/literal/function_call.h"
+    #include "ecma/ast/expr/literal/string.h"
+
+    using namespace ecma;
+}
+
+%syntax_error {
+    int n = sizeof(yyTokenName) / sizeof(*yyTokenName);
+    for (int i = 0; i < n; i++)
+    {
+        int a = yy_find_shift_action(yypParser, static_cast<YYCODETYPE>(i));
+        if (a < YY_ERROR_ACTION)
+        {
+            parser->errors().push_back(yyTokenName[i]);
+        }
+    }
+    parser->error(true);
+}
+
+%left Var Null Undefined.
+%right Return.
+
+%right Assign.
+%left Plus Minus Mul Div Mod.
+%left Not Inv.
+%left LParen RParen LBracket RBracket LBrace RBrace.
+%left Dot.
+
+%left Comma Semicolon Colon.
+
+%left Identifier.
+
+%left Number.
+
+program ::= statements(A). { parser->program(A); }
+
+%type statements { ast::stmt::Block * }
+statements(A) ::= statements(B) statement(C). { if (C) B->statements().push_back(C); A = B; }
+statements(A) ::= . { A = new ast::stmt::Block(); }
+
+    %type statement { ast::Statement * }
+    statement(A) ::= Semicolon. { A = nullptr; }
+    statement(A) ::= LBrace statements(B) RBrace. { A = B; }
+    statement(A) ::= expression(B) Semicolon. { A = new ast::stmt::Expression(B); }
+    statement(A) ::= Return expression(B) Semicolon. { A = new ast::stmt::Return(B); }
+    statement(A) ::= declstatement(B). { A = B; }
+
+        %type declstatement { ast::stmt::decl::Variables * }
+        declstatement(A) ::= Var decls(B) Semicolon. { A = B; }
+
+            %type decls { ast::stmt::decl::Variables * }
+            decls(A) ::= decls(B) Comma decl(C). { B->variables().push_back(C); A = B; }
+            decls(A) ::= decl(B). { A = new ast::stmt::decl::Variables(); A->variables().push_back(B); }
+
+                %type decl { ast::stmt::decl::Variables::Variable * }
+                decl(A) ::= Identifier(B) Assign expression(C). { A = new ast::stmt::decl::Variables::Variable(B->as<std::string>().substr(), C); }
+                decl(A) ::= Identifier(B). { A = new ast::stmt::decl::Variables::Variable(B->as<std::string>().substr()); }
+
+%type expression { ast::Expression * }
+expression(A) ::= Identifier(B) Assign expression(C). { A = new ast::expr::Assignment(B->as<std::string>(), C); }
+expression(A) ::= factor(B) Plus expression(C). { A = new ast::expr::Binary(ast::expr::Binary::Operator::Addition, B, C); }
+expression(A) ::= factor(B) Minus expression(C). { A = new ast::expr::Binary(ast::expr::Binary::Operator::Substraction, B, C); }
+expression(A) ::= factor(B). { A = B; }
+
+    %type factor { ast::Expression * }
+    factor(A) ::= factor(B) Mul unary(C). { A = new ast::expr::Binary(ast::expr::Binary::Operator::Multiplication, B, C); }
+    factor(A) ::= factor(B) Div unary(C). { A = new ast::expr::Binary(ast::expr::Binary::Operator::Division, B, C); }
+    factor(A) ::= factor(B) Mod unary(C). { A = new ast::expr::Binary(ast::expr::Binary::Operator::Modulo, B, C); }
+    factor(A) ::= unary(B). { A = B; }
+
+        %type unary { ast::Expression * }
+        unary(A) ::= Plus unary(B). { A = new ast::expr::Unary(ast::expr::Unary::Operator::Positive, B); }
+        unary(A) ::= Minus unary(B). { A = new ast::expr::Unary(ast::expr::Unary::Operator::Negative, B); }
+        unary(A) ::= Not unary(B). { A = new ast::expr::Unary(ast::expr::Unary::Operator::Not, B); }
+        unary(A) ::= Inv unary(B). { A = new ast::expr::Unary(ast::expr::Unary::Operator::Inv, B); }
+        unary(A) ::= LParen expression(B) RParen. { A = B; }
+        unary(A) ::= literal(B). { A = B; }
+
+            %type literal { ast::Expression * }
+            literal(A) ::= Number(B). { A = new ast::expr::literal::Number(B->as<ast::expr::literal::Number::value_type>()); }
+            literal(A) ::= String(B). { A = new ast::expr::literal::String(B->as<std::string>().substr(1, B->as<std::string>().length() - 2)); }
+            literal(A) ::= Identifier(B). { A = new ast::expr::literal::Identifier(B->as<std::string>()); }
+            literal(A) ::= Identifier(B) LParen RParen. { A = new ast::expr::literal::FunctionCall(B->as<std::string>()); }
+            literal(A) ::= Identifier(B) LParen arguments(C) RParen. { A = new ast::expr::literal::FunctionCall(B->as<std::string>(), C); }
+            literal(A) ::= Null. { A = nullptr; }
+            literal(A) ::= Undefined. { A = nullptr; }
+
+                %type arguments { ast::expr::literal::FunctionCall::Arguments * }
+                arguments(A) ::= arguments(B) Comma expression(C). { B->push_back(C); A = B; }
+                arguments(A) ::= expression(B). { A = new ast::expr::literal::FunctionCall::Arguments(); A->push_back(B); }

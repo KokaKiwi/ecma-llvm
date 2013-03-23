@@ -46,6 +46,7 @@ Lexeme *Lexer::consume(void)
             'var'           => { type = Lexeme::Type::Var; fbreak; };
             'null'          => { type = Lexeme::Type::Null; fbreak; };
             'return'        => { type = Lexeme::Type::Return; fbreak; };
+            'function'      => { type = Lexeme::Type::Function; fbreak; };
             'undefined'     => { type = Lexeme::Type::Undefined; fbreak; };
 
             '='             => { type = Lexeme::Type::Assign; fbreak; };

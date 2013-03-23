@@ -20,6 +20,7 @@ namespace ecma
             namespace decl
             {
                 class Variables;
+                class Function;
             }
         }
 
@@ -113,6 +114,11 @@ namespace ecma
                 virtual inline void visit(ast::stmt::Return &ret)
                 {
                     throw std::runtime_error("Unknown AST branch (ast::stmt::Return).");
+                }
+
+                virtual inline void visit(ast::stmt::decl::Function &function)
+                {
+                    throw std::runtime_error("Unknown AST branch (ast::stmt::decl::Function).");
                 }
             };
         }

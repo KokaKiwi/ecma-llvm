@@ -7,6 +7,7 @@
     #include <cassert>
     #include <cstdio>
     #include <vector>
+    #include <string>
     #include "ecma/lex/lexeme.h"
     #include "ecma/parser/parser.h"
 
@@ -17,6 +18,7 @@
     #include "ecma/ast/stmt/expression.h"
     #include "ecma/ast/stmt/return.h"
     #include "ecma/ast/stmt/decl/variables.h"
+    #include "ecma/ast/stmt/decl/function.h"
     #include "ecma/ast/expr/unary.h"
     #include "ecma/ast/expr/binary.h"
     #include "ecma/ast/expr/assignment.h"
@@ -42,7 +44,7 @@
 }
 
 %left Var Null Undefined.
-%right Return.
+%left Return Function.
 
 %right Assign.
 %left Plus Minus Mul Div Mod.
@@ -69,8 +71,12 @@ statements(A) ::= . { A = new ast::stmt::Block(); }
     statement(A) ::= Return expression(B) Semicolon. { A = new ast::stmt::Return(B); }
     statement(A) ::= declstatement(B). { A = B; }
 
-        %type declstatement { ast::stmt::decl::Variables * }
+        %type declstatement { ast::Statement * }
         declstatement(A) ::= Var decls(B) Semicolon. { A = B; }
+        declstatement(A) ::= Function Identifier(B) LParen functionarguments(C) RParen LBrace statements(D) RBrace.
+                                { A = new ast::stmt::decl::Function(B->as<std::string>(), C, D); }
+        declstatement(A) ::= Function Identifier(B) LParen RParen LBrace statements(C) RBrace.
+                                { A = new ast::stmt::decl::Function(B->as<std::string>(), new std::vector<std::string>(), C); }
 
             %type decls { ast::stmt::decl::Variables * }
             decls(A) ::= decls(B) Comma decl(C). { B->variables().push_back(C); A = B; }
@@ -79,6 +85,10 @@ statements(A) ::= . { A = new ast::stmt::Block(); }
                 %type decl { ast::stmt::decl::Variables::Variable * }
                 decl(A) ::= Identifier(B) Assign expression(C). { A = new ast::stmt::decl::Variables::Variable(B->as<std::string>().substr(), C); }
                 decl(A) ::= Identifier(B). { A = new ast::stmt::decl::Variables::Variable(B->as<std::string>().substr()); }
+
+            %type functionarguments { std::vector<std::string> * }
+            functionarguments(A) ::= functionarguments(B) Comma Identifier(C). { B->push_back(C->as<std::string>()); A = B; }
+            functionarguments(A) ::= Identifier(B). { A = new std::vector<std::string>(); A->push_back(B->as<std::string>()); }
 
 %type expression { ast::Expression * }
 expression(A) ::= Identifier(B) Assign expression(C). { A = new ast::expr::Assignment(B->as<std::string>(), C); }

@@ -24,6 +24,7 @@ namespace ecma
             void visit(ast::stmt::Expression &expr);
             void visit(ast::stmt::Return &ret);
             void visit(ast::stmt::decl::Variables &vars);
+            void visit(ast::stmt::decl::Function &function);
 
             inline llvm::LLVMContext &context(void) const
             {

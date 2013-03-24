@@ -1,8 +1,8 @@
-function kiwi(a, b)
+function test()
 {
-    return 20;
+    printf("Do you have some Schwepps?\n");
+
+    return strcmp("Test", "test");
 }
 
-a = kiwi(10, 2);
-
-return a;
+return test();

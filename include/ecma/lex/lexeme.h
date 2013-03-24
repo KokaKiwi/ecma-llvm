@@ -31,6 +31,36 @@ namespace ecma
                 return m_position;
             }
 
+            inline operator std::string() const
+            {
+                return m_text;
+            }
+
+            inline operator const char *() const
+            {
+                return m_text.c_str();
+            }
+
+            inline operator int() const
+            {
+                return std::stoi(m_text);
+            }
+
+            inline operator long() const
+            {
+                return std::stol(m_text);
+            }
+
+            inline operator double() const
+            {
+                return std::stod(m_text);
+            }
+
+            inline operator float() const
+            {
+                return std::stof(m_text);
+            }
+
             template<typename T>
             inline T as(void) const
             {

@@ -16,7 +16,10 @@ namespace ecma
                 class String: public ast::Expression
                 {
                 public:
-                    String(const std::string &value): m_value(value) {}
+                    String(const std::string &value)
+                    {
+                        m_value = value.substr(1, value.length() - 1);
+                    }
 
                     inline String &replace(const std::string &oldStr, const std::string &newStr)
                     {

@@ -35,7 +35,7 @@ Lexeme *Lexer::consume(void)
     %%{
         identifier          = [a-zA-Z$_][a-zA-Z0-9$_]*;
         number              = [0-9]+;
-        string              = ('"'[^"]*'"'|'\''[^']*'\'');
+        string              = ('"'([^"]|'\\' any)*'"'|'\''([^']|'\\' any)*'\'');
 
         spaces              = (' '|'\t')+;
         newline             = ('\n');
@@ -43,21 +43,40 @@ Lexeme *Lexer::consume(void)
         linecomment         = '//'[^\n]*;
 
         main := |*
+            'if'            => { type = Lexeme::Type::If; fbreak; };
             'var'           => { type = Lexeme::Type::Var; fbreak; };
+            'else'          => { type = Lexeme::Type::Else; fbreak; };
             'null'          => { type = Lexeme::Type::Null; fbreak; };
+            'true'          => { type = Lexeme::Type::True; fbreak; };
+            'false'         => { type = Lexeme::Type::False; fbreak; };
             'return'        => { type = Lexeme::Type::Return; fbreak; };
             'function'      => { type = Lexeme::Type::Function; fbreak; };
             'undefined'     => { type = Lexeme::Type::Undefined; fbreak; };
 
-            '='             => { type = Lexeme::Type::Assign; fbreak; };
             '+'             => { type = Lexeme::Type::Plus; fbreak; };
             '-'             => { type = Lexeme::Type::Minus; fbreak; };
             '*'             => { type = Lexeme::Type::Mul; fbreak; };
             '/'             => { type = Lexeme::Type::Div; fbreak; };
             '%'             => { type = Lexeme::Type::Mod; fbreak; };
 
+            '='             => { type = Lexeme::Type::Assign; fbreak; };
+            '+='            => { type = Lexeme::Type::PlusAssign; fbreak; };
+            '-='            => { type = Lexeme::Type::MinusAssign; fbreak; };
+            '*='            => { type = Lexeme::Type::MulAssign; fbreak; };
+            '/='            => { type = Lexeme::Type::DivAssign; fbreak; };
+            '%='            => { type = Lexeme::Type::ModAssign; fbreak; };
+
+            '>'             => { type = Lexeme::Type::Greater; fbreak; };
+            '>='            => { type = Lexeme::Type::GreaterOrEqual; fbreak; };
+            '<'             => { type = Lexeme::Type::Lesser; fbreak; };
+            '<='            => { type = Lexeme::Type::LesserOrEqual; fbreak; };
+            '=='            => { type = Lexeme::Type::Equal; fbreak; };
+            '!='            => { type = Lexeme::Type::NotEqual; fbreak; };
+
             '!'             => { type = Lexeme::Type::Not; fbreak; };
             '~'             => { type = Lexeme::Type::Inv; fbreak; };
+            '++'            => { type = Lexeme::Type::Incrementation; fbreak; };
+            '--'            => { type = Lexeme::Type::Decrementation; fbreak; };
 
             '('             => { type = Lexeme::Type::LParen; fbreak; };
             ')'             => { type = Lexeme::Type::RParen; fbreak; };
@@ -66,6 +85,7 @@ Lexeme *Lexer::consume(void)
             '{'             => { type = Lexeme::Type::LBrace; fbreak; };
             '}'             => { type = Lexeme::Type::RBrace; fbreak; };
 
+            '?'             => { type = Lexeme::Type::QuestionMark; fbreak; };
             '.'             => { type = Lexeme::Type::Dot; fbreak; };
 
             ';'             => { type = Lexeme::Type::Semicolon; fbreak; };

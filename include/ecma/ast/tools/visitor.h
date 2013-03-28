@@ -14,29 +14,6 @@ namespace ecma
         namespace stmt
         {
             class Block;
-            class Expression;
-            class Return;
-
-            namespace decl
-            {
-                class Variables;
-                class Function;
-            }
-        }
-
-        namespace expr
-        {
-            class Binary;
-            class Unary;
-            class Assignment;
-
-            namespace literal
-            {
-                class Number;
-                class Identifier;
-                class FunctionCall;
-                class String;
-            }
         }
 
         namespace tools
@@ -64,61 +41,6 @@ namespace ecma
                 virtual inline void visit(ast::stmt::Block &block)
                 {
                     throw std::runtime_error("Unknown AST branch (ast::stmt::Block).");
-                }
-
-                virtual inline void visit(ast::stmt::Expression &expr)
-                {
-                    throw std::runtime_error("Unknown AST branch (ast::stmt::Expression).");
-                }
-
-                virtual inline void visit(ast::stmt::decl::Variables &vars)
-                {
-                    throw std::runtime_error("Unknown AST branch (ast::stmt::decl::Variables).");
-                }
-
-                virtual inline void visit(ast::expr::Binary &binary)
-                {
-                    throw std::runtime_error("Unknown AST branch (ast::expr::Binary).");
-                }
-
-                virtual inline void visit(ast::expr::Unary &unary)
-                {
-                    throw std::runtime_error("Unknown AST branch (ast::expr::Unary).");
-                }
-
-                virtual inline void visit(ast::expr::Assignment &assign)
-                {
-                    throw std::runtime_error("Unknown AST branch (ast::expr::Assignment).");
-                }
-
-                virtual inline void visit(ast::expr::literal::Number &number)
-                {
-                    throw std::runtime_error("Unknown AST branch (ast::expr::literal::Number).");
-                }
-
-                virtual inline void visit(ast::expr::literal::Identifier &identifier)
-                {
-                    throw std::runtime_error("Unknown AST branch (ast::expr::literal::Identifier).");
-                }
-
-                virtual inline void visit(ast::expr::literal::FunctionCall &call)
-                {
-                    throw std::runtime_error("Unknown AST branch (ast::expr::literal::FunctionCall).");
-                }
-
-                virtual inline void visit(ast::expr::literal::String &string)
-                {
-                    throw std::runtime_error("Unknown AST branch (ast::expr::literal::String).");
-                }
-
-                virtual inline void visit(ast::stmt::Return &ret)
-                {
-                    throw std::runtime_error("Unknown AST branch (ast::stmt::Return).");
-                }
-
-                virtual inline void visit(ast::stmt::decl::Function &function)
-                {
-                    throw std::runtime_error("Unknown AST branch (ast::stmt::decl::Function).");
                 }
             };
         }

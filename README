@@ -10,3 +10,4 @@ Requirements:
 
 Links:
 - Castel language (by the guy who introduced me to LLVM :D): http://castel.github.com/
+- ECMAScript 262 grammar file (from Aptana Studio 2): https://github.com/aptana/studio2/blob/master/tools/com.aptana.ide.parsing.tools/Parser%20Files/ECMAScript-262.bnf

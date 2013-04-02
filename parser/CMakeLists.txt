@@ -1,21 +1,14 @@
 cmake_minimum_required(VERSION 2.8)
 
-add_custom_command(OUTPUT
-    lexer.cpp
-    COMMAND ragel -C -o lexer.cpp "${CMAKE_CURRENT_SOURCE_DIR}/lex/lexer.rl"
-    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/lex/lexer.rl")
+find_package(Ragel REQUIRED)
+find_package(Lemon REQUIRED)
 
-add_custom_command(OUTPUT
-    lemon-parser.cpp
-    COMMAND lemon "${CMAKE_CURRENT_SOURCE_DIR}/parser/lemon-parser.lm"
-    COMMAND rm "${CMAKE_CURRENT_SOURCE_DIR}/parser/lemon-parser.out"
-    COMMAND mv "${CMAKE_CURRENT_SOURCE_DIR}/parser/lemon-parser.h" "${CMAKE_CURRENT_BINARY_DIR}/lemon-parser.h"
-    COMMAND mv "${CMAKE_CURRENT_SOURCE_DIR}/parser/lemon-parser.c" "${CMAKE_CURRENT_BINARY_DIR}/lemon-parser.cpp"
-    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/parser/lemon-parser.lm")
+ragel_generate(EcmaLexer lexer.cpp lex/lexer.rl)
+lemon_generate(EcmaLParser "${CMAKE_CURRENT_BINARY_DIR}" ".cpp" parser/lemon-parser.lm)
 
 set(EcmaParser_SOURCES
     lexer.cpp
-    lemon-parser.cpp
+    ${EcmaLParser_SOURCE}
     lex/lexeme.cpp
     parser/parser.cpp
     parser/exception.cpp

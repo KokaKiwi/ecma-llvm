@@ -32,17 +32,25 @@
     parser->error(true);
 }
 
-%left If Var Else Null True False Return Function Undefined.
+%left Do If In For Try Var Case Else Null This True With Break Catch False While.
+%left Return Switch Default Finally Continue Function Undefined InstanceOf.
 
 %left Plus Minus Mul Div Mod.
 
 %left Assign PlusAssign MinusAssign MulAssign DivAssign ModAssign.
 
+%left RightShiftAssign BinaryAndAssign BinaryOrAssign XorAssign.
+
 %left Greater GreaterOrEqual Lesser LesserOrEqual Equal NotEqual.
 
 %left Not Inv Incrementation Decrementation.
 
-%left LParen RParen LBracket RBracket LBrace RBrace.
+%left LogicalOr LogicalAnd BitwiseOr BitwiseAnd BitwiseXor.
+
+%left LeftShift RightShift.
+
+%left LParen LBracket LBrace.
+%left RParen RBracket RBrace.
 
 %left QuestionMark Dot.
 
@@ -50,11 +58,317 @@
 
 %left Identifier Number String.
 
-program ::= statements(A). { parser->program(A); }
+/* Level 0 */
 
-    %type statements { ast::stmt::Block * }
-    statements(A) ::= statements(B) statement(C). { if (C) B->statements().push_back(C); A = B; }
-    statements(A) ::= . { A = new ast::stmt::Block(); }
+program ::= source_elements.
 
-        %type statement { ast::Statement * }
-        statement(A) ::= Var Identifier Assign Number. { A = nullptr; }
+/* Level 1 */
+
+source_elements ::= .
+source_elements ::= source_elements source_element.
+
+/* Level 2 */
+
+source_element ::= function_declaration.
+source_element ::= statement.
+
+/* Level 3 */
+
+function_declaration ::= Function Identifier LParen RParen LBrace source_elements RBrace.
+function_declaration ::= Function Identifier LParen function_params RParen LBrace source_elements RBrace.
+
+statement ::= block.
+statement ::= varstatement.
+statement ::= emptystatement.
+statement ::= exprstatement.
+statement ::= ifstatement.
+statement ::= iterstatement.
+statement ::= contstatement.
+statement ::= breakstatement.
+statement ::= returnstatement.
+statement ::= withstatement.
+statement ::= labelstatement.
+statement ::= switchstatement.
+statement ::= throwstatement.
+statement ::= trystatement.
+
+/* Level 4 */
+
+// block ::= LBrace RBrace.
+block ::= LBrace statements RBrace.
+
+varstatement ::= Var vardecls Semicolon.
+
+emptystatement ::= Semicolon.
+
+exprstatement ::= expression Semicolon.
+
+function_params ::= Identifier.
+function_params ::= function_params Comma Identifier.
+
+ifstatement ::= If LParen expression RParen statement Else statement.
+ifstatement ::= If LParen expression RParen statement.
+
+iterstatement ::= Do statement While LParen expression RParen.
+iterstatement ::= While LParen expression RParen statement.
+iterstatement ::= For LParen expressionsNoIn Semicolon expressions Semicolon expressions RParen statement.
+iterstatement ::= For LParen Var vardeclsNoIn Semicolon expressions Semicolon expressions RParen statement.
+iterstatement ::= For LParen leftexpression In expression RParen statement.
+iterstatement ::= For LParen Var vardeclNoIn In expression RParen statement.
+
+    expressionsNoIn ::= expressionNoIn.
+    expressionsNoIn ::= .
+
+    expressions ::= expression.
+    expressions ::= .
+
+contstatement ::= Continue Semicolon.
+contstatement ::= Continue Identifier Semicolon.
+
+breakstatement ::= Break Semicolon.
+breakstatement ::= Break Identifier Semicolon.
+
+returnstatement ::= Return Semicolon.
+returnstatement ::= Return expression Semicolon.
+
+withstatement ::= With LParen expression RParen statement.
+
+labelstatement ::= Identifier Colon statement.
+
+switchstatement ::= Switch LParen expression RParen caseblock.
+
+throwstatement ::= Throw expression Semicolon.
+
+trystatement ::= Try block catch.
+trystatement ::= Try block finally.
+trystatement ::= Try block catch finally.
+
+/* Level 5 */
+
+caseblock ::= LBrace RBrace.
+caseblock ::= LBrace caseclauses RBrace.
+
+catch ::= Catch LParen Identifier RParen block.
+
+expression ::= assignexpression.
+expression ::= expression Comma assignexpression.
+
+expressionNoIn ::= assignexpressionNoIn.
+expressionNoIn ::= expressionNoIn Comma assignexpressionNoIn.
+
+finally ::= Finally block.
+
+leftexpression ::= newexpression.
+leftexpression ::= callexpression.
+
+statements ::= statement.
+statements ::= statements statement.
+
+vardecls ::= vardecl.
+vardecls ::= vardecls Comma vardecl.
+
+vardeclsNoIn ::= vardeclNoIn.
+vardeclsNoIn ::= vardeclsNoIn Comma vardeclNoIn.
+
+vardeclNoIn ::= Identifier.
+vardeclNoIn ::= Identifier Assign assignexpressionNoIn.
+
+/* Level 6 */
+
+assignexpression ::= condexpression.
+assignexpression ::= leftexpression assignop assignexpression.
+
+assignexpressionNoIn ::= condexpressionNoIn.
+assignexpressionNoIn ::= leftexpression assignop assignexpressionNoIn.
+
+callexpression ::= memberexpression arguments.
+callexpression ::= callexpression arguments.
+callexpression ::= callexpression LBracket expression RBracket.
+callexpression ::= callexpression Dot Identifier.
+
+caseclauses ::= caseclause.
+caseclauses ::= caseclauses caseclause.
+
+newexpression ::= memberexpression.
+newexpression ::= New newexpression.
+
+vardecl ::= Identifier.
+vardecl ::= Identifier Assign assignexpression.
+
+/* Level 7 */
+
+arguments ::= LParen RParen.
+arguments ::= LParen arguments_list RParen.
+
+assignop ::= Assign.
+assignop ::= PlusAssign.
+assignop ::= MinusAssign.
+assignop ::= MulAssign.
+assignop ::= DivAssign.
+assignop ::= ModAssign.
+assignop ::= RightShiftAssign.
+assignop ::= BinaryAndAssign.
+assignop ::= BinaryOrAssign.
+assignop ::= XorAssign.
+
+caseclause ::= Case expression Colon.
+caseclause ::= Case expression Colon statements.
+caseclause ::= Default Colon.
+caseclause ::= Default Colon statements.
+
+condexpression ::= logical_or_expr.
+condexpression ::= logical_or_expr QuestionMark assignexpression Colon assignexpression.
+
+condexpressionNoIn ::= logical_or_exprNoIn.
+condexpressionNoIn ::= logical_or_exprNoIn QuestionMark assignexpressionNoIn Colon assignexpressionNoIn.
+
+memberexpression ::= primaryexpression.
+memberexpression ::= functionexpression.
+memberexpression ::= memberexpression LBracket expression RBracket.
+memberexpression ::= memberexpression Dot Identifier.
+memberexpression ::= New memberexpression arguments.
+
+/* Level 8 */
+
+arguments_list ::= assignexpression.
+arguments_list ::= arguments_list Comma assignexpression.
+
+functionexpression ::= Function func_name LParen RParen LBrace source_elements RBrace.
+functionexpression ::= Function func_name LParen function_params RParen LBrace source_elements RBrace.
+
+    func_name ::= .
+    func_name ::= Identifier.
+
+logical_or_expr ::= logical_and_expr.
+logical_or_expr ::= logical_or_expr LogicalOr logical_and_expr.
+
+logical_or_exprNoIn ::= logical_and_exprNoIn.
+logical_or_exprNoIn ::= logical_or_exprNoIn LogicalOr logical_and_exprNoIn.
+
+primaryexpression ::= This.
+primaryexpression ::= Identifier.
+primaryexpression ::= literal.
+primaryexpression ::= arrayliteral.
+primaryexpression ::= objectliteral.
+primaryexpression ::= LParen expression RParen.
+
+/* Level 9 */
+
+arrayliteral ::= LBracket RBracket.
+arrayliteral ::= LBracket elision RBracket.
+arrayliteral ::= LBracket element_list RBracket.
+arrayliteral ::= LBracket element_list Comma RBracket.
+arrayliteral ::= LBracket element_list Comma elision RBracket.
+
+literal ::= Null.
+literal ::= True.
+literal ::= False.
+literal ::= Number.
+literal ::= String.
+
+logical_and_expr ::= bitwise_or_expr.
+logical_and_expr ::= logical_and_expr LogicalAnd bitwise_or_expr.
+
+logical_and_exprNoIn ::= bitwise_or_exprNoIn.
+logical_and_exprNoIn ::= logical_and_exprNoIn LogicalAnd bitwise_or_exprNoIn.
+
+objectliteral ::= LBrace RBrace.
+objectliteral ::= LBrace object_properties RBrace.
+
+/* Level 10 */
+
+bitwise_or_expr ::= bitwise_xor_expr.
+bitwise_or_expr ::= bitwise_or_expr BitwiseOr bitwise_xor_expr.
+
+bitwise_or_exprNoIn ::= bitwise_xor_exprNoIn.
+bitwise_or_exprNoIn ::= bitwise_or_exprNoIn BitwiseOr bitwise_xor_exprNoIn.
+
+element_list ::= assignexpression.
+element_list ::= elision assignexpression.
+element_list ::= element_list Comma assignexpression.
+element_list ::= element_list Comma elision assignexpression.
+
+elision ::= Comma.
+elision ::= elision Comma.
+
+object_properties ::= property_name Colon assignexpression.
+object_properties ::= object_properties Comma property_name Colon assignexpression.
+
+/* Level 11 */
+
+bitwise_xor_expr ::= bitwise_and_expr.
+bitwise_xor_expr ::= bitwise_xor_expr BitwiseXor bitwise_and_expr.
+
+bitwise_xor_exprNoIn ::= bitwise_and_exprNoIn.
+bitwise_xor_exprNoIn ::= bitwise_xor_exprNoIn BitwiseXor bitwise_and_exprNoIn.
+
+property_name ::= Identifier.
+property_name ::= String.
+property_name ::= Number.
+
+/* Level 12 */
+
+bitwise_and_expr ::= equality_expr.
+bitwise_and_expr ::= bitwise_and_expr BitwiseAnd equality_expr.
+
+bitwise_and_exprNoIn ::= equality_exprNoIn.
+bitwise_and_exprNoIn ::= bitwise_and_exprNoIn BitwiseAnd equality_exprNoIn.
+
+/* Level 13 */
+
+equality_expr ::= relational_expr.
+equality_expr ::= equality_expr Equal relational_expr.
+equality_expr ::= equality_expr NotEqual relational_expr.
+
+equality_exprNoIn ::= relational_exprNoIn.
+equality_exprNoIn ::= equality_exprNoIn Equal relational_exprNoIn.
+equality_exprNoIn ::= equality_exprNoIn NotEqual relational_exprNoIn.
+
+/* Level 14 */
+relational_expr ::= shift_expr.
+relational_expr ::= relational_expr Lesser shift_expr.
+relational_expr ::= relational_expr LesserOrEqual shift_expr.
+relational_expr ::= relational_expr Greater shift_expr.
+relational_expr ::= relational_expr GreaterOrEqual shift_expr.
+relational_expr ::= relational_expr InstanceOf shift_expr.
+relational_expr ::= relational_expr In shift_expr.
+
+relational_exprNoIn ::= shift_expr.
+relational_exprNoIn ::= relational_exprNoIn Lesser shift_expr.
+relational_exprNoIn ::= relational_exprNoIn LesserOrEqual shift_expr.
+relational_exprNoIn ::= relational_exprNoIn Greater shift_expr.
+relational_exprNoIn ::= relational_exprNoIn GreaterOrEqual shift_expr.
+relational_exprNoIn ::= relational_exprNoIn InstanceOf shift_expr.
+
+/* Level 15 */
+
+shift_expr ::= add_expr.
+shift_expr ::= shift_expr LeftShift add_expr.
+shift_expr ::= shift_expr RightShift add_expr.
+
+/* Level 16 */
+
+add_expr ::= mul_expr.
+add_expr ::= add_expr Plus mul_expr.
+add_expr ::= add_expr Minus mul_expr.
+
+/* Level 17 */
+
+mul_expr ::= unary_expr.
+mul_expr ::= mul_expr Mul unary_expr.
+mul_expr ::= mul_expr Div unary_expr.
+mul_expr ::= mul_expr Mod unary_expr.
+
+/* Level 18 */
+
+unary_expr ::= postfix_expr.
+unary_expr ::= Not unary_expr.
+unary_expr ::= Inv unary_expr.
+unary_expr ::= Incrementation unary_expr.
+unary_expr ::= Decrementation unary_expr.
+
+/* Level 19 */
+
+postfix_expr ::= leftexpression.
+postfix_expr ::= leftexpression Incrementation.
+postfix_expr ::= leftexpression Decrementation.

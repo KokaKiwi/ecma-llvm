@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <stdexcept>
+#include <string>
 #include <llvm/Module.h>
 #include <llvm/Support/raw_ostream.h>
 #include "ecma/parser/exception.h"
@@ -14,16 +15,19 @@ int main(int argc, char **argv)
     toolchain::Compiler compiler;
     ast::stmt::Block *program;
     llvm::Module *module;
+    std::string moduleName;
 
     try
     {
         if (argc == 1)
         {
             program = toolchain::Source::fromStream(std::cin).parse();
+            moduleName = "*stream*";
         }
         else if (argc == 2)
         {
             program = toolchain::Source::fromFile(argv[1]).parse();
+            moduleName = argv[1];
         }
         else
         {
@@ -39,7 +43,7 @@ int main(int argc, char **argv)
 
     try
     {
-        module = compiler.build(argv[1], program);
+        module = compiler.build(moduleName, program);
         module->print(llvm::outs(), nullptr);
 
         delete program;

@@ -34,7 +34,7 @@
 }
 
 %left Do If In For New Try Var Case Else Null This True With Break Catch False While.
-%left Return Switch Default Finally Continue Function Undefined InstanceOf.
+%left Return Switch TypeOf Default Finally Continue Function Undefined InstanceOf.
 
 %left Plus Minus Mul Div Mod.
 
@@ -42,7 +42,7 @@
 
 %left RightShiftAssign BinaryAndAssign BinaryOrAssign XorAssign.
 
-%left Greater GreaterOrEqual Lesser LesserOrEqual Equal NotEqual.
+%left Greater GreaterOrEqual Lesser LesserOrEqual Equal NotEqual Identity NotIdentity.
 
 %left Not Inv Incrementation Decrementation.
 
@@ -57,7 +57,7 @@
 
 %left Semicolon Colon Comma.
 
-%left Identifier Number String.
+%left Identifier Integer Double String.
 
 /* Level 0 */
 
@@ -260,7 +260,7 @@ primaryexpression ::= Identifier.
 primaryexpression ::= literal.
 primaryexpression ::= arrayliteral.
 primaryexpression ::= objectliteral.
-primaryexpression ::= LParen expression RParen.
+primaryexpression ::= LParen down_expression RParen.
 
 /* Level 9 */
 
@@ -273,7 +273,8 @@ arrayliteral ::= LBracket element_list Comma elision RBracket.
 literal ::= Null.
 literal ::= True.
 literal ::= False.
-literal ::= Number.
+literal ::= Integer.
+literal ::= Double.
 literal ::= String.
 
 logical_and_expr ::= bitwise_or_expr.
@@ -329,6 +330,8 @@ bitwise_and_exprNoIn ::= bitwise_and_exprNoIn BitwiseAnd equality_exprNoIn.
 equality_expr ::= relational_expr.
 equality_expr ::= equality_expr Equal relational_expr.
 equality_expr ::= equality_expr NotEqual relational_expr.
+equality_expr ::= equality_expr Identity relational_expr.
+equality_expr ::= equality_expr NotIdentity relational_expr.
 
 equality_exprNoIn ::= relational_exprNoIn.
 equality_exprNoIn ::= equality_exprNoIn Equal relational_exprNoIn.
@@ -376,6 +379,7 @@ unary_expr ::= Not unary_expr.
 unary_expr ::= Inv unary_expr.
 unary_expr ::= Incrementation unary_expr.
 unary_expr ::= Decrementation unary_expr.
+unary_expr ::= TypeOf unary_expr.
 
 /* Level 19 */
 

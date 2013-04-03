@@ -8,12 +8,12 @@
 using namespace ecma;
 using namespace ecma::toolchain;
 
-ast::stmt::Block *Source::parse() const
+ast::stmt::Block *Source::parse(bool debug) const
 {
     lex::Lexer lexer(m_source);
     parser::Parser parser(lexer);
 
-    parser.exec();
+    parser.debug(debug).exec();
 
     return parser.program();
 }

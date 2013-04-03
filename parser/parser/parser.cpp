@@ -6,10 +6,13 @@
 
 using namespace ecma::parser;
 
-Parser::Parser(lex::Lexer &lexer): m_lexer(lexer), m_error(false), m_program(nullptr)
+Parser::Parser(lex::Lexer &lexer)
+    : m_lexer(lexer)
+    , m_error(false)
+    , m_debug(false)
+    , m_program(nullptr)
 {
     m_yyp = EcmaParseAlloc(&malloc);
-    // EcmaParseTrace(stderr, "[EcmaParser] ");
 }
 
 Parser::~Parser()
@@ -21,6 +24,15 @@ void Parser::exec()
 {
     std::unique_ptr<lex::Lexeme> lexeme;
     bool parsing = true;
+
+    if (debug())
+    {
+        EcmaParseTrace(stderr, "[EcmaParser] ");
+    }
+    else
+    {
+        EcmaParseTrace(NULL, NULL);
+    }
 
     while (parsing && !error())
     {

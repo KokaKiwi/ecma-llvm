@@ -10,6 +10,8 @@
 
 using namespace ecma;
 
+#define DEBUG false
+
 int main(int argc, char **argv)
 {
     toolchain::Compiler compiler;
@@ -21,12 +23,12 @@ int main(int argc, char **argv)
     {
         if (argc == 1)
         {
-            program = toolchain::Source::fromStream(std::cin).parse();
+            program = toolchain::Source::fromStream(std::cin).parse(DEBUG);
             moduleName = "*stream*";
         }
         else if (argc == 2)
         {
-            program = toolchain::Source::fromFile(argv[1]).parse();
+            program = toolchain::Source::fromFile(argv[1]).parse(DEBUG);
             moduleName = argv[1];
         }
         else

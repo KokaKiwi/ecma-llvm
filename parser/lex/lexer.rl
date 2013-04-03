@@ -34,13 +34,12 @@ Lexeme *Lexer::consume(void)
 {
     %%{
         identifier          = [a-zA-Z$_][a-zA-Z0-9$_]*;
-        number              = [0-9]+;
+        integer             = [0-9]+|'0x'[0-9a-fA-F]+;
+        double              = [0-9]+'.'[0-9]*;
         string              = ('"'([^"]|'\\' any)*'"'|'\''([^']|'\\' any)*'\'');
 
         spaces              = (' '|'\t')+;
         newline             = ('\n');
-
-        linecomment         = '//'[^\n]*;
 
         main := |*
             'do'            => { type = Lexeme::Type::Do; fbreak; };
@@ -62,6 +61,7 @@ Lexeme *Lexer::consume(void)
             'while'         => { type = Lexeme::Type::While; fbreak; };
             'return'        => { type = Lexeme::Type::Return; fbreak; };
             'switch'        => { type = Lexeme::Type::Switch; fbreak; };
+            'typeof'        => { type = Lexeme::Type::TypeOf; fbreak; };
             'default'       => { type = Lexeme::Type::Default; fbreak; };
             'finally'       => { type = Lexeme::Type::Finally; fbreak; };
             'continue'      => { type = Lexeme::Type::Continue; fbreak; };
@@ -93,6 +93,8 @@ Lexeme *Lexer::consume(void)
             '<='            => { type = Lexeme::Type::LesserOrEqual; fbreak; };
             '=='            => { type = Lexeme::Type::Equal; fbreak; };
             '!='            => { type = Lexeme::Type::NotEqual; fbreak; };
+            '==='           => { type = Lexeme::Type::Identity; fbreak; };
+            '!=='           => { type = Lexeme::Type::NotIdentity; fbreak; };
 
             '!'             => { type = Lexeme::Type::Not; fbreak; };
             '~'             => { type = Lexeme::Type::Inv; fbreak; };
@@ -123,13 +125,13 @@ Lexeme *Lexer::consume(void)
             ','             => { type = Lexeme::Type::Comma; fbreak; };
 
             identifier      => { type = Lexeme::Type::Identifier; fbreak; };
-            number          => { type = Lexeme::Type::Number; fbreak; };
+            integer         => { type = Lexeme::Type::Integer; fbreak; };
+            double          => { type = Lexeme::Type::Double; fbreak; };
             string          => { type = Lexeme::Type::String; fbreak; };
 
             spaces          => { type = Lexeme::Type::Spaces; fbreak; };
             newline         => { type = Lexeme::Type::Newline; fbreak; };
 
-            linecomment     => { fbreak; };
             any             => { fbreak; };
         *|;
     }%%

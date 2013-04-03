@@ -44,9 +44,20 @@ namespace ecma
                 return *this;
             }
 
+            inline const bool debug(void) const
+            {
+                return m_debug;
+            }
+            inline Parser &debug(bool debug)
+            {
+                m_debug = debug;
+                return *this;
+            }
+
         private:
             void *m_yyp;
             lex::Lexer &m_lexer;
+            bool m_debug;
             bool m_error;
             std::vector<std::string> m_errors;
             ast::stmt::Block *m_program;

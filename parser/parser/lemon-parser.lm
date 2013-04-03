@@ -16,6 +16,7 @@
     #include "ecma/ast/expression.h"
     #include "ecma/ast/statement.h"
     #include "ecma/ast/stmt/block.h"
+    #include "ecma/ast/stmt/decl/variables.h"
 
     using namespace ecma;
 }
@@ -61,44 +62,49 @@
 
 /* Level 0 */
 
-program ::= source_elements.
+program ::= source_elements(A). { parser->program(A); }
 
 /* Level 1 */
 
-source_elements ::= .
-source_elements ::= source_elements source_element.
+%type source_elements { ast::stmt::Block * }
+source_elements(A) ::= . { A = new ast::stmt::Block(); }
+source_elements(A) ::= source_elements(B) source_element(C). { B->statements().push_back(C); A = B; }
 
 /* Level 2 */
 
-source_element ::= function_declaration.
-source_element ::= statement.
+%type source_element { ast::Statement * }
+source_element(A) ::= function_declaration(B). { A = B; }
+source_element(A) ::= statement(B). { A = B; }
 
 /* Level 3 */
 
+%type function_declaration { ast::Statement * }
 function_declaration ::= Function Identifier LParen RParen LBrace source_elements RBrace.
 function_declaration ::= Function Identifier LParen function_params RParen LBrace source_elements RBrace.
 
-statement ::= block.
-statement ::= varstatement.
-statement ::= emptystatement.
-statement ::= exprstatement.
-statement ::= ifstatement.
-statement ::= iterstatement.
-statement ::= contstatement.
-statement ::= breakstatement.
-statement ::= returnstatement.
-statement ::= withstatement.
-statement ::= labelstatement.
-statement ::= switchstatement.
-statement ::= throwstatement.
-statement ::= trystatement.
+%type statement { ast::Statement * }
+statement(A) ::= block(B). { A = B; }
+statement(A) ::= varstatement(B). { A = B; }
+statement(A) ::= emptystatement. { A = nullptr; }
+statement(A) ::= exprstatement. { A = nullptr; }
+statement(A) ::= ifstatement. { A = nullptr; }
+statement(A) ::= iterstatement. { A = nullptr; }
+statement(A) ::= contstatement. { A = nullptr; }
+statement(A) ::= breakstatement. { A = nullptr; }
+statement(A) ::= returnstatement. { A = nullptr; }
+statement(A) ::= withstatement. { A = nullptr; }
+statement(A) ::= labelstatement. { A = nullptr; }
+statement(A) ::= switchstatement. { A = nullptr; }
+statement(A) ::= throwstatement. { A = nullptr; }
+statement(A) ::= trystatement. { A = nullptr; }
 
 /* Level 4 */
 
-// block ::= LBrace RBrace.
-block ::= LBrace statements RBrace.
+%type block { ast::stmt::Block * }
+block(A) ::= LBrace statements(B) RBrace. { A = B; }
 
-varstatement ::= Var vardecls Semicolon.
+%type varstatement { ast::stmt::decl::Variables * }
+varstatement(A) ::= Var vardecls(B) Semicolon. { A = B; }
 
 emptystatement ::= Semicolon.
 
@@ -166,11 +172,13 @@ finally ::= Finally block.
 leftexpression ::= newexpression.
 leftexpression ::= callexpression.
 
-statements ::= statement.
-statements ::= statements statement.
+%type statements { ast::stmt::Block * }
+statements(A) ::= statement(B). { A = new ast::stmt::Block(); A->statements().push_back(B); }
+statements(A) ::= statements(B) statement(C). { B->statements().push_back(C); A = B; }
 
-vardecls ::= vardecl.
-vardecls ::= vardecls Comma vardecl.
+%type vardecls { ast::stmt::decl::Variables * }
+vardecls(A) ::= vardecl(B). { A = new ast::stmt::decl::Variables(); A->vars().push_back(B); }
+vardecls(A) ::= vardecls(B) Comma vardecl(C). { B->vars().push_back(C); A = B; }
 
 vardeclsNoIn ::= vardeclNoIn.
 vardeclsNoIn ::= vardeclsNoIn Comma vardeclNoIn.
@@ -197,8 +205,9 @@ caseclauses ::= caseclauses caseclause.
 newexpression ::= memberexpression.
 newexpression ::= New newexpression.
 
-vardecl ::= Identifier.
-vardecl ::= Identifier Assign down_expression.
+%type vardecl { ast::stmt::decl::Variables::Variable * }
+vardecl(A) ::= Identifier(B). { A = new ast::stmt::decl::Variables::Variable(*B); }
+vardecl(A) ::= Identifier(B) Assign down_expression(C). { A = new ast::stmt::decl::Variables::Variable(*B, C); }
 
 /* Level 7 */
 
@@ -227,6 +236,7 @@ condexpression ::= logical_or_expr QuestionMark assignexpression Colon assignexp
 condexpressionNoIn ::= logical_or_exprNoIn.
 condexpressionNoIn ::= logical_or_exprNoIn QuestionMark assignexpressionNoIn Colon assignexpressionNoIn.
 
+%type down_expression { ast::Expression * }
 down_expression ::= assignexpression.
 down_expression ::= functionexpression.
 

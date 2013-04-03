@@ -7,6 +7,7 @@
 #include "ecma/ast/tools/visitor.h"
 #include "ecma/ast/statement.h"
 #include "ecma/ast/stmt/block.h"
+#include "ecma/ast/stmt/decl/variables.h"
 
 namespace ecma
 {
@@ -17,17 +18,39 @@ namespace ecma
             class PrintVisitor: public ast::tools::Visitor
             {
             public:
-                PrintVisitor(): depth(0) {}
+                PrintVisitor(std::ostream &stream): depth(0), m_stream(stream) {}
 
                 inline void visit(ast::stmt::Block &block)
                 {
-                    std::cout << spaces() << "Block:" << std::endl;
+                    stream() << spaces() << "Block:" << std::endl;
                     for (ast::Statement *stmt : block.statements())
                     {
-                        depth++;
-                        stmt->accept(*this);
-                        depth--;
+                        if (stmt)
+                        {
+                            depth++;
+                            stmt->accept(*this);
+                            depth--;
+                        }
                     }
+                }
+
+                inline void visit(ast::stmt::decl::Variables &vars)
+                {
+                    stream() << spaces() << "Variables:" << std::endl;
+                    for (ast::stmt::decl::Variables::Variable *var : vars.vars())
+                    {
+                        if (var)
+                        {
+                            depth++;
+                            stream() << spaces() << "Variable: " << var->name() << std::endl;
+                            depth--;
+                        }
+                    }
+                }
+
+                inline std::ostream &stream(void) const
+                {
+                    return m_stream;
                 }
 
             private:
@@ -44,6 +67,7 @@ namespace ecma
                 }
 
                 int depth;
+                std::ostream &m_stream;
             };
         }
     }

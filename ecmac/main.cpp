@@ -7,6 +7,7 @@
 #include "ecma/parser/exception.h"
 #include "ecma/toolchain/source.h"
 #include "ecma/toolchain/compiler.h"
+#include "ecma/ast/tools/print_visitor.h"
 
 using namespace ecma;
 
@@ -18,6 +19,7 @@ int main(int argc, char **argv)
     ast::stmt::Block *program;
     llvm::Module *module;
     std::string moduleName;
+    ast::tools::PrintVisitor visitor(std::cerr);
 
     try
     {
@@ -47,6 +49,8 @@ int main(int argc, char **argv)
     {
         module = compiler.build(moduleName, program);
         module->print(llvm::outs(), nullptr);
+
+        program->accept(visitor);
 
         delete program;
         delete module;

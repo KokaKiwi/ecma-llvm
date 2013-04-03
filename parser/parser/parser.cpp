@@ -49,7 +49,7 @@ void Parser::exec()
 
             if (!error())
             {
-                delete lexeme.release();
+                lexeme.release();
             }
         }
     }

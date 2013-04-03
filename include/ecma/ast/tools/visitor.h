@@ -14,6 +14,11 @@ namespace ecma
         namespace stmt
         {
             class Block;
+
+            namespace decl
+            {
+                class Variables;
+            }
         }
 
         namespace tools
@@ -41,6 +46,11 @@ namespace ecma
                 virtual inline void visit(ast::stmt::Block &block)
                 {
                     throw std::runtime_error("Unknown AST branch (ast::stmt::Block).");
+                }
+
+                virtual inline void visit(ast::stmt::decl::Variables &vars)
+                {
+                    throw std::runtime_error("Unknown AST branch (ast::stmt::decl::Variables).");
                 }
             };
         }

@@ -32,7 +32,7 @@
     parser->error(true);
 }
 
-%left Do If In For Try Var Case Else Null This True With Break Catch False While.
+%left Do If In For New Try Var Case Else Null This True With Break Catch False While.
 %left Return Switch Default Finally Continue Function Undefined InstanceOf.
 
 %left Plus Minus Mul Div Mod.
@@ -101,7 +101,7 @@ varstatement ::= Var vardecls Semicolon.
 
 emptystatement ::= Semicolon.
 
-exprstatement ::= expression Semicolon.
+exprstatement ::= top_expression Semicolon.
 
 function_params ::= Identifier.
 function_params ::= function_params Comma Identifier.
@@ -151,7 +151,17 @@ caseblock ::= LBrace caseclauses RBrace.
 catch ::= Catch LParen Identifier RParen block.
 
 expression ::= assignexpression.
+expression ::= functionexpression.
 expression ::= expression Comma assignexpression.
+
+down_expression ::= assignexpression.
+down_expression ::= functionexpression.
+
+down_expressionNoIn ::= assignexpressionNoIn.
+down_expressionNoIn ::= functionexpression.
+
+top_expression ::= assignexpression.
+top_expression ::= top_expression Comma assignexpression.
 
 expressionNoIn ::= assignexpressionNoIn.
 expressionNoIn ::= expressionNoIn Comma assignexpressionNoIn.
@@ -176,10 +186,10 @@ vardeclNoIn ::= Identifier Assign assignexpressionNoIn.
 /* Level 6 */
 
 assignexpression ::= condexpression.
-assignexpression ::= leftexpression assignop assignexpression.
+assignexpression ::= leftexpression assignop down_expression.
 
 assignexpressionNoIn ::= condexpressionNoIn.
-assignexpressionNoIn ::= leftexpression assignop assignexpressionNoIn.
+assignexpressionNoIn ::= leftexpression assignop down_expressionNoIn.
 
 callexpression ::= memberexpression arguments.
 callexpression ::= callexpression arguments.
@@ -193,7 +203,7 @@ newexpression ::= memberexpression.
 newexpression ::= New newexpression.
 
 vardecl ::= Identifier.
-vardecl ::= Identifier Assign assignexpression.
+vardecl ::= Identifier Assign down_expression.
 
 /* Level 7 */
 
@@ -223,15 +233,14 @@ condexpressionNoIn ::= logical_or_exprNoIn.
 condexpressionNoIn ::= logical_or_exprNoIn QuestionMark assignexpressionNoIn Colon assignexpressionNoIn.
 
 memberexpression ::= primaryexpression.
-memberexpression ::= functionexpression.
 memberexpression ::= memberexpression LBracket expression RBracket.
 memberexpression ::= memberexpression Dot Identifier.
 memberexpression ::= New memberexpression arguments.
 
 /* Level 8 */
 
-arguments_list ::= assignexpression.
-arguments_list ::= arguments_list Comma assignexpression.
+arguments_list ::= down_expression.
+arguments_list ::= arguments_list Comma down_expression.
 
 functionexpression ::= Function func_name LParen RParen LBrace source_elements RBrace.
 functionexpression ::= Function func_name LParen function_params RParen LBrace source_elements RBrace.
@@ -283,16 +292,16 @@ bitwise_or_expr ::= bitwise_or_expr BitwiseOr bitwise_xor_expr.
 bitwise_or_exprNoIn ::= bitwise_xor_exprNoIn.
 bitwise_or_exprNoIn ::= bitwise_or_exprNoIn BitwiseOr bitwise_xor_exprNoIn.
 
-element_list ::= assignexpression.
-element_list ::= elision assignexpression.
-element_list ::= element_list Comma assignexpression.
-element_list ::= element_list Comma elision assignexpression.
+element_list ::= down_expression.
+element_list ::= elision down_expression.
+element_list ::= element_list Comma down_expression.
+element_list ::= element_list Comma elision down_expression.
 
 elision ::= Comma.
 elision ::= elision Comma.
 
-object_properties ::= property_name Colon assignexpression.
-object_properties ::= object_properties Comma property_name Colon assignexpression.
+object_properties ::= property_name Colon down_expression.
+object_properties ::= object_properties Comma property_name Colon down_expression.
 
 /* Level 11 */
 

@@ -9,6 +9,7 @@ using namespace ecma::parser;
 Parser::Parser(lex::Lexer &lexer): m_lexer(lexer), m_error(false), m_program(nullptr)
 {
     m_yyp = EcmaParseAlloc(&malloc);
+    // EcmaParseTrace(stderr, "[EcmaParser] ");
 }
 
 Parser::~Parser()
@@ -36,7 +37,7 @@ void Parser::exec()
 
             if (!error())
             {
-                lexeme.release();
+                delete lexeme.release();
             }
         }
     }

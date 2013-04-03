@@ -57,5 +57,6 @@ namespace ecma
 void *EcmaParseAlloc(void *(*mallocProc)(size_t));
 void EcmaParseFree(void *p, void (*freeProc)(void*));
 void EcmaParse(void *yyp, int yymajor, ecma::lex::Lexeme *yyminor, ecma::parser::Parser *parser);
+void EcmaParseTrace(FILE *stream, char *prefix);
 
 #endif /* ECMA_PARSER_PARSER_H_ */

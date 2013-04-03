@@ -2,6 +2,7 @@
 %token_type         { lex::Lexeme * }
 %extra_argument     { parser::Parser *parser }
 %name               EcmaParse
+%start_symbol       program
 
 %include {
     #include <cassert>
@@ -154,12 +155,6 @@ expression ::= assignexpression.
 expression ::= functionexpression.
 expression ::= expression Comma assignexpression.
 
-down_expression ::= assignexpression.
-down_expression ::= functionexpression.
-
-down_expressionNoIn ::= assignexpressionNoIn.
-down_expressionNoIn ::= functionexpression.
-
 top_expression ::= assignexpression.
 top_expression ::= top_expression Comma assignexpression.
 
@@ -231,6 +226,12 @@ condexpression ::= logical_or_expr QuestionMark assignexpression Colon assignexp
 
 condexpressionNoIn ::= logical_or_exprNoIn.
 condexpressionNoIn ::= logical_or_exprNoIn QuestionMark assignexpressionNoIn Colon assignexpressionNoIn.
+
+down_expression ::= assignexpression.
+down_expression ::= functionexpression.
+
+down_expressionNoIn ::= assignexpressionNoIn.
+down_expressionNoIn ::= functionexpression.
 
 memberexpression ::= primaryexpression.
 memberexpression ::= memberexpression LBracket expression RBracket.

@@ -47,6 +47,7 @@ Lexeme *Lexer::consume(void)
             'if'            => { type = Lexeme::Type::If; fbreak; };
             'in'            => { type = Lexeme::Type::In; fbreak; };
             'for'           => { type = Lexeme::Type::For; fbreak; };
+            'new'           => { type = Lexeme::Type::New; fbreak; };
             'try'           => { type = Lexeme::Type::Try; fbreak; };
             'var'           => { type = Lexeme::Type::Var; fbreak; };
             'case'          => { type = Lexeme::Type::Case; fbreak; };

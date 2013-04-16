@@ -12,11 +12,7 @@
     #include "ecma/lex/lexeme.h"
     #include "ecma/parser/parser.h"
 
-    #include "ecma/ast/node.h"
-    #include "ecma/ast/expression.h"
-    #include "ecma/ast/statement.h"
-    #include "ecma/ast/stmt/block.h"
-    #include "ecma/ast/stmt/decl/variables.h"
+    #include "ecma/ast/ast.h"
 
     using namespace ecma;
 }
@@ -79,23 +75,23 @@ source_element(A) ::= statement(B). { A = B; }
 /* Level 3 */
 
 %type function_declaration { ast::Statement * }
-function_declaration ::= Function Identifier LParen RParen LBrace source_elements RBrace.
-function_declaration ::= Function Identifier LParen function_params RParen LBrace source_elements RBrace.
+function_declaration(A) ::= Function Identifier(B) LParen RParen LBrace source_elements(C) RBrace. { A = new ast::stmt::decl::Function(*B, new ast::expr::literal::Function(nullptr, C)); }
+function_declaration(A) ::= Function Identifier(B) LParen function_params(C) RParen LBrace source_elements(D) RBrace. { A = new ast::stmt::decl::Function(*B, new ast::expr::literal::Function(C, D)); }
 
 %type statement { ast::Statement * }
 statement(A) ::= block(B). { A = B; }
 statement(A) ::= varstatement(B). { A = B; }
 statement(A) ::= emptystatement. { A = nullptr; }
-statement(A) ::= exprstatement. { A = nullptr; }
-statement(A) ::= ifstatement. { A = nullptr; }
+statement(A) ::= exprstatement(B). { A = B; }
 statement(A) ::= iterstatement. { A = nullptr; }
-statement(A) ::= contstatement. { A = nullptr; }
-statement(A) ::= breakstatement. { A = nullptr; }
-statement(A) ::= returnstatement. { A = nullptr; }
-statement(A) ::= withstatement. { A = nullptr; }
-statement(A) ::= labelstatement. { A = nullptr; }
+statement(A) ::= ifstatement(B). { A = B; }
+statement(A) ::= contstatement(B). { A = B; }
+statement(A) ::= breakstatement(B). { A = B; }
+statement(A) ::= returnstatement(B). { A = B; }
+statement(A) ::= withstatement(B). { A = B; }
+statement(A) ::= labelstatement(B). { A = B; }
 statement(A) ::= switchstatement. { A = nullptr; }
-statement(A) ::= throwstatement. { A = nullptr; }
+statement(A) ::= throwstatement(B). { A = B; }
 statement(A) ::= trystatement. { A = nullptr; }
 
 /* Level 4 */
@@ -108,13 +104,31 @@ varstatement(A) ::= Var vardecls(B) Semicolon. { A = B; }
 
 emptystatement ::= Semicolon.
 
-exprstatement ::= top_expression Semicolon.
+%type exprstatement { ast::Statement * }
+exprstatement(A) ::= top_expression(B) Semicolon. { A = new ast::stmt::Expression(B); }
 
-function_params ::= Identifier.
-function_params ::= function_params Comma Identifier.
+%type function_params { std::vector<std::string> * }
+function_params(A) ::= Identifier(B). { A = new std::vector<std::string>(); A->push_back(*B); }
+function_params(A) ::= function_params(B) Comma Identifier(C). { A = B; A->push_back(*C); }
 
-ifstatement ::= If LParen expression RParen statement Else statement.
-ifstatement ::= If LParen expression RParen statement.
+%type ifstatement { ast::Statement * }
+ifstatement(A) ::= If LParen expression(B) RParen openifstatement(C). { A = new ast::stmt::ctrl::If(B, C); }
+ifstatement(A) ::= If LParen expression(B) RParen openifstatement(C) Else statement(D). { A = A = new ast::stmt::ctrl::If(B, C, D); }
+
+    %type openifstatement { ast::Statement * }
+    openifstatement(A) ::= block(B). { A = B; }
+    openifstatement(A) ::= varstatement(B). { A = B; }
+    openifstatement(A) ::= emptystatement. { A = nullptr; }
+    openifstatement(A) ::= exprstatement(B). { A = B; }
+    // openifstatement(A) ::= iterstatement. { A = nullptr; }
+    openifstatement(A) ::= contstatement(B). { A = B; }
+    openifstatement(A) ::= breakstatement(B). { A = B; }
+    openifstatement(A) ::= returnstatement(B). { A = B; }
+    // openifstatement(A) ::= withstatement(B). { A = B; }
+    // openifstatement(A) ::= labelstatement(B). { A = B; }
+    openifstatement(A) ::= switchstatement. { A = nullptr; }
+    openifstatement(A) ::= throwstatement(B). { A = B; }
+    openifstatement(A) ::= trystatement. { A = nullptr; }
 
 iterstatement ::= Do statement While LParen expression RParen.
 iterstatement ::= While LParen expression RParen statement.
@@ -129,22 +143,28 @@ iterstatement ::= For LParen Var vardeclNoIn In expression RParen statement.
     expressions ::= expression.
     expressions ::= .
 
-contstatement ::= Continue Semicolon.
-contstatement ::= Continue Identifier Semicolon.
+%type contstatement { ast::Statement * }
+contstatement(A) ::= Continue Semicolon. { A = new ast::stmt::Continue(""); }
+contstatement(A) ::= Continue Identifier(B) Semicolon. { A = new ast::stmt::Continue(*B); }
 
-breakstatement ::= Break Semicolon.
-breakstatement ::= Break Identifier Semicolon.
+%type breakstatement { ast::Statement * }
+breakstatement(A) ::= Break Semicolon. { A = new ast::stmt::Break(""); }
+breakstatement(A) ::= Break Identifier(B) Semicolon. { A = new ast::stmt::Break(*B); }
 
-returnstatement ::= Return Semicolon.
-returnstatement ::= Return expression Semicolon.
+%type returnstatement { ast::Statement * }
+returnstatement(A) ::= Return Semicolon. { A = new ast::stmt::Return(); }
+returnstatement(A) ::= Return expression(B) Semicolon. { A = new ast::stmt::Return(B); }
 
-withstatement ::= With LParen expression RParen statement.
+%type withstatement { ast::Statement * }
+withstatement(A) ::= With LParen expression(B) RParen statement(C). { A = new ast::stmt::With(B, C); }
 
-labelstatement ::= Identifier Colon statement.
+%type labelstatement { ast::Statement * }
+labelstatement(A) ::= Identifier(B) Colon statement(C). { A = new ast::stmt::Label(*B, C); }
 
 switchstatement ::= Switch LParen expression RParen caseblock.
 
-throwstatement ::= Throw expression Semicolon.
+%type throwstatement { ast::Statement * }
+throwstatement(A) ::= Throw expression(B) Semicolon. { A = new ast::stmt::Throw(B); }
 
 trystatement ::= Try block catch.
 trystatement ::= Try block finally.
@@ -157,20 +177,24 @@ caseblock ::= LBrace caseclauses RBrace.
 
 catch ::= Catch LParen Identifier RParen block.
 
-expression ::= assignexpression.
-expression ::= functionexpression.
-expression ::= expression Comma assignexpression.
+%type expression { ast::Expression * }
+expression(A) ::= assignexpression(B). { A = B; }
+expression(A) ::= functionexpression(B). { A = B; }
+expression(A) ::= expression Comma assignexpression. { A = nullptr; }
 
-top_expression ::= assignexpression.
-top_expression ::= top_expression Comma assignexpression.
+%type top_expression { ast::Expression * }
+top_expression(A) ::= assignexpression(B). { A = B; }
+top_expression(A) ::= top_expression Comma assignexpression. { A = nullptr; }
 
-expressionNoIn ::= assignexpressionNoIn.
-expressionNoIn ::= expressionNoIn Comma assignexpressionNoIn.
+%type expressionNoIn { ast::Expression * }
+expressionNoIn(A) ::= assignexpressionNoIn(B). { A = B; }
+expressionNoIn(A) ::= expressionNoIn Comma assignexpressionNoIn. { A = nullptr; }
 
 finally ::= Finally block.
 
-leftexpression ::= newexpression.
-leftexpression ::= callexpression.
+%type leftexpression { ast::Expression * }
+leftexpression(A) ::= newexpression(B). { A = B; }
+leftexpression(A) ::= callexpression(B). { A = B; }
 
 %type statements { ast::stmt::Block * }
 statements(A) ::= statement(B). { A = new ast::stmt::Block(); A->statements().push_back(B); }
@@ -180,30 +204,36 @@ statements(A) ::= statements(B) statement(C). { B->statements().push_back(C); A 
 vardecls(A) ::= vardecl(B). { A = new ast::stmt::decl::Variables(); A->vars().push_back(B); }
 vardecls(A) ::= vardecls(B) Comma vardecl(C). { B->vars().push_back(C); A = B; }
 
-vardeclsNoIn ::= vardeclNoIn.
-vardeclsNoIn ::= vardeclsNoIn Comma vardeclNoIn.
+%type vardeclsNoIn { ast::stmt::decl::Variables * }
+vardeclsNoIn(A) ::= vardeclNoIn(B). { A = new ast::stmt::decl::Variables(); A->vars().push_back(B); }
+vardeclsNoIn(A) ::= vardeclsNoIn(B) Comma vardeclNoIn(C). { B->vars().push_back(C); A = B; }
 
-vardeclNoIn ::= Identifier.
-vardeclNoIn ::= Identifier Assign assignexpressionNoIn.
+%type vardeclNoIn { ast::stmt::decl::Variables::Variable * }
+vardeclNoIn(A) ::= Identifier(B). { A = new ast::stmt::decl::Variables::Variable(*B); }
+vardeclNoIn(A) ::= Identifier(B) Assign assignexpressionNoIn(C). { A = new ast::stmt::decl::Variables::Variable(*B, C); }
 
 /* Level 6 */
 
-assignexpression ::= condexpression.
-assignexpression ::= leftexpression assignop down_expression.
+%type assignexpression { ast::Expression * }
+assignexpression(A) ::= condexpression(B). { A = B; }
+assignexpression(A) ::= leftexpression(B) assignop(C) down_expression(D). { A = new ast::expr::Assign(B, C, D); }
 
-assignexpressionNoIn ::= condexpressionNoIn.
-assignexpressionNoIn ::= leftexpression assignop down_expressionNoIn.
+%type assignexpressionNoIn { ast::Expression * }
+assignexpressionNoIn(A) ::= condexpressionNoIn(B). { A = B; }
+assignexpressionNoIn(A) ::= leftexpression(B) assignop(C) down_expressionNoIn(D). { A = new ast::expr::Assign(B, C, D); }
 
-callexpression ::= memberexpression arguments.
-callexpression ::= callexpression arguments.
-callexpression ::= callexpression LBracket expression RBracket.
-callexpression ::= callexpression Dot Identifier.
+%type callexpression { ast::Expression * }
+callexpression(A) ::= memberexpression(B) arguments(C). { A = new ast::expr::Call(B, C); }
+callexpression(A) ::= callexpression(B) arguments(C). { A = new ast::expr::Call(B, C); }
+callexpression(A) ::= callexpression LBracket expression RBracket. { A = nullptr; }
+callexpression(A) ::= callexpression Dot Identifier. { A = nullptr; }
 
 caseclauses ::= caseclause.
 caseclauses ::= caseclauses caseclause.
 
-newexpression ::= memberexpression.
-newexpression ::= New newexpression.
+%type newexpression { ast::Expression * }
+newexpression(A) ::= memberexpression(B). { A = B; }
+newexpression(A) ::= New newexpression. { A = nullptr; }
 
 %type vardecl { ast::stmt::decl::Variables::Variable * }
 vardecl(A) ::= Identifier(B). { A = new ast::stmt::decl::Variables::Variable(*B); }
@@ -211,66 +241,77 @@ vardecl(A) ::= Identifier(B) Assign down_expression(C). { A = new ast::stmt::dec
 
 /* Level 7 */
 
-arguments ::= LParen RParen.
-arguments ::= LParen arguments_list RParen.
+%type arguments { std::vector<ast::Expression *> * }
+arguments(A) ::= LParen RParen. { A = nullptr; }
+arguments(A) ::= LParen arguments_list(B) RParen. { A = B; }
 
-assignop ::= Assign.
-assignop ::= PlusAssign.
-assignop ::= MinusAssign.
-assignop ::= MulAssign.
-assignop ::= DivAssign.
-assignop ::= ModAssign.
-assignop ::= RightShiftAssign.
-assignop ::= BinaryAndAssign.
-assignop ::= BinaryOrAssign.
-assignop ::= XorAssign.
+%type assignop { ast::expr::Assign::Type }
+assignop(A) ::= Assign. { A = ast::expr::Assign::Type::Assign; }
+assignop(A) ::= PlusAssign. { A = ast::expr::Assign::Type::PlusAssign; }
+assignop(A) ::= MinusAssign. { A = ast::expr::Assign::Type::MinusAssign; }
+assignop(A) ::= MulAssign. { A = ast::expr::Assign::Type::MulAssign; }
+assignop(A) ::= DivAssign. { A = ast::expr::Assign::Type::DivAssign; }
+assignop(A) ::= ModAssign. { A = ast::expr::Assign::Type::ModAssign; }
+assignop(A) ::= RightShiftAssign. { A = ast::expr::Assign::Type::RightShiftAssign; }
+assignop(A) ::= BinaryAndAssign. { A = ast::expr::Assign::Type::BinaryAndAssign; }
+assignop(A) ::= BinaryOrAssign. { A = ast::expr::Assign::Type::BinaryOrAssign; }
+assignop(A) ::= XorAssign. { A = ast::expr::Assign::Type::XorAssign; }
 
 caseclause ::= Case expression Colon.
 caseclause ::= Case expression Colon statements.
 caseclause ::= Default Colon.
 caseclause ::= Default Colon statements.
 
-condexpression ::= logical_or_expr.
-condexpression ::= logical_or_expr QuestionMark assignexpression Colon assignexpression.
+%type condexpression { ast::Expression * }
+condexpression(A) ::= logical_or_expr(B). { A = B; }
+condexpression(A) ::= logical_or_expr QuestionMark assignexpression Colon assignexpression. { A = nullptr; }
 
-condexpressionNoIn ::= logical_or_exprNoIn.
-condexpressionNoIn ::= logical_or_exprNoIn QuestionMark assignexpressionNoIn Colon assignexpressionNoIn.
+%type condexpressionNoIn { ast::Expression * }
+condexpressionNoIn(A) ::= logical_or_exprNoIn(B). { A = B; }
+condexpressionNoIn(A) ::= logical_or_exprNoIn QuestionMark assignexpressionNoIn Colon assignexpressionNoIn. { A = nullptr; }
 
 %type down_expression { ast::Expression * }
-down_expression ::= assignexpression.
-down_expression ::= functionexpression.
+down_expression(A) ::= assignexpression(B). { A = B; }
+down_expression(A) ::= functionexpression(B). { A = B; }
 
-down_expressionNoIn ::= assignexpressionNoIn.
-down_expressionNoIn ::= functionexpression.
+%type down_expressionNoIn { ast::Expression * }
+down_expressionNoIn(A) ::= assignexpressionNoIn(B). { A = B; }
+down_expressionNoIn(A) ::= functionexpression(B). { A = B; }
 
-memberexpression ::= primaryexpression.
-memberexpression ::= memberexpression LBracket expression RBracket.
-memberexpression ::= memberexpression Dot Identifier.
-memberexpression ::= New memberexpression arguments.
+%type memberexpression { ast::Expression * }
+memberexpression(A) ::= primaryexpression(B). { A = B; }
+memberexpression(A) ::= memberexpression(B) LBracket expression(C) RBracket. { A = new ast::expr::Index(B, C); }
+memberexpression(A) ::= memberexpression(B) Dot Identifier(C). { A = new ast::expr::Member(B, *C); }
+memberexpression(A) ::= New memberexpression(B) arguments(C). { A = new ast::expr::New(B, C); }
 
 /* Level 8 */
 
-arguments_list ::= down_expression.
-arguments_list ::= arguments_list Comma down_expression.
+%type arguments_list { std::vector<ast::Expression *> * }
+arguments_list(A) ::= down_expression(B). { A = new std::vector<ast::Expression *>(); if (B) A->push_back(B); }
+arguments_list(A) ::= arguments_list(B) Comma down_expression(C). { A = B; if (C) A->push_back(C); }
 
-functionexpression ::= Function func_name LParen RParen LBrace source_elements RBrace.
-functionexpression ::= Function func_name LParen function_params RParen LBrace source_elements RBrace.
+%type functionexpression { ast::Expression * }
+functionexpression(A) ::= Function func_name LParen RParen LBrace source_elements(B) RBrace. { A = new ast::expr::literal::Function(nullptr, B); }
+functionexpression(A) ::= Function func_name LParen function_params(B) RParen LBrace source_elements(C) RBrace. { A = new ast::expr::literal::Function(B, C); }
 
     func_name ::= .
     func_name ::= Identifier.
 
-logical_or_expr ::= logical_and_expr.
-logical_or_expr ::= logical_or_expr LogicalOr logical_and_expr.
+%type logical_or_expr { ast::Expression * }
+logical_or_expr(A) ::= logical_and_expr(B). { A = B; }
+logical_or_expr(A) ::= logical_or_expr LogicalOr logical_and_expr. { A = nullptr; }
 
-logical_or_exprNoIn ::= logical_and_exprNoIn.
-logical_or_exprNoIn ::= logical_or_exprNoIn LogicalOr logical_and_exprNoIn.
+%type logical_or_exprNoIn { ast::Expression * }
+logical_or_exprNoIn(A) ::= logical_and_exprNoIn(B). { A = B; }
+logical_or_exprNoIn(A) ::= logical_or_exprNoIn LogicalOr logical_and_exprNoIn. { A = nullptr; }
 
-primaryexpression ::= This.
-primaryexpression ::= Identifier.
-primaryexpression ::= literal.
-primaryexpression ::= arrayliteral.
-primaryexpression ::= objectliteral.
-primaryexpression ::= LParen down_expression RParen.
+%type primaryexpression { ast::Expression * }
+primaryexpression(A) ::= This. { A = nullptr; }
+primaryexpression(A) ::= Identifier(B). { A = new ast::expr::Identifier(*B); }
+primaryexpression(A) ::= literal(B). { A = B; }
+primaryexpression(A) ::= arrayliteral. { A = nullptr; }
+primaryexpression(A) ::= objectliteral. { A = nullptr; }
+primaryexpression(A) ::= LParen down_expression(B) RParen. { A = B; }
 
 /* Level 9 */
 
@@ -280,29 +321,35 @@ arrayliteral ::= LBracket element_list RBracket.
 arrayliteral ::= LBracket element_list Comma RBracket.
 arrayliteral ::= LBracket element_list Comma elision RBracket.
 
-literal ::= Null.
-literal ::= True.
-literal ::= False.
-literal ::= Integer.
-literal ::= Double.
-literal ::= String.
+%type literal { ast::Expression * }
+literal(A) ::= Null. { A = new ast::expr::literal::Null(); }
+literal(A) ::= True. { A = new ast::expr::literal::Boolean(true); }
+literal(A) ::= False. { A = new ast::expr::literal::Boolean(false); }
+literal(A) ::= Integer(B). { A = new ast::expr::literal::Integer(*B); }
+literal(A) ::= Double(B). { A = new ast::expr::literal::Double(*B); }
+literal(A) ::= String(B). { A = new ast::expr::literal::String(*B); }
+literal(A) ::= Regex(B). { A = new ast::expr::literal::Regex(*B); }
 
-logical_and_expr ::= bitwise_or_expr.
-logical_and_expr ::= logical_and_expr LogicalAnd bitwise_or_expr.
+%type logical_and_expr { ast::Expression * }
+logical_and_expr(A) ::= bitwise_or_expr(B). { A = B; }
+logical_and_expr(A) ::= logical_and_expr LogicalAnd bitwise_or_expr. { A = nullptr; }
 
-logical_and_exprNoIn ::= bitwise_or_exprNoIn.
-logical_and_exprNoIn ::= logical_and_exprNoIn LogicalAnd bitwise_or_exprNoIn.
+%type logical_and_exprNoIn { ast::Expression * }
+logical_and_exprNoIn(A) ::= bitwise_or_exprNoIn(B). { A = B; }
+logical_and_exprNoIn(A) ::= logical_and_exprNoIn LogicalAnd bitwise_or_exprNoIn. { A = nullptr; }
 
 objectliteral ::= LBrace RBrace.
 objectliteral ::= LBrace object_properties RBrace.
 
 /* Level 10 */
 
-bitwise_or_expr ::= bitwise_xor_expr.
-bitwise_or_expr ::= bitwise_or_expr BitwiseOr bitwise_xor_expr.
+%type bitwise_or_expr { ast::Expression * }
+bitwise_or_expr(A) ::= bitwise_xor_expr(B). { A = B; }
+bitwise_or_expr(A) ::= bitwise_or_expr BitwiseOr bitwise_xor_expr. { A = nullptr; }
 
-bitwise_or_exprNoIn ::= bitwise_xor_exprNoIn.
-bitwise_or_exprNoIn ::= bitwise_or_exprNoIn BitwiseOr bitwise_xor_exprNoIn.
+%type bitwise_or_exprNoIn { ast::Expression * }
+bitwise_or_exprNoIn(A) ::= bitwise_xor_exprNoIn(B). { A = B; }
+bitwise_or_exprNoIn(A) ::= bitwise_or_exprNoIn BitwiseOr bitwise_xor_exprNoIn. { A = nullptr; }
 
 element_list ::= down_expression.
 element_list ::= elision down_expression.
@@ -317,11 +364,13 @@ object_properties ::= object_properties Comma property_name Colon down_expressio
 
 /* Level 11 */
 
-bitwise_xor_expr ::= bitwise_and_expr.
-bitwise_xor_expr ::= bitwise_xor_expr BitwiseXor bitwise_and_expr.
+%type bitwise_xor_expr { ast::Expression * }
+bitwise_xor_expr(A) ::= bitwise_and_expr(B). { A = B; }
+bitwise_xor_expr(A) ::= bitwise_xor_expr BitwiseXor bitwise_and_expr. { A = nullptr; }
 
-bitwise_xor_exprNoIn ::= bitwise_and_exprNoIn.
-bitwise_xor_exprNoIn ::= bitwise_xor_exprNoIn BitwiseXor bitwise_and_exprNoIn.
+%type bitwise_xor_exprNoIn { ast::Expression * }
+bitwise_xor_exprNoIn(A) ::= bitwise_and_exprNoIn(B). { A = B; }
+bitwise_xor_exprNoIn(A) ::= bitwise_xor_exprNoIn BitwiseXor bitwise_and_exprNoIn. { A = nullptr; }
 
 property_name ::= Identifier.
 property_name ::= String.
@@ -329,70 +378,83 @@ property_name ::= Number.
 
 /* Level 12 */
 
-bitwise_and_expr ::= equality_expr.
-bitwise_and_expr ::= bitwise_and_expr BitwiseAnd equality_expr.
+%type bitwise_and_expr { ast::Expression * }
+bitwise_and_expr(A) ::= equality_expr(B). { A = B; }
+bitwise_and_expr(A) ::= bitwise_and_expr BitwiseAnd equality_expr. { A = nullptr; }
 
-bitwise_and_exprNoIn ::= equality_exprNoIn.
-bitwise_and_exprNoIn ::= bitwise_and_exprNoIn BitwiseAnd equality_exprNoIn.
+%type bitwise_and_exprNoIn { ast::Expression * }
+bitwise_and_exprNoIn(A) ::= equality_exprNoIn(B). { A = B; }
+bitwise_and_exprNoIn(A) ::= bitwise_and_exprNoIn BitwiseAnd equality_exprNoIn. { A = nullptr; }
 
 /* Level 13 */
 
-equality_expr ::= relational_expr.
-equality_expr ::= equality_expr Equal relational_expr.
-equality_expr ::= equality_expr NotEqual relational_expr.
-equality_expr ::= equality_expr Identity relational_expr.
-equality_expr ::= equality_expr NotIdentity relational_expr.
+%type equality_expr { ast::Expression * }
+equality_expr(A) ::= relational_expr(B). { A = B; }
+equality_expr(A) ::= equality_expr Equal relational_expr. { A = nullptr; }
+equality_expr(A) ::= equality_expr NotEqual relational_expr. { A = nullptr; }
+equality_expr(A) ::= equality_expr Identity relational_expr. { A = nullptr; }
+equality_expr(A) ::= equality_expr NotIdentity relational_expr. { A = nullptr; }
 
-equality_exprNoIn ::= relational_exprNoIn.
-equality_exprNoIn ::= equality_exprNoIn Equal relational_exprNoIn.
-equality_exprNoIn ::= equality_exprNoIn NotEqual relational_exprNoIn.
+%type equality_exprNoIn { ast::Expression * }
+equality_exprNoIn(A) ::= relational_exprNoIn(B). { A = B; }
+equality_exprNoIn(A) ::= equality_exprNoIn Equal relational_exprNoIn. { A = nullptr; }
+equality_exprNoIn(A) ::= equality_exprNoIn NotEqual relational_exprNoIn. { A = nullptr; }
+equality_exprNoIn(A) ::= equality_exprNoIn Identity relational_expr. { A = nullptr; }
+equality_exprNoIn(A) ::= equality_exprNoIn NotIdentity relational_expr. { A = nullptr; }
 
 /* Level 14 */
-relational_expr ::= shift_expr.
-relational_expr ::= relational_expr Lesser shift_expr.
-relational_expr ::= relational_expr LesserOrEqual shift_expr.
-relational_expr ::= relational_expr Greater shift_expr.
-relational_expr ::= relational_expr GreaterOrEqual shift_expr.
-relational_expr ::= relational_expr InstanceOf shift_expr.
-relational_expr ::= relational_expr In shift_expr.
+%type relational_expr { ast::Expression * }
+relational_expr(A) ::= shift_expr(B). { A = B; }
+relational_expr(A) ::= relational_expr Lesser shift_expr. { A = nullptr; }
+relational_expr(A) ::= relational_expr LesserOrEqual shift_expr. { A = nullptr; }
+relational_expr(A) ::= relational_expr Greater shift_expr. { A = nullptr; }
+relational_expr(A) ::= relational_expr GreaterOrEqual shift_expr. { A = nullptr; }
+relational_expr(A) ::= relational_expr InstanceOf shift_expr. { A = nullptr; }
+relational_expr(A) ::= relational_expr In shift_expr. { A = nullptr; }
 
-relational_exprNoIn ::= shift_expr.
-relational_exprNoIn ::= relational_exprNoIn Lesser shift_expr.
-relational_exprNoIn ::= relational_exprNoIn LesserOrEqual shift_expr.
-relational_exprNoIn ::= relational_exprNoIn Greater shift_expr.
-relational_exprNoIn ::= relational_exprNoIn GreaterOrEqual shift_expr.
-relational_exprNoIn ::= relational_exprNoIn InstanceOf shift_expr.
+%type relational_exprNoIn { ast::Expression * }
+relational_exprNoIn(A) ::= shift_expr(B). { A = B; }
+relational_exprNoIn(A) ::= relational_exprNoIn Lesser shift_expr. { A = nullptr; }
+relational_exprNoIn(A) ::= relational_exprNoIn LesserOrEqual shift_expr. { A = nullptr; }
+relational_exprNoIn(A) ::= relational_exprNoIn Greater shift_expr. { A = nullptr; }
+relational_exprNoIn(A) ::= relational_exprNoIn GreaterOrEqual shift_expr. { A = nullptr; }
+relational_exprNoIn(A) ::= relational_exprNoIn InstanceOf shift_expr. { A = nullptr; }
 
 /* Level 15 */
 
-shift_expr ::= add_expr.
-shift_expr ::= shift_expr LeftShift add_expr.
-shift_expr ::= shift_expr RightShift add_expr.
+%type shift_expr { ast::Expression * }
+shift_expr(A) ::= add_expr(B). { A = B; }
+shift_expr(A) ::= shift_expr LeftShift add_expr. { A = nullptr; }
+shift_expr(A) ::= shift_expr RightShift add_expr. { A = nullptr; }
 
 /* Level 16 */
 
-add_expr ::= mul_expr.
-add_expr ::= add_expr Plus mul_expr.
-add_expr ::= add_expr Minus mul_expr.
+%type add_expr { ast::Expression * }
+add_expr(A) ::= mul_expr(B). { A = B; }
+add_expr(A) ::= add_expr Plus mul_expr. { A = nullptr; }
+add_expr(A) ::= add_expr Minus mul_expr. { A = nullptr; }
 
 /* Level 17 */
 
-mul_expr ::= unary_expr.
-mul_expr ::= mul_expr Mul unary_expr.
-mul_expr ::= mul_expr Div unary_expr.
-mul_expr ::= mul_expr Mod unary_expr.
+%type mul_expr { ast::Expression * }
+mul_expr(A) ::= unary_expr(B). { A = B; }
+mul_expr(A) ::= mul_expr Mul unary_expr. { A = nullptr; }
+mul_expr(A) ::= mul_expr Div unary_expr. { A = nullptr; }
+mul_expr(A) ::= mul_expr Mod unary_expr. { A = nullptr; }
 
 /* Level 18 */
 
-unary_expr ::= postfix_expr.
-unary_expr ::= Not unary_expr.
-unary_expr ::= Inv unary_expr.
-unary_expr ::= Incrementation unary_expr.
-unary_expr ::= Decrementation unary_expr.
-unary_expr ::= TypeOf unary_expr.
+%type unary_expr { ast::Expression * }
+unary_expr(A) ::= postfix_expr(B). { A = B; }
+unary_expr(A) ::= Not unary_expr. { A = nullptr; }
+unary_expr(A) ::= Inv unary_expr. { A = nullptr; }
+unary_expr(A) ::= Incrementation unary_expr. { A = nullptr; }
+unary_expr(A) ::= Decrementation unary_expr. { A = nullptr; }
+unary_expr(A) ::= TypeOf unary_expr. { A = nullptr; }
 
 /* Level 19 */
 
-postfix_expr ::= leftexpression.
-postfix_expr ::= leftexpression Incrementation.
-postfix_expr ::= leftexpression Decrementation.
+%type postfix_expr { ast::Expression * }
+postfix_expr(A) ::= leftexpression(B). { A = B; }
+postfix_expr(A) ::= leftexpression Incrementation. { A = nullptr; }
+postfix_expr(A) ::= leftexpression Decrementation. { A = nullptr; }

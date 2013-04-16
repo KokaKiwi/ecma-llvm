@@ -1,18 +1,5 @@
 
-var Class = function()
+var kiwi = exports.kiwi = function(str)
 {
-    this.lol = 20;
+    console.log(str);
 };
-
-Class.prototype = {
-    print: function() {
-        return this.lol;
-    }
-};
-
-function createClass()
-{
-    return new Class(20);
-}
-
-var instance = createClass();

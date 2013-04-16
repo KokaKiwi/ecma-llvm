@@ -1,0 +1,183 @@
+
+ast: !omap
+    Node: null
+    Expression: null
+    Statement: null
+
+    expr: !omap
+        This: null
+        Array: null
+        Object: null
+        Identifier: null
+        Assign:
+            gen: false
+            type: expr
+        Call:
+            gen: false
+            type: expr
+            headers:
+                -   <memory>
+                -   <vector>
+            values:
+                -   name: expr
+                    type: ast::Expression *
+                -   name: args
+                    type: std::vector<ast::Expression *> *
+        Member:
+            gen: false
+            type: expr
+            headers:
+                -   <memory>
+                -   <string>
+            values:
+                -   name: expr
+                    type: ast::Expression *
+                -   name: name
+                    type: std::string
+        New:
+            gen: false
+            type: expr
+            headers:
+                -   <memory>
+                -   <vector>
+            values:
+                -   name: expr
+                    type: ast::Expression *
+                -   name: args
+                    type: std::vector<ast::Expression *> *
+        Index:
+            gen: false
+            type: expr
+            headers:
+                -   <memory>
+                -   <vector>
+            values:
+                -   name: expr
+                    type: ast::Expression *
+                -   name: index
+                    type: ast::Expression *
+
+        literal: !omap
+            'Null': null
+            Boolean:
+                gen: false
+                type: expr
+                values:
+                    -   name: value
+                        type: bool
+            Integer:
+                gen: false
+                type: expr
+                values:
+                    -   name: value
+                        type: int
+            Double:
+                gen: false
+                type: expr
+                values:
+                    -   name: value
+                        type: double
+            Function:
+                gen: false
+                type: expr
+                headers:
+                    -   <vector>
+                    -   <string>
+                values:
+                    -   name: args
+                        type: std::vector<std::string> *
+                    -   name: block
+                        type: ast::stmt::Block *
+            String: null
+            Regex: null
+
+    stmt: !omap
+        Block: null
+        Return:
+            gen: false
+            type: stmt
+            headers:
+                -   '<memory>'
+            values:
+                -   name: expr
+                    type: ast::Expression *
+                    default: nullptr
+        Continue:
+            gen: false
+            type: stmt
+            headers:
+                -   '<string>'
+            values:
+                -   name: name
+                    type: std::string
+        Break:
+            gen: false
+            type: stmt
+            headers:
+                -   '<string>'
+            values:
+                -   name: name
+                    type: std::string
+        With:
+            gen: false
+            type: stmt
+            headers:
+                -   '<memory>'
+            values:
+                -   name: expr
+                    type: ast::Expression *
+                -   name: stmt
+                    type: ast::Statement *
+        Label:
+            gen: false
+            type: stmt
+            headers:
+                -   '<string>'
+                -   '<memory>'
+            values:
+                -   name: name
+                    type: std::string
+                -   name: stmt
+                    type: ast::Statement *
+        Throw:
+            gen: false
+            type: stmt
+            headers:
+                -   '<memory>'
+            values:
+                -   name: expr
+                    type: ast::Expression *
+        Expression:
+            gen: false
+            type: stmt
+            headers:
+                -   '<memory>'
+            values:
+                -   name: expr
+                    type: ast::Expression *
+
+        ctrl: !omap
+            If:
+                gen: false
+                type: stmt
+                headers:
+                    -   '<memory>'
+                values:
+                    -   name: expr
+                        type: ast::Expression *
+                    -   name: thenBranch
+                        type: ast::stmt::Block *
+                    -   name: elseBranch
+                        type: ast::stmt::Block *
+                        default: nullptr
+
+        decl: !omap
+            Function:
+                gen: false
+                type: stmt
+                values:
+                    -   name: name
+                        type: std::string
+                    -   name: literal
+                        type: ast::expr::literal::Function *
+            Variables: null

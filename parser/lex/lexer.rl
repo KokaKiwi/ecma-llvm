@@ -37,6 +37,7 @@ Lexeme *Lexer::consume(void)
         integer             = [0-9]+|'0x'[0-9a-fA-F]+;
         double              = [0-9]+'.'[0-9]*;
         string              = ('"'([^"]|'\\' any)*'"'|'\''([^']|'\\' any)*'\'');
+        regex               = ('/'[^/]*'/');
 
         spaces              = (' '|'\t')+;
         newline             = ('\n');
@@ -58,6 +59,7 @@ Lexeme *Lexer::consume(void)
             'break'         => { type = Lexeme::Type::Break; fbreak; };
             'catch'         => { type = Lexeme::Type::Catch; fbreak; };
             'false'         => { type = Lexeme::Type::False; fbreak; };
+            'throw'         => { type = Lexeme::Type::Throw; fbreak; };
             'while'         => { type = Lexeme::Type::While; fbreak; };
             'return'        => { type = Lexeme::Type::Return; fbreak; };
             'switch'        => { type = Lexeme::Type::Switch; fbreak; };
@@ -128,6 +130,7 @@ Lexeme *Lexer::consume(void)
             integer         => { type = Lexeme::Type::Integer; fbreak; };
             double          => { type = Lexeme::Type::Double; fbreak; };
             string          => { type = Lexeme::Type::String; fbreak; };
+            regex           => { type = Lexeme::Type::Regex; fbreak; };
 
             spaces          => { type = Lexeme::Type::Spaces; fbreak; };
             newline         => { type = Lexeme::Type::Newline; fbreak; };

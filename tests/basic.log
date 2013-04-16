@@ -1,0 +1,17 @@
+Block:
+  Variables:
+    Variable: kiwi
+      Assign: Assign
+        Left:
+          Member: kiwi
+            Identifier: exports
+        Right:
+          Function: str
+            Block:
+              Expression:
+                Call:
+                  Expression:
+                    Member: log
+                      Identifier: console
+                  Arguments:
+                    Identifier: str

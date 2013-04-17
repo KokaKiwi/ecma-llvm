@@ -16,6 +16,17 @@ namespace ecma
             public:
                 inline Array(std::vector<ast::Expression *> *values = nullptr): m_values(values) {}
 
+                inline ~Array()
+                {
+                    if (values())
+                    {
+                        for (ast::Expression *value : *m_values)
+                        {
+                            delete value;
+                        }
+                    }
+                }
+
                 inline std::vector<ast::Expression *> *values(void) const
                 {
                     return m_values.get();

@@ -8,6 +8,9 @@ set(CMAKE_CXX_FLAGS "-std=c++11 -Wno-deprecated-writable-strings ${OPT_FLAGS}")
 
 include_directories(include)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
+
+configure_file(include/config.h.in include/config.h @ONLY)
 
 add_subdirectory(parser)
 add_subdirectory(compiler)

@@ -20,6 +20,8 @@ namespace ecma
 
                     inline Switch(ast::Expression *expr, std::vector<Case *> *caseblock): m_expr(expr), m_caseblock(caseblock) {}
 
+                    inline ~Switch();
+
                     inline ast::Expression *expr(void) const
                     {
                         return m_expr.get();
@@ -95,6 +97,17 @@ namespace ecma
                     std::unique_ptr<ast::stmt::Block> m_block;
                     std::unique_ptr<ast::Expression> m_key;
                 };
+
+                inline Switch::~Switch()
+                {
+                    if (caseblock())
+                    {
+                        for (Switch::Case *clause : *m_caseblock)
+                        {
+                            delete clause;
+                        }
+                    }
+                }
             }
         }
     }

@@ -22,6 +22,8 @@ namespace ecma
 
                     inline Variables() {}
 
+                    inline ~Variables();
+
                     inline std::vector<Variable *> &vars(void)
                     {
                         return m_vars;
@@ -69,6 +71,14 @@ namespace ecma
                     std::string m_name;
                     std::unique_ptr<ast::Expression> m_initializer;
                 };
+
+                inline Variables::~Variables()
+                {
+                    for (Variables::Variable *var : m_vars)
+                    {
+                        delete var;
+                    }
+                }
             }
         }
     }

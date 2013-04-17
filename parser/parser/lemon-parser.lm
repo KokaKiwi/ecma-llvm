@@ -30,6 +30,11 @@
     parser->error(true);
 }
 
+%token_destructor
+{
+    delete $$;
+}
+
 %left Do If In For New Try Var Case Else Null This True With Break Catch False While.
 %left Return Switch TypeOf Default Finally Continue Function Undefined InstanceOf.
 
@@ -75,8 +80,8 @@ source_element(A) ::= statement(B). { A = B; }
 /* Level 3 */
 
 %type function_declaration { ast::Statement * }
-function_declaration(A) ::= Function Identifier(B) LParen RParen LBrace source_elements(C) RBrace. { A = new ast::stmt::decl::Function(*B, new ast::expr::literal::Function(nullptr, C)); }
-function_declaration(A) ::= Function Identifier(B) LParen function_params(C) RParen LBrace source_elements(D) RBrace. { A = new ast::stmt::decl::Function(*B, new ast::expr::literal::Function(C, D)); }
+function_declaration(A) ::= Function Identifier(B) LParen RParen LBrace source_elements(C) RBrace. { A = new ast::stmt::decl::Function(*B, new ast::expr::literal::Function(nullptr, C)); delete B; }
+function_declaration(A) ::= Function Identifier(B) LParen function_params(C) RParen LBrace source_elements(D) RBrace. { A = new ast::stmt::decl::Function(*B, new ast::expr::literal::Function(C, D)); delete B; }
 
 %type statement { ast::Statement * }
 statement(A) ::= block(B). { A = B; }
@@ -108,8 +113,8 @@ emptystatement ::= Semicolon.
 exprstatement(A) ::= top_expression(B) Semicolon. { A = new ast::stmt::Expression(B); }
 
 %type function_params { std::vector<std::string> * }
-function_params(A) ::= Identifier(B). { A = new std::vector<std::string>(); A->push_back(*B); }
-function_params(A) ::= function_params(B) Comma Identifier(C). { A = B; A->push_back(*C); }
+function_params(A) ::= Identifier(B). { A = new std::vector<std::string>(); A->push_back(*B); delete B; }
+function_params(A) ::= function_params(B) Comma Identifier(C). { A = B; A->push_back(*C); delete C; }
 
 %type ifstatement { ast::Statement * }
 ifstatement(A) ::= If LParen expression(B) RParen openifstatement(C). { A = new ast::stmt::ctrl::If(B, C); }
@@ -135,8 +140,8 @@ iterstatement(A) ::= Do statement(B) While LParen expression(C) RParen. { A = ne
 iterstatement(A) ::= While LParen expression(B) RParen statement(C). { A = new ast::stmt::ctrl::While(false, B, C); }
 iterstatement(A) ::= For LParen expressionsNoIn(B) Semicolon expressions(C) Semicolon expressions(D) RParen statement(E). { A = new ast::stmt::ctrl::For(B, C, D, E); }
 iterstatement(A) ::= For LParen Var vardeclsNoIn(B) Semicolon expressions(C) Semicolon expressions(D) RParen statement(E). { A = new ast::stmt::ctrl::For(B, C, D, E); }
-iterstatement(A) ::= For LParen Identifier(B) In expression(C) RParen statement(D). { A = new ast::stmt::ctrl::ForIn(false, *B, C, D); }
-iterstatement(A) ::= For LParen Var Identifier(B) In expression(C) RParen statement(D). { A = new ast::stmt::ctrl::ForIn(true, *B, C, D); }
+iterstatement(A) ::= For LParen Identifier(B) In expression(C) RParen statement(D). { A = new ast::stmt::ctrl::ForIn(false, *B, C, D); delete B; }
+iterstatement(A) ::= For LParen Var Identifier(B) In expression(C) RParen statement(D). { A = new ast::stmt::ctrl::ForIn(true, *B, C, D); delete B; }
 
     %type expressionsNoIn { ast::Expression * }
     expressionsNoIn(A) ::= expressionNoIn(B). { A = B; }
@@ -148,11 +153,11 @@ iterstatement(A) ::= For LParen Var Identifier(B) In expression(C) RParen statem
 
 %type contstatement { ast::Statement * }
 contstatement(A) ::= Continue Semicolon. { A = new ast::stmt::Continue(""); }
-contstatement(A) ::= Continue Identifier(B) Semicolon. { A = new ast::stmt::Continue(*B); }
+contstatement(A) ::= Continue Identifier(B) Semicolon. { A = new ast::stmt::Continue(*B); delete B; }
 
 %type breakstatement { ast::Statement * }
 breakstatement(A) ::= Break Semicolon. { A = new ast::stmt::Break(""); }
-breakstatement(A) ::= Break Identifier(B) Semicolon. { A = new ast::stmt::Break(*B); }
+breakstatement(A) ::= Break Identifier(B) Semicolon. { A = new ast::stmt::Break(*B); delete B; }
 
 %type returnstatement { ast::Statement * }
 returnstatement(A) ::= Return Semicolon. { A = new ast::stmt::Return(); }
@@ -162,7 +167,7 @@ returnstatement(A) ::= Return expression(B) Semicolon. { A = new ast::stmt::Retu
 withstatement(A) ::= With LParen expression(B) RParen statement(C). { A = new ast::stmt::With(B, C); }
 
 %type labelstatement { ast::Statement * }
-labelstatement(A) ::= Identifier(B) Colon statement(C). { A = new ast::stmt::Label(*B, C); }
+labelstatement(A) ::= Identifier(B) Colon statement(C). { A = new ast::stmt::Label(*B, C); delete B; }
 
 %type switchstatement { ast::Statement * }
 switchstatement(A) ::= Switch LParen expression(B) RParen caseblock(C). { A = new ast::stmt::ctrl::Switch(B, C); }
@@ -182,7 +187,7 @@ caseblock(A) ::= LBrace RBrace. { A = nullptr; }
 caseblock(A) ::= LBrace caseclauses(B) RBrace. { A = B; }
 
 %type catch { ast::stmt::ctrl::Try::Catch * }
-catch(A) ::= Catch LParen Identifier(B) RParen block(C). { A = new ast::stmt::ctrl::Try::Catch(*B, C); }
+catch(A) ::= Catch LParen Identifier(B) RParen block(C). { A = new ast::stmt::ctrl::Try::Catch(*B, C); delete B; }
 
 %type expression { ast::Expression * }
 expression(A) ::= assignexpression(B). { A = B; }
@@ -217,8 +222,8 @@ vardeclsNoIn(A) ::= vardeclNoIn(B). { A = new ast::stmt::decl::Variables(); A->v
 vardeclsNoIn(A) ::= vardeclsNoIn(B) Comma vardeclNoIn(C). { B->vars().push_back(C); A = B; }
 
 %type vardeclNoIn { ast::stmt::decl::Variables::Variable * }
-vardeclNoIn(A) ::= Identifier(B). { A = new ast::stmt::decl::Variables::Variable(*B); }
-vardeclNoIn(A) ::= Identifier(B) Assign assignexpressionNoIn(C). { A = new ast::stmt::decl::Variables::Variable(*B, C); }
+vardeclNoIn(A) ::= Identifier(B). { A = new ast::stmt::decl::Variables::Variable(*B); delete B; }
+vardeclNoIn(A) ::= Identifier(B) Assign assignexpressionNoIn(C). { A = new ast::stmt::decl::Variables::Variable(*B, C); delete B; }
 
 /* Level 6 */
 
@@ -234,7 +239,7 @@ assignexpressionNoIn(A) ::= leftexpression(B) assignop(C) down_expressionNoIn(D)
 callexpression(A) ::= memberexpression(B) arguments(C). { A = new ast::expr::Call(B, C); }
 callexpression(A) ::= callexpression(B) arguments(C). { A = new ast::expr::Call(B, C); }
 callexpression(A) ::= callexpression(B) LBracket expression(C) RBracket. { A = new ast::expr::Index(B, C); }
-callexpression(A) ::= callexpression(B) Dot Identifier(C). { A = new ast::expr::Member(B, *C); }
+callexpression(A) ::= callexpression(B) Dot Identifier(C). { A = new ast::expr::Member(B, *C); delete C; }
 
 %type caseclauses { std::vector<ast::stmt::ctrl::Switch::Case *> * }
 caseclauses(A) ::= caseclause(B). { A = new std::vector<ast::stmt::ctrl::Switch::Case *>(); A->push_back(B); }
@@ -245,8 +250,8 @@ newexpression(A) ::= memberexpression(B). { A = B; }
 // newexpression(A) ::= New newexpression. { A = nullptr; }
 
 %type vardecl { ast::stmt::decl::Variables::Variable * }
-vardecl(A) ::= Identifier(B). { A = new ast::stmt::decl::Variables::Variable(*B); }
-vardecl(A) ::= Identifier(B) Assign down_expression(C). { A = new ast::stmt::decl::Variables::Variable(*B, C); }
+vardecl(A) ::= Identifier(B). { A = new ast::stmt::decl::Variables::Variable(*B); delete B; }
+vardecl(A) ::= Identifier(B) Assign down_expression(C). { A = new ast::stmt::decl::Variables::Variable(*B, C); delete B; }
 
 /* Level 7 */
 
@@ -291,7 +296,7 @@ down_expressionNoIn(A) ::= functionexpression(B). { A = B; }
 %type memberexpression { ast::Expression * }
 memberexpression(A) ::= primaryexpression(B). { A = B; }
 memberexpression(A) ::= memberexpression(B) LBracket expression(C) RBracket. { A = new ast::expr::Index(B, C); }
-memberexpression(A) ::= memberexpression(B) Dot Identifier(C). { A = new ast::expr::Member(B, *C); }
+memberexpression(A) ::= memberexpression(B) Dot Identifier(C). { A = new ast::expr::Member(B, *C); delete C; }
 memberexpression(A) ::= New memberexpression(B) arguments(C). { A = new ast::expr::New(B, C); }
 
 /* Level 8 */
@@ -317,7 +322,7 @@ logical_or_exprNoIn(A) ::= logical_or_exprNoIn(B) LogicalOr logical_and_exprNoIn
 
 %type primaryexpression { ast::Expression * }
 primaryexpression(A) ::= This. { A = new ast::expr::This(); }
-primaryexpression(A) ::= Identifier(B). { A = new ast::expr::Identifier(*B); }
+primaryexpression(A) ::= Identifier(B). { A = new ast::expr::Identifier(*B); delete B; }
 primaryexpression(A) ::= literal(B). { A = B; }
 primaryexpression(A) ::= arrayliteral(B). { A = B; }
 primaryexpression(A) ::= objectliteral(B). { A = B; }
@@ -334,10 +339,10 @@ literal(A) ::= Null. { A = new ast::expr::literal::Null(); }
 literal(A) ::= Undefined. { A = new ast::expr::literal::Undefined(); }
 literal(A) ::= True. { A = new ast::expr::literal::Boolean(true); }
 literal(A) ::= False. { A = new ast::expr::literal::Boolean(false); }
-literal(A) ::= Integer(B). { A = new ast::expr::literal::Integer(*B); }
-literal(A) ::= Double(B). { A = new ast::expr::literal::Double(*B); }
-literal(A) ::= String(B). { A = new ast::expr::literal::String(*B); }
-literal(A) ::= Regex(B). { A = new ast::expr::literal::Regex(*B); }
+literal(A) ::= Integer(B). { A = new ast::expr::literal::Integer(*B); delete B; }
+literal(A) ::= Double(B). { A = new ast::expr::literal::Double(*B); delete B; }
+literal(A) ::= String(B). { A = new ast::expr::literal::String(*B); delete B; }
+literal(A) ::= Regex(B). { A = new ast::expr::literal::Regex(*B); delete B; }
 
 %type logical_and_expr { ast::Expression * }
 logical_and_expr(A) ::= bitwise_or_expr(B). { A = B; }

@@ -19,6 +19,8 @@ namespace ecma
 
                 inline Object(std::vector<Property *> *properties = nullptr): m_properties(properties) {}
 
+                inline ~Object();
+
                 inline std::vector<Property *> *properties(void) const
                 {
                     return m_properties.get();
@@ -79,6 +81,17 @@ namespace ecma
                 std::unique_ptr<lex::Lexeme> m_key;
                 std::unique_ptr<ast::Expression> m_value;
             };
+
+            inline Object::~Object()
+            {
+                if (properties())
+                {
+                    for (Object::Property *property : *m_properties)
+                    {
+                        delete property;
+                    }
+                }
+            }
         }
     }
 }

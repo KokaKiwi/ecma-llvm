@@ -16,6 +16,17 @@ namespace ecma
             public:
                 inline Call(ast::Expression *expr, std::vector<ast::Expression *> *args): m_expr(expr), m_args(args) {}
 
+                inline ~Call()
+                {
+                    if (args())
+                    {
+                        for (ast::Expression *arg : *m_args)
+                        {
+                            delete arg;
+                        }
+                    }
+                }
+
                 inline ast::Expression *expr(void) const
                 {
                     return m_expr.get();

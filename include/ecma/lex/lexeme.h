@@ -121,6 +121,13 @@ namespace ecma
         {
             return m_text;
         }
+
+        inline std::ostream& operator<<(std::ostream& os, const lex::Lexeme &lexeme)
+        {
+            os << lexeme.as<std::string>();
+
+            return os;
+        }
     }
 }
 

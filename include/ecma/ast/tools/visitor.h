@@ -22,10 +22,14 @@ namespace ecma
             class Member;
             class New;
             class Index;
+            class Conditional;
+            class Binary;
+            class Unary;
 
             namespace literal
             {
                 class Null;
+                class Undefined;
                 class Boolean;
                 class Integer;
                 class Double;
@@ -49,6 +53,11 @@ namespace ecma
             namespace ctrl
             {
                 class If;
+                class While;
+                class For;
+                class ForIn;
+                class Switch;
+                class Try;
             }
 
             namespace decl
@@ -125,9 +134,29 @@ namespace ecma
                     throw std::runtime_error("Unknown AST branch (ast::expr::Index).");
                 }
 
+                virtual inline void visit(ast::expr::Conditional &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ast::expr::Conditional).");
+                }
+
+                virtual inline void visit(ast::expr::Binary &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ast::expr::Binary).");
+                }
+
+                virtual inline void visit(ast::expr::Unary &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ast::expr::Unary).");
+                }
+
                 virtual inline void visit(ast::expr::literal::Null &node)
                 {
                     throw std::runtime_error("Unknown AST branch (ast::expr::literal::Null).");
+                }
+
+                virtual inline void visit(ast::expr::literal::Undefined &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ast::expr::literal::Undefined).");
                 }
 
                 virtual inline void visit(ast::expr::literal::Boolean &node)
@@ -203,6 +232,31 @@ namespace ecma
                 virtual inline void visit(ast::stmt::ctrl::If &node)
                 {
                     throw std::runtime_error("Unknown AST branch (ast::stmt::ctrl::If).");
+                }
+
+                virtual inline void visit(ast::stmt::ctrl::While &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ast::stmt::ctrl::While).");
+                }
+
+                virtual inline void visit(ast::stmt::ctrl::For &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ast::stmt::ctrl::For).");
+                }
+
+                virtual inline void visit(ast::stmt::ctrl::ForIn &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ast::stmt::ctrl::ForIn).");
+                }
+
+                virtual inline void visit(ast::stmt::ctrl::Switch &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ast::stmt::ctrl::Switch).");
+                }
+
+                virtual inline void visit(ast::stmt::ctrl::Try &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ast::stmt::ctrl::Try).");
                 }
 
                 virtual inline void visit(ast::stmt::decl::Function &node)

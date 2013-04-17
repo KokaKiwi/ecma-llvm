@@ -92,6 +92,153 @@ namespace ecma
                     }
                 }
 
+                inline void visit(ast::stmt::ctrl::While &loop)
+                {
+                    stream() << spaces() << (loop.doFirst() ? "Do:" : "While:") << std::endl;
+                    if (loop.expr())
+                    {
+                        depth++;
+                        stream() << spaces() << "Expression:" << std::endl;
+                        depth++;
+                        loop.expr()->accept(*this);
+                        depth -= 2;
+                    }
+                    if (loop.thenBranch())
+                    {
+                        depth++;
+                        stream() << spaces() << "Then:" << std::endl;
+                        depth++;
+                        loop.thenBranch()->accept(*this);
+                        depth -= 2;
+                    }
+                }
+
+                inline void visit(ast::stmt::ctrl::For &loop)
+                {
+                    stream() << spaces() << "For:" << std::endl;
+                    if (loop.initializer())
+                    {
+                        depth++;
+                        stream() << spaces() << "Initializer:" << std::endl;
+                        depth++;
+                        loop.initializer()->accept(*this);
+                        depth -= 2;
+                    }
+                    if (loop.condBranch())
+                    {
+                        depth++;
+                        stream() << spaces() << "Condition:" << std::endl;
+                        depth++;
+                        loop.condBranch()->accept(*this);
+                        depth -= 2;
+                    }
+                    if (loop.loopBranch())
+                    {
+                        depth++;
+                        stream() << spaces() << "Loop:" << std::endl;
+                        depth++;
+                        loop.loopBranch()->accept(*this);
+                        depth -= 2;
+                    }
+                    if (loop.thenBranch())
+                    {
+                        depth++;
+                        stream() << spaces() << "Then:" << std::endl;
+                        depth++;
+                        loop.thenBranch()->accept(*this);
+                        depth -= 2;
+                    }
+                }
+
+                inline void visit(ast::stmt::ctrl::ForIn &loop)
+                {
+                    stream() << spaces() << "ForIn: " << (loop.decl() ? "var " : "") << loop.name() << std::endl;
+                    if (loop.expr())
+                    {
+                        depth++;
+                        stream() << spaces() << "Expression:" << std::endl;
+                        depth++;
+                        loop.expr()->accept(*this);
+                        depth -= 2;
+                    }
+                    if (loop.thenBranch())
+                    {
+                        depth++;
+                        stream() << spaces() << "Then:" << std::endl;
+                        depth++;
+                        loop.thenBranch()->accept(*this);
+                        depth -= 2;
+                    }
+                }
+
+                inline void visit(ast::stmt::ctrl::Switch &node)
+                {
+                    stream() << spaces() << "Switch:" << std::endl;
+                    if (node.expr())
+                    {
+                        depth++;
+                        stream() << spaces() << "Expression:" << std::endl;
+                        depth++;
+                        node.expr()->accept(*this);
+                        depth -= 2;
+                    }
+                    if (node.caseblock())
+                    {
+                        depth++;
+                        stream() << spaces() << "Case blocks:" << std::endl;
+                        for (ast::stmt::ctrl::Switch::Case *clause : *node.caseblock())
+                        {
+                            depth++;
+                            stream() << spaces() << "Case:" << std::endl;
+                            if (clause->key())
+                            {
+                                depth++;
+                                stream() << spaces() << "Expression:" << std::endl;
+                                depth++;
+                                clause->key()->accept(*this);
+                                depth -= 2;
+                            }
+                            if (clause->block())
+                            {
+                                depth++;
+                                clause->block()->accept(*this);
+                                depth--;
+                            }
+                            depth--;
+                        }
+                        depth--;
+                    }
+                }
+
+                inline void visit(ast::stmt::ctrl::Try &node)
+                {
+                    stream() << spaces() << "Try:" << std::endl;
+                    if (node.block())
+                    {
+                        depth++;
+                        stream() << spaces() << "Block:" << std::endl;
+                        depth++;
+                        node.block()->accept(*this);
+                        depth -= 2;
+                    }
+                    if (node.catchBranch())
+                    {
+                        depth++;
+                        stream() << spaces() << "Catch: " << node.catchBranch()->name() << std::endl;
+                        depth++;
+                        node.catchBranch()->block()->accept(*this);
+                        depth -= 2;
+                    }
+                    if (node.finallyBranch())
+                    {
+                        depth++;
+                        stream() << spaces() << "Finally:" << std::endl;
+                        depth++;
+                        node.finallyBranch()->accept(*this);
+                        depth -= 2;
+                    }
+                }
+
                 inline void visit(ast::expr::Assign &assign)
                 {
                     stream() << spaces() << "Assign: " << assign.type() << std::endl;
@@ -109,6 +256,40 @@ namespace ecma
                         stream() << spaces() << "Right:" << std::endl;
                         depth++;
                         assign.expr()->accept(*this);
+                        depth -= 2;
+                    }
+                }
+
+                inline void visit(ast::expr::Binary &binary)
+                {
+                    stream() << spaces() << "Binary: " << binary.type() << std::endl;
+                    if (binary.left())
+                    {
+                        depth++;
+                        stream() << spaces() << "Left:" << std::endl;
+                        depth++;
+                        binary.left()->accept(*this);
+                        depth -= 2;
+                    }
+                    if (binary.right())
+                    {
+                        depth++;
+                        stream() << spaces() << "Right:" << std::endl;
+                        depth++;
+                        binary.right()->accept(*this);
+                        depth -= 2;
+                    }
+                }
+
+                inline void visit(ast::expr::Unary &unary)
+                {
+                    stream() << spaces() << "Unary: " << unary.type() << std::endl;
+                    if (unary.expr())
+                    {
+                        depth++;
+                        stream() << spaces() << "Expression:" << std::endl;
+                        depth++;
+                        unary.expr()->accept(*this);
                         depth -= 2;
                     }
                 }
@@ -131,7 +312,14 @@ namespace ecma
 
                 inline void visit(ast::stmt::Break &br)
                 {
-                    stream() << spaces() << "Break: " << br.name() << std::endl;
+                    if (br.name().length() > 0)
+                    {
+                        stream() << spaces() << "Break: " << br.name() << std::endl;
+                    }
+                    else
+                    {
+                        stream() << spaces() << "Break" << std::endl;
+                    }
                 }
 
                 inline void visit(ast::stmt::With &with)
@@ -190,7 +378,7 @@ namespace ecma
 
                 inline void visit(ast::expr::literal::Boolean &boolean)
                 {
-                    stream() << spaces() << "Boolean: " << boolean.value() << std::endl;
+                    stream() << spaces() << "Boolean: " << (boolean.value() ? "true" : "false") << std::endl;
                 }
 
                 inline void visit(ast::expr::literal::Double &num)
@@ -200,12 +388,12 @@ namespace ecma
 
                 inline void visit(ast::expr::literal::String &string)
                 {
-                    stream() << spaces() << "String: " << string.value() << std::endl;
+                    stream() << spaces() << "String: \"" << string.value() << "\"" << std::endl;
                 }
 
                 inline void visit(ast::expr::literal::Regex &regex)
                 {
-                    stream() << spaces() << "Regex: " << regex.value() << std::endl;
+                    stream() << spaces() << "Regex: /" << regex.value() << "/" << std::endl;
                 }
 
                 inline void visit(ast::expr::literal::Integer &num)
@@ -216,6 +404,11 @@ namespace ecma
                 inline void visit(ast::expr::literal::Null &null)
                 {
                     stream() << spaces() << "Null" << std::endl;
+                }
+
+                inline void visit(ast::expr::literal::Undefined &node)
+                {
+                    stream() << spaces() << "Undefined" << std::endl;
                 }
 
                 inline void visit(ast::expr::literal::Function &function)
@@ -237,9 +430,44 @@ namespace ecma
                     }
                 }
 
+                inline void visit(ast::expr::Object &object)
+                {
+                    stream() << spaces() << "Object:" << std::endl;
+                    if (object.properties())
+                    {
+                        for (ast::expr::Object::Property *property : *object.properties())
+                        {
+                            depth++;
+                            stream() << spaces() << "Property: " << *property->key() << std::endl;
+                            depth++;
+                            property->value()->accept(*this);
+                            depth -= 2;
+                        }
+                    }
+                }
+
+                inline void visit(ast::expr::Array &array)
+                {
+                    stream() << spaces() << "Array:" << std::endl;
+                    if (array.values())
+                    {
+                        for (ast::Expression *value : *array.values())
+                        {
+                            depth++;
+                            value->accept(*this);
+                            depth--;
+                        }
+                    }
+                }
+
                 inline void visit(ast::expr::Identifier &identifier)
                 {
                     stream() << spaces() << "Identifier: " << identifier.name() << std::endl;
+                }
+
+                inline void visit(ast::expr::This &node)
+                {
+                    stream() << spaces() << "This" << std::endl;
                 }
 
                 inline void visit(ast::expr::Call &call)

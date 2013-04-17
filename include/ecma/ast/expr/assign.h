@@ -17,7 +17,7 @@ namespace ecma
             public:
                 enum class Type;
 
-                inline Assign(ast::Expression *left, Type type, ast::Expression *expr): m_left(left), m_type(type), m_expr(expr) {}
+                inline Assign(Type type, ast::Expression *left, ast::Expression *expr): m_type(type), m_left(left), m_expr(expr) {}
 
                 inline ast::Expression *left(void) const
                 {
@@ -82,7 +82,7 @@ namespace ecma
                 XorAssign
             };
 
-            inline std::ostream& operator<<( std::ostream& os, const Assign::Type &type )
+            inline std::ostream& operator<<(std::ostream& os, const Assign::Type &type)
             {
                 switch (type)
                 {

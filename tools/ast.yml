@@ -5,10 +5,31 @@ ast: !omap
     Statement: null
 
     expr: !omap
-        This: null
-        Array: null
-        Object: null
-        Identifier: null
+        This:
+            gen: false
+            type: expr
+        Array:
+            gen: false
+            type: expr
+            headers:
+                -   <memory>
+                -   <vector>
+            values:
+                -   name: values
+                    type: std::vector<ast::Expression *> *
+        Object:
+            gen: false
+            type: expr
+            headers:
+                -   <memory>
+                -   <vector>
+                -   <utility>
+            values:
+                -   name: properties
+                    type: std::vector<Property *> *
+        Identifier:
+            gen: false
+            type: expr
         Assign:
             gen: false
             type: expr
@@ -56,9 +77,46 @@ ast: !omap
                     type: ast::Expression *
                 -   name: index
                     type: ast::Expression *
+        Conditional:
+            gen: false
+            type: expr
+            headers:
+                -   <memory>
+            values:
+                -   name: expr
+                    type: ast::Expression *
+                -   name: thenExpr
+                    type: ast::Expression *
+                -   name: elseExpr
+                    type: ast::Expression *
+        Binary:
+            gen: false
+            type: expr
+            headers:
+                -   <memory>
+            values:
+                -   name: type
+                    type: Type
+                -   name: left
+                    type: ast::Expression *
+                -   name: right
+                    type: ast::Expression *
+        Unary:
+            gen: false
+            type: expr
+            headers:
+                -   <memory>
+            values:
+                -   name: type
+                    type: Type
+                -   name: expr
+                    type: ast::Expression *
 
         literal: !omap
             'Null': null
+            Undefined:
+                gen: false
+                type: expr
             Boolean:
                 gen: false
                 type: expr
@@ -166,10 +224,65 @@ ast: !omap
                     -   name: expr
                         type: ast::Expression *
                     -   name: thenBranch
-                        type: ast::stmt::Block *
+                        type: ast::Statement *
                     -   name: elseBranch
-                        type: ast::stmt::Block *
+                        type: ast::Statement *
                         default: nullptr
+            While:
+                gen: false
+                type: stmt
+                headers:
+                    -   <memory>
+                values:
+                    -   name: doFirst
+                        type: bool
+                    -   name: expr
+                        type: ast::Expression *
+                    -   name: thenBranch
+                        type: ast::Statement *
+            For:
+                gen: false
+                type: stmt
+                headers:
+                    -   <memory>
+                values:
+                    -   name: initializer
+                        type: ast::Node *
+                    -   name: condBranch
+                        type: ast::Expression *
+                    -   name: loopBranch
+                        type: ast::Expression *
+                    -   name: thenBranch
+                        type: ast::Statement *
+            ForIn:
+                gen: false
+                type: stmt
+                headers:
+                    -   <memory>
+                    -   <string>
+                values:
+                    -   name: name
+                        type: std::string
+                    -   name: expr
+                        type: ast::Expression *
+                    -   name: thenBranch
+                        type: ast::Statement *
+            Switch:
+                gen: false
+                type: stmt
+                headers:
+                    -   <memory>
+                values:
+                    -   name: expr
+                        type: ast::Expression *
+            Try:
+                gen: false
+                type: stmt
+                headers:
+                    -   <memory>
+                values:
+                    -   name: block
+                        type: ast::stmt::Block *
 
         decl: !omap
             Function:

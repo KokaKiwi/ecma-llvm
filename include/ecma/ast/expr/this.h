@@ -1,7 +1,7 @@
 #ifndef ECMA_AST_EXPR_THIS_H_
 #define ECMA_AST_EXPR_THIS_H_
 
-#include "ecma/ast/statement.h"
+#include "ecma/ast/ast.h"
 
 namespace ecma
 {
@@ -9,7 +9,7 @@ namespace ecma
     {
         namespace expr
         {
-            class This: public ast::Statement
+            class This: public ast::Expression
             {
             public:
                 inline This() {}

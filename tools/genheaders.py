@@ -92,7 +92,7 @@ def classattr(value):
 def classattrdef(value):
     ty = value['type']
     if '*' in ty:
-        ty = 'std::unique_ptr<%s>' % (ty[:ty.index('*')].strip())
+        ty = 'std::unique_ptr<%s>' % (ty[:ty.rindex('*')].strip())
 
     s = '%s m_%s;' % (ty, value['name'])
 

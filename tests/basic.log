@@ -1,17 +1,171 @@
 Block:
   Variables:
-    Variable: kiwi
-      Assign: Assign
-        Left:
-          Member: kiwi
-            Identifier: exports
-        Right:
-          Function: str
-            Block:
+    Variable: t
+      Array:
+        Integer: 10
+        Integer: 10
+        Binary: Mul
+          Left:
+            Binary: Plus
+              Left:
+                Integer: 25
+              Right:
+                Integer: 10
+          Right:
+            Integer: 100
+    Variable: i
+      Index:
+        Expression:
+          Identifier: t
+        Index:
+          Integer: 0
+  Expression:
+    Assign: Assign
+      Left:
+        Identifier: result
+      Right:
+        Call:
+          Expression:
+            Member: cos
+              Identifier: Math
+          Arguments:
+            Binary: Mul
+              Left:
+                Identifier: i
+              Right:
+                Integer: 2
+  Variables:
+    Variable: Object
+      Function:
+        Block:
+          Expression:
+            Assign: Assign
+              Left:
+                Member: refCount
+                  This
+              Right:
+                Integer: 1
+  Expression:
+    Assign: Assign
+      Left:
+        Member: retain
+          Member: prototype
+            Identifier: Object
+      Right:
+        Function:
+          Block:
+            Expression:
+              Unary: PostIncrementation
+                Expression:
+                  Member: refCount
+                    This
+  Expression:
+    Assign: Assign
+      Left:
+        Member: release
+          Member: prototype
+            Identifier: Object
+      Right:
+        Function:
+          Block:
+            Expression:
+              Unary: PostDecrementation
+                Expression:
+                  Member: refCount
+                    This
+            If:
               Expression:
-                Call:
+                Binary: Equal
+                  Left:
+                    Member: refCount
+                      This
+                  Right:
+                    Integer: 0
+              Then:
+                Block:
                   Expression:
-                    Member: log
-                      Identifier: console
-                  Arguments:
-                    Identifier: str
+                    Call:
+                      Expression:
+                        Identifier: delete
+                      Arguments:
+                        This
+  Expression:
+    Assign: Assign
+      Left:
+        Member: strlen
+          Member: prototype
+            Identifier: Object
+      Right:
+        Function: str
+          Block:
+            Variables:
+              Variable: length
+                Integer: 0
+            ForIn: var c
+              Expression:
+                Identifier: str
+              Then:
+                Expression:
+                  Unary: PostIncrementation
+                    Expression:
+                      Identifier: length
+            Return:
+              Identifier: length
+  Variables:
+    Variable: o
+      New:
+        Expression:
+          Identifier: Object
+  Try:
+    Block:
+      Block:
+        Switch:
+          Expression:
+            Identifier: o
+          Case blocks:
+            Case:
+              Expression:
+                Integer: 25
+              Block:
+                Expression:
+                  Call:
+                    Expression:
+                      Member: log
+                        Identifier: console
+                    Arguments:
+                      String: "Hello world!"
+                Break
+            Case:
+              Expression:
+                Unary: TypeOf
+                  Expression:
+                    Identifier: o
+              Block:
+                Expression:
+                  Call:
+                    Expression:
+                      Member: log
+                        Identifier: console
+                    Arguments:
+                      Unary: TypeOf
+                        Expression:
+                          Identifier: o
+                Break
+    Catch: e
+      Block:
+        Expression:
+          Call:
+            Expression:
+              Member: log
+                Identifier: console
+            Arguments:
+              Identifier: e
+    Finally:
+      Block:
+        Expression:
+          Call:
+            Expression:
+              Member: log
+                Identifier: console
+            Arguments:
+              String: "Terminated."

@@ -1,12 +1,25 @@
 
+if (a == 10)
+    if (b == 10)
+        if (c == 10)
+            while (true) i++;
+        else
+            return 10;
+    else
+        return 20;
+else
+    return 30;
+
+/*
 var t = [10, 10, (25 + 10) * 100],
     i = t[0];
 
 result = Math.cos(i * 2);
+result = i == 0 ? true : false;
 
 var Object = function()
 {
-    this.refCount = 1;
+    this.refCount = 1
 };
 
 Object.prototype.retain = function()
@@ -56,3 +69,4 @@ finally
 {
     console.log("Terminated.");
 }
+*/

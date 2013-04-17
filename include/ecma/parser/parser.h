@@ -4,7 +4,9 @@
 #include <stddef.h>
 #include <vector>
 #include <string>
+#include <memory>
 #include "ecma/lex/lexer.h"
+#include "ecma/lex/lexeme.h"
 #include "ecma/ast/stmt/block.h"
 
 namespace ecma
@@ -18,16 +20,6 @@ namespace ecma
             ~Parser();
 
             void exec(void);
-
-            inline bool error(void) const
-            {
-                return m_error;
-            }
-            inline Parser &error(bool error)
-            {
-                m_error = error;
-                return *this;
-            }
 
             inline std::vector<std::string> &errors(void)
             {
@@ -54,13 +46,27 @@ namespace ecma
                 return *this;
             }
 
+            inline lex::Lexeme *lexeme(void) const
+            {
+                return m_lexeme.get();
+            }
+            inline Parser &lexeme(lex::Lexeme * lexeme)
+            {
+                m_lexeme.reset(lexeme);
+                return *this;
+            }
+            inline lex::Lexeme *takeLexeme(void)
+            {
+                return m_lexeme.release();
+            }
+
         private:
             void *m_yyp;
             lex::Lexer &m_lexer;
             bool m_debug;
-            bool m_error;
             std::vector<std::string> m_errors;
             ast::stmt::Block *m_program;
+            std::unique_ptr<lex::Lexeme> m_lexeme;
         };
     }
 }

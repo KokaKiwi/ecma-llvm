@@ -2,13 +2,11 @@
 #include <cstdio>
 #include <memory>
 #include "ecma/parser/parser.h"
-#include "ecma/parser/exception.h"
 
 using namespace ecma::parser;
 
 Parser::Parser(lex::Lexer &lexer)
     : m_lexer(lexer)
-    , m_error(false)
     , m_debug(false)
     , m_program(nullptr)
 {
@@ -22,7 +20,6 @@ Parser::~Parser()
 
 void Parser::exec()
 {
-    std::unique_ptr<lex::Lexeme> lexeme;
     bool parsing = true;
 
     if (debug())
@@ -34,28 +31,21 @@ void Parser::exec()
         EcmaParseTrace(NULL, NULL);
     }
 
-    while (parsing && !error())
+    while (parsing)
     {
-        lexeme.reset(m_lexer.consume());
+        lexeme(m_lexer.consume());
 
-        if (lexeme->type() != lex::Lexeme::Type::Spaces && lexeme->type() != lex::Lexeme::Type::Newline)
+        if (lexeme()->type() != lex::Lexeme::Type::Spaces && lexeme()->type() != lex::Lexeme::Type::Newline)
         {
-            EcmaParse(m_yyp, static_cast<int>(lexeme->type()), lexeme.get(), this);
+            EcmaParse(m_yyp, static_cast<int>(lexeme()->type()), lexeme(), this);
 
-            if (lexeme->type() == lex::Lexeme::Type::End)
+            if (lexeme()->type() == lex::Lexeme::Type::End)
             {
                 parsing = false;
+                delete takeLexeme();
             }
 
-            if (!error())
-            {
-                lexeme.release();
-            }
+            takeLexeme();
         }
-    }
-
-    if (error())
-    {
-        throw Exception("Unexpected token", *lexeme, errors());
     }
 }

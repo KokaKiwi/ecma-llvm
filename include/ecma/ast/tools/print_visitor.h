@@ -281,6 +281,35 @@ namespace ecma
                     }
                 }
 
+                inline void visit(ast::expr::Conditional &cond)
+                {
+                    stream() << spaces() << "Conditional:" << std::endl;
+                    if (cond.expr())
+                    {
+                        depth++;
+                        stream() << spaces() << "Expression:" << std::endl;
+                        depth++;
+                        cond.expr()->accept(*this);
+                        depth -= 2;
+                    }
+                    if (cond.thenExpr())
+                    {
+                        depth++;
+                        stream() << spaces() << "Then:" << std::endl;
+                        depth++;
+                        cond.thenExpr()->accept(*this);
+                        depth -= 2;
+                    }
+                    if (cond.elseExpr())
+                    {
+                        depth++;
+                        stream() << spaces() << "Else:" << std::endl;
+                        depth++;
+                        cond.elseExpr()->accept(*this);
+                        depth -= 2;
+                    }
+                }
+
                 inline void visit(ast::expr::Unary &unary)
                 {
                     stream() << spaces() << "Unary: " << unary.type() << std::endl;

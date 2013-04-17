@@ -11,6 +11,7 @@
     #include <string>
     #include "ecma/lex/lexeme.h"
     #include "ecma/parser/parser.h"
+    #include "ecma/parser/exception.h"
 
     #include "ecma/ast/ast.h"
 
@@ -27,7 +28,7 @@
             parser->errors().push_back(yyTokenName[i]);
         }
     }
-    parser->error(true);
+    throw parser::Exception("Unexpected token", *parser->lexeme(), parser->errors());
 }
 
 %token_destructor
@@ -35,7 +36,10 @@
     delete $$;
 }
 
-%left Do If In For New Try Var Case Else Null This True With Break Catch False While.
+%right If.
+%left Else.
+
+%left Do In For New Try Var Case Null This True With Break Catch False While.
 %left Return Switch TypeOf Default Finally Continue Function Undefined InstanceOf.
 
 %left Plus Minus Mul Div Mod.
@@ -63,13 +67,21 @@
 
 /* Level 0 */
 
-program ::= source_elements(A). { parser->program(A); }
+program ::= source(A). { parser->program(A); }
 
 /* Level 1 */
 
-%type source_elements { ast::stmt::Block * }
-source_elements(A) ::= . { A = new ast::stmt::Block(); }
-source_elements(A) ::= source_elements(B) source_element(C). { B->statements().push_back(C); A = B; }
+%type source { ast::stmt::Block * }
+source(A) ::= source_end(B). { A = new ast::stmt::Block(); if (B) A->statements().push_back(B); }
+source(A) ::= source_elements(B) source_end(C). { A = B; if (C) A->statements().push_back(C); }
+
+    %type source_elements { ast::stmt::Block * }
+    source_elements(A) ::= source_element(B). { A = new ast::stmt::Block(); A->statements().push_back(B); }
+    source_elements(A) ::= source_elements(B) source_element(C). { A = B; A->statements().push_back(C); }
+
+    %type source_end { ast::Statement * }
+    source_end(A) ::= . { A = nullptr; }
+    source_end(A) ::= openstatement(B). { A = B; }
 
 /* Level 2 */
 
@@ -80,24 +92,32 @@ source_element(A) ::= statement(B). { A = B; }
 /* Level 3 */
 
 %type function_declaration { ast::Statement * }
-function_declaration(A) ::= Function Identifier(B) LParen RParen LBrace source_elements(C) RBrace. { A = new ast::stmt::decl::Function(*B, new ast::expr::literal::Function(nullptr, C)); delete B; }
-function_declaration(A) ::= Function Identifier(B) LParen function_params(C) RParen LBrace source_elements(D) RBrace. { A = new ast::stmt::decl::Function(*B, new ast::expr::literal::Function(C, D)); delete B; }
+function_declaration(A) ::= Function Identifier(B) LParen RParen LBrace source(C) RBrace. { A = new ast::stmt::decl::Function(*B, new ast::expr::literal::Function(nullptr, C)); delete B; }
+function_declaration(A) ::= Function Identifier(B) LParen function_params(C) RParen LBrace source(D) RBrace. { A = new ast::stmt::decl::Function(*B, new ast::expr::literal::Function(C, D)); delete B; }
 
 %type statement { ast::Statement * }
 statement(A) ::= block(B). { A = B; }
-statement(A) ::= varstatement(B). { A = B; }
+statement(A) ::= varstatement(B) Semicolon. { A = B; }
 statement(A) ::= emptystatement. { A = nullptr; }
-statement(A) ::= exprstatement(B). { A = B; }
+statement(A) ::= exprstatement(B) Semicolon. { A = B; }
 statement(A) ::= iterstatement(B). { A = B; }
 statement(A) ::= ifstatement(B). { A = B; }
-statement(A) ::= contstatement(B). { A = B; }
-statement(A) ::= breakstatement(B). { A = B; }
-statement(A) ::= returnstatement(B). { A = B; }
+statement(A) ::= contstatement(B) Semicolon. { A = B; }
+statement(A) ::= breakstatement(B) Semicolon. { A = B; }
+statement(A) ::= returnstatement(B) Semicolon. { A = B; }
 statement(A) ::= withstatement(B). { A = B; }
 statement(A) ::= labelstatement(B). { A = B; }
 statement(A) ::= switchstatement(B). { A = B; }
-statement(A) ::= throwstatement(B). { A = B; }
+statement(A) ::= throwstatement(B) Semicolon. { A = B; }
 statement(A) ::= trystatement(B). { A = B; }
+
+%type openstatement { ast::Statement * }
+openstatement(A) ::= varstatement(B). { A = B; }
+openstatement(A) ::= exprstatement(B). { A = B; }
+openstatement(A) ::= contstatement(B). { A = B; }
+openstatement(A) ::= breakstatement(B). { A = B; }
+openstatement(A) ::= returnstatement(B). { A = B; }
+openstatement(A) ::= throwstatement(B). { A = B; }
 
 /* Level 4 */
 
@@ -105,35 +125,20 @@ statement(A) ::= trystatement(B). { A = B; }
 block(A) ::= LBrace statements(B) RBrace. { A = B; }
 
 %type varstatement { ast::stmt::decl::Variables * }
-varstatement(A) ::= Var vardecls(B) Semicolon. { A = B; }
+varstatement(A) ::= Var vardecls(B). { A = B; }
 
 emptystatement ::= Semicolon.
 
 %type exprstatement { ast::Statement * }
-exprstatement(A) ::= top_expression(B) Semicolon. { A = new ast::stmt::Expression(B); }
+exprstatement(A) ::= top_expression(B). { A = new ast::stmt::Expression(B); }
 
 %type function_params { std::vector<std::string> * }
 function_params(A) ::= Identifier(B). { A = new std::vector<std::string>(); A->push_back(*B); delete B; }
 function_params(A) ::= function_params(B) Comma Identifier(C). { A = B; A->push_back(*C); delete C; }
 
 %type ifstatement { ast::Statement * }
-ifstatement(A) ::= If LParen expression(B) RParen openifstatement(C). { A = new ast::stmt::ctrl::If(B, C); }
-ifstatement(A) ::= If LParen expression(B) RParen openifstatement(C) Else statement(D). { A = A = new ast::stmt::ctrl::If(B, C, D); }
-
-    %type openifstatement { ast::Statement * }
-    openifstatement(A) ::= block(B). { A = B; }
-    openifstatement(A) ::= varstatement(B). { A = B; }
-    openifstatement(A) ::= emptystatement. { A = nullptr; }
-    openifstatement(A) ::= exprstatement(B). { A = B; }
-    // openifstatement(A) ::= iterstatement(B). { A = B; }
-    openifstatement(A) ::= contstatement(B). { A = B; }
-    openifstatement(A) ::= breakstatement(B). { A = B; }
-    openifstatement(A) ::= returnstatement(B). { A = B; }
-    // openifstatement(A) ::= withstatement(B). { A = B; }
-    // openifstatement(A) ::= labelstatement(B). { A = B; }
-    openifstatement(A) ::= switchstatement(B). { A = B; }
-    openifstatement(A) ::= throwstatement(B). { A = B; }
-    openifstatement(A) ::= trystatement(B). { A = B; }
+ifstatement(A) ::= If LParen expression(B) RParen statement(C). { A = new ast::stmt::ctrl::If(B, C); }
+ifstatement(A) ::= If LParen expression(B) RParen statement(C) Else statement(D). { A = A = new ast::stmt::ctrl::If(B, C, D); }
 
 %type iterstatement { ast::Statement * }
 iterstatement(A) ::= Do statement(B) While LParen expression(C) RParen. { A = new ast::stmt::ctrl::While(true, C, B); }
@@ -152,16 +157,16 @@ iterstatement(A) ::= For LParen Var Identifier(B) In expression(C) RParen statem
     expressions(A) ::= . { A = nullptr; }
 
 %type contstatement { ast::Statement * }
-contstatement(A) ::= Continue Semicolon. { A = new ast::stmt::Continue(""); }
-contstatement(A) ::= Continue Identifier(B) Semicolon. { A = new ast::stmt::Continue(*B); delete B; }
+contstatement(A) ::= Continue. { A = new ast::stmt::Continue(""); }
+contstatement(A) ::= Continue Identifier(B). { A = new ast::stmt::Continue(*B); delete B; }
 
 %type breakstatement { ast::Statement * }
-breakstatement(A) ::= Break Semicolon. { A = new ast::stmt::Break(""); }
-breakstatement(A) ::= Break Identifier(B) Semicolon. { A = new ast::stmt::Break(*B); delete B; }
+breakstatement(A) ::= Break. { A = new ast::stmt::Break(""); }
+breakstatement(A) ::= Break Identifier(B). { A = new ast::stmt::Break(*B); delete B; }
 
 %type returnstatement { ast::Statement * }
-returnstatement(A) ::= Return Semicolon. { A = new ast::stmt::Return(); }
-returnstatement(A) ::= Return expression(B) Semicolon. { A = new ast::stmt::Return(B); }
+returnstatement(A) ::= Return. { A = new ast::stmt::Return(); }
+returnstatement(A) ::= Return expression(B). { A = new ast::stmt::Return(B); }
 
 %type withstatement { ast::Statement * }
 withstatement(A) ::= With LParen expression(B) RParen statement(C). { A = new ast::stmt::With(B, C); }
@@ -173,7 +178,7 @@ labelstatement(A) ::= Identifier(B) Colon statement(C). { A = new ast::stmt::Lab
 switchstatement(A) ::= Switch LParen expression(B) RParen caseblock(C). { A = new ast::stmt::ctrl::Switch(B, C); }
 
 %type throwstatement { ast::Statement * }
-throwstatement(A) ::= Throw expression(B) Semicolon. { A = new ast::stmt::Throw(B); }
+throwstatement(A) ::= Throw expression(B). { A = new ast::stmt::Throw(B); }
 
 %type trystatement { ast::Statement * }
 trystatement(A) ::= Try block(B) catch(C). { A = new ast::stmt::ctrl::Try(B, C); }
@@ -306,8 +311,8 @@ arguments_list(A) ::= down_expression(B). { A = new std::vector<ast::Expression 
 arguments_list(A) ::= arguments_list(B) Comma down_expression(C). { A = B; if (C) A->push_back(C); }
 
 %type functionexpression { ast::Expression * }
-functionexpression(A) ::= Function func_name LParen RParen LBrace source_elements(B) RBrace. { A = new ast::expr::literal::Function(nullptr, B); }
-functionexpression(A) ::= Function func_name LParen function_params(B) RParen LBrace source_elements(C) RBrace. { A = new ast::expr::literal::Function(B, C); }
+functionexpression(A) ::= Function func_name LParen RParen LBrace source(B) RBrace. { A = new ast::expr::literal::Function(nullptr, B); }
+functionexpression(A) ::= Function func_name LParen function_params(B) RParen LBrace source(C) RBrace. { A = new ast::expr::literal::Function(B, C); }
 
     func_name ::= .
     func_name ::= Identifier.

@@ -20,7 +20,13 @@ Lexer::Lexer(const char *source, unsigned int length)
 
 }
 
-Lexer::Lexer(const std::string &source): Lexer(source.c_str(), source.length())
+Lexer::Lexer(const std::string &source)
+    : m_source(source.c_str())
+    , m_source_end(source.c_str() + source.length())
+    , m_source_eof(m_source_end)
+    , m_ts(nullptr), m_te(nullptr)
+    , m_current_state(0), m_act(0)
+    , m_position(std::make_pair(1, 1))
 {
 
 }

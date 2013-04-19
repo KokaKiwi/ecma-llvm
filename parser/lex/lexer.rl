@@ -34,18 +34,20 @@ Lexeme *Lexer::consume(void)
 {
     %%{
         identifier          = [a-zA-Z$_][a-zA-Z0-9$_]*;
-        integer             = [0-9]+|'0x'[0-9a-fA-F]+;
+        integer             = [0-9]+ | '0x'[0-9a-fA-F]+;
         double              = [0-9]+'.'[0-9]*;
-        string              = ('"'([^"]|'\\' any)*'"'|'\''([^']|'\\' any)*'\'');
-        regex               = '/' [^*]? [^/\n]* [^*]? '/' [img]*;
+        string              = ('"' ([^"] | '\\' any)* '"' | '\'' ([^'] | '\\' any)* '\'');
+        regex               = '/' ([^/\n] | '\\' any)* '/' [img]*;
 
         linecomment         = '//' [^\n]* '\n';
-        comment             := any* :>> '*/' @{ fgoto main; };
+        comment             := any* :>> '*/' @{ fgoto program; };
 
         spaces              = (' '|'\t')+;
         newline             = '\n';
 
-        main := |*
+        main                := ('#' [^\n] '\n')? @{ fgoto program; };
+
+        program := |*
             'do'            => { type = Lexeme::Type::Do; fbreak; };
             'if'            => { type = Lexeme::Type::If; fbreak; };
             'in'            => { type = Lexeme::Type::In; fbreak; };

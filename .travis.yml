@@ -1,0 +1,11 @@
+language: cpp
+before_install:
+    -   sudo apt-get install cmake llvm-dev ragel lemon
+compiler:
+    -   gcc
+    -   clang
+script:
+    -   mkdir build
+    -   cd build
+    -   cmake ..
+    -   make

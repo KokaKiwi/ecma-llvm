@@ -15,6 +15,9 @@ void CodeBuilder::build(llvm::LLVMContext &context, llvm::Module *module, llvm::
 
     for (ast::Statement *stmt : m_statements->statements())
     {
-        stmt->accept(visitor);
+        if (stmt)
+        {
+            stmt->accept(visitor);
+        }
     }
 }

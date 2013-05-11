@@ -1,36 +1,51 @@
 Block:
-  Named function: process
-    Function: data cb
+  Named function: swap
+    Function: elems
       Block:
         Variables:
-          Variable: console
+          Variable: tmp
+            Index:
+              Expression:
+                Identifier: elems
+              Index:
+                Integer: 0
         Expression:
-          Call:
-            Expression:
-              Member: log
-                Identifier: console
-            Arguments:
-              Identifier: data
-        Expression:
-          Call:
-            Expression:
-              Identifier: cb
-            Arguments:
-              Identifier: data
-  Expression:
-    Call:
-      Expression:
-        Identifier: process
-      Arguments:
-        Integer: 25
-        Function:
-          Block:
-            Variables:
-              Variable: console
-            Expression:
-              Call:
+          Assign: Assign
+            Left:
+              Index:
                 Expression:
-                  Member: log
-                    Identifier: console
-                Arguments:
-                  String: "CALLBACK"
+                  Identifier: elems
+                Index:
+                  Integer: 0
+            Right:
+              Index:
+                Expression:
+                  Identifier: elems
+                Index:
+                  Integer: 1
+        Expression:
+          Assign: Assign
+            Left:
+              Index:
+                Expression:
+                  Identifier: elems
+                Index:
+                  Integer: 1
+            Right:
+              Identifier: tmp
+  Named function: index
+    Function:
+      Block:
+        Return:
+          Integer: 2
+  Variables:
+    Variable: tab
+      Array:
+        Integer: 0
+        Integer: 0
+        Integer: 0
+        Integer: 0
+        Integer: 0
+        Integer: 0
+        Integer: 0
+        String: "Hello world!"

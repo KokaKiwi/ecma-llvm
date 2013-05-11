@@ -1,13 +1,15 @@
 #!/usr/bin/env node
 
-function process(data, cb)
+function swap(elems)
 {
-    var console;
-    console.log(data);
-    cb(data);
+    var tmp = elems[0];
+    elems[0] = elems[1];
+    elems[1] = tmp;
 }
 
-process(25, function() {
-    var console;
-    console.log("CALLBACK");
-});
+function index()
+{
+    return 2;
+}
+
+var tab = [0, 0, 0, 0, 0, 0, 0, 'Hello world!'];

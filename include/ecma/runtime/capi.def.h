@@ -5,7 +5,12 @@ ECMA_FUNCTION(Ecma_malloc, void *, unsigned int size, unsigned int count)
 ECMA_FUNCTION(Ecma_setProperty, void, ecma::runtime::Object *instance, char *name, ecma::runtime::Object *value)
 ECMA_FUNCTION(Ecma_getProperty, ecma::runtime::Object *, ecma::runtime::Object *instance, char *name)
 
+ECMA_FUNCTION(Ecma_setIndex, void, ecma::runtime::Object *instance, ecma::runtime::Object *index, ecma::runtime::Object *value)
+ECMA_FUNCTION(Ecma_getIndex, ecma::runtime::Object *, ecma::runtime::Object *instance, ecma::runtime::Object *index)
+
 ECMA_FUNCTION(Ecma_call, ecma::runtime::Object *, ecma::runtime::Object *callee, int argc, ecma::runtime::Object **argv)
+
+ECMA_FUNCTION(Ecma_boolCast, bool, ecma::runtime::Object *object)
 
 ECMA_FUNCTION(Ecma_Operator_LogicalOr, ecma::runtime::Object *, ecma::runtime::Object *, ecma::runtime::Object *)
 ECMA_FUNCTION(Ecma_Operator_LogicalAnd, ecma::runtime::Object *, ecma::runtime::Object *, ecma::runtime::Object *)
@@ -30,8 +35,19 @@ ECMA_FUNCTION(Ecma_Operator_Mul, ecma::runtime::Object *, ecma::runtime::Object 
 ECMA_FUNCTION(Ecma_Operator_Div, ecma::runtime::Object *, ecma::runtime::Object *, ecma::runtime::Object *)
 ECMA_FUNCTION(Ecma_Operator_Mod, ecma::runtime::Object *, ecma::runtime::Object *, ecma::runtime::Object *)
 
+ECMA_FUNCTION(Ecma_Operator_Not, ecma::runtime::Object *, ecma::runtime::Object *)
+ECMA_FUNCTION(Ecma_Operator_Inv, ecma::runtime::Object *, ecma::runtime::Object *)
+ECMA_FUNCTION(Ecma_Operator_Positive, ecma::runtime::Object *, ecma::runtime::Object *)
+ECMA_FUNCTION(Ecma_Operator_Negative, ecma::runtime::Object *, ecma::runtime::Object *)
+ECMA_FUNCTION(Ecma_Operator_Incrementation, ecma::runtime::Object *, ecma::runtime::Object *)
+ECMA_FUNCTION(Ecma_Operator_Decrementation, ecma::runtime::Object *, ecma::runtime::Object *)
+ECMA_FUNCTION(Ecma_Operator_TypeOf, ecma::runtime::Object *, ecma::runtime::Object *)
+
 // Object type
 ECMA_FUNCTION(Ecma_Object_create, ecma::runtime::Object *)
+
+// Array type
+ECMA_TYPE(Array, int size, ecma::runtime::Object **elems)
 
 // Integer type
 ECMA_TYPE(Integer, int value)

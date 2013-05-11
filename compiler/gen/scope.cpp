@@ -21,7 +21,7 @@ llvm::Value *Scope::declare(llvm::IRBuilder<> &irBuilder, const std::string &nam
         throw std::runtime_error("Multiple variable redefinition.");
     }
 
-    llvm::Value *dummy = irBuilder.CreateAlloca(gen::helper::type<runtime::Object *>(m_context));
+    llvm::Value *dummy = irBuilder.CreateAlloca(gen::helper::type<runtime::Object *>(m_context), nullptr, name);
     m_variables[name] = dummy;
 
     if (initializer)
@@ -41,7 +41,7 @@ llvm::Value *Scope::get(llvm::IRBuilder<> &irBuilder, const std::string &name)
         throw std::runtime_error("Undeclared variable: " + name);
     }
 
-    return irBuilder.CreateLoad(dummy);
+    return irBuilder.CreateLoad(dummy, name);
 }
 
 llvm::Value *Scope::set(llvm::IRBuilder<> &irBuilder, const std::string &name, llvm::Value *value)

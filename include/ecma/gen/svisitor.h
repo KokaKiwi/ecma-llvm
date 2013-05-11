@@ -22,6 +22,8 @@ namespace ecma
             virtual void visit(ast::stmt::Return &ret);
             virtual void visit(ast::stmt::decl::Variables &vars);
             virtual void visit(ast::stmt::decl::Function &function);
+            virtual void visit(ast::stmt::ctrl::If &stmt);
+            virtual void visit(ast::stmt::ctrl::While &stmt);
 
             inline const llvm::LLVMContext &context(void) const
             {

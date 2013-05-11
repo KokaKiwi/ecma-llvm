@@ -13,6 +13,9 @@ void SVisitor::visit(ast::stmt::Block &block)
 
     for (ast::Statement *stmt : block.statements())
     {
-        stmt->accept(visitor);
+        if (stmt)
+        {
+            stmt->accept(visitor);
+        }
     }
 }

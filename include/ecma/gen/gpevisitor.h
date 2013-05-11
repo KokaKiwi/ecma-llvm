@@ -21,10 +21,13 @@ namespace ecma
             virtual void visit(ast::expr::Assign &assign);
             virtual void visit(ast::expr::Identifier &id);
             virtual void visit(ast::expr::Member &member);
+            virtual void visit(ast::expr::Index &index);
             virtual void visit(ast::expr::Binary &binary);
+            virtual void visit(ast::expr::Unary &unary);
             virtual void visit(ast::expr::Object &object);
             virtual void visit(ast::expr::Array &array);
             virtual void visit(ast::expr::Call &call);
+            virtual void visit(ast::expr::Conditional &cond);
 
             virtual void visit(ast::expr::literal::Integer &integer);
             virtual void visit(ast::expr::literal::Boolean &boolean);

@@ -12,6 +12,7 @@
 #include "ecma/runtime/type/null.h"
 #include "ecma/runtime/type/undefined.h"
 #include "ecma/runtime/type/function.h"
+#include "ecma/runtime/type/array.h"
 
 namespace llvm
 {
@@ -61,6 +62,11 @@ namespace llvm
 
     template<bool XCompile>
     struct TypeBuilder<ecma::runtime::type::Undefined, XCompile>
+        : public TypeBuilder<ecma::runtime::Object, XCompile>
+    {};
+
+    template<bool XCompile>
+    struct TypeBuilder<ecma::runtime::type::Array, XCompile>
         : public TypeBuilder<ecma::runtime::Object, XCompile>
     {};
 }

@@ -8,6 +8,7 @@
 #include "ecma/runtime/type/null.h"
 #include "ecma/runtime/type/function.h"
 #include "ecma/runtime/type/undefined.h"
+#include "ecma/runtime/type/array.h"
 
 extern "C"
 {

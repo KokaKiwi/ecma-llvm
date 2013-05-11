@@ -14,6 +14,8 @@ set(OFLAGS "-ggdb3")
 
 set(CMAKE_CXX_FLAGS "-std=c++0x -Wno-deprecated-writable-strings ${OFLAGS}")
 
+include(PrecompiledHeader)
+
 include_directories(include)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)

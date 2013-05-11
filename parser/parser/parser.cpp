@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <memory>
+#include <iostream>
 #include "ecma/parser/parser.h"
 
 using namespace ecma::parser;

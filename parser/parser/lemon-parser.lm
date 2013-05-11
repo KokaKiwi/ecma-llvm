@@ -470,6 +470,8 @@ mul_expr(A) ::= mul_expr(B) Mod unary_expr(C). { A = new ast::expr::Binary(ast::
 unary_expr(A) ::= postfix_expr(B). { A = B; }
 unary_expr(A) ::= Not unary_expr(B). { A = new ast::expr::Unary(ast::expr::Unary::Type::Not, B); }
 unary_expr(A) ::= Inv unary_expr(B). { A = new ast::expr::Unary(ast::expr::Unary::Type::Inv, B); }
+unary_expr(A) ::= Plus unary_expr(B). { A = new ast::expr::Unary(ast::expr::Unary::Type::Plus, B); }
+unary_expr(A) ::= Minus unary_expr(B). { A = new ast::expr::Unary(ast::expr::Unary::Type::Minus, B); }
 unary_expr(A) ::= Incrementation unary_expr(B). { A = new ast::expr::Unary(ast::expr::Unary::Type::PreIncrementation, B); }
 unary_expr(A) ::= Decrementation unary_expr(B). { A = new ast::expr::Unary(ast::expr::Unary::Type::PreDecrementation, B); }
 unary_expr(A) ::= TypeOf unary_expr(B). { A = new ast::expr::Unary(ast::expr::Unary::Type::TypeOf, B); }

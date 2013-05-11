@@ -55,6 +55,8 @@ namespace ecma
             {
                 Not,
                 Inv,
+                Plus,
+                Minus,
                 PreIncrementation,
                 PreDecrementation,
                 TypeOf,
@@ -87,6 +89,12 @@ namespace ecma
                         break;
                     case Unary::Type::PostDecrementation:
                         os << "PostDecrementation";
+                        break;
+                    case Unary::Type::Plus:
+                        os << "Plus";
+                        break;
+                    case Unary::Type::Minus:
+                        os << "Minus";
                         break;
                 }
 

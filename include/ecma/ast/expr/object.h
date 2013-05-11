@@ -5,6 +5,7 @@
 #include <vector>
 #include <utility>
 #include "ecma/ast/ast.h"
+#include "ecma/lex/lexeme.h"
 
 namespace ecma
 {

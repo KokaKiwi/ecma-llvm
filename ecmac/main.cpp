@@ -47,10 +47,10 @@ int main(int argc, char **argv)
 
     try
     {
+        program->accept(visitor);
+
         module = compiler.build(moduleName, program);
         module->print(llvm::outs(), nullptr);
-
-        program->accept(visitor);
 
         delete program;
         delete module;

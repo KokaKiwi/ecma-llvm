@@ -14,6 +14,8 @@ namespace ecma
         class Compiler
         {
         public:
+            Compiler();
+
             llvm::Module *build(const std::string &name, const Source &source);
             llvm::Module *build(const std::string &name, ast::stmt::Block *program);
 

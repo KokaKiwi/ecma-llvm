@@ -1,2 +1,36 @@
-terminate called after throwing an instance of 'std::logic_error'
-  what():  basic_string::_S_construct null not valid
+Block:
+  Named function: process
+    Function: data cb
+      Block:
+        Variables:
+          Variable: console
+        Expression:
+          Call:
+            Expression:
+              Member: log
+                Identifier: console
+            Arguments:
+              Identifier: data
+        Expression:
+          Call:
+            Expression:
+              Identifier: cb
+            Arguments:
+              Identifier: data
+  Expression:
+    Call:
+      Expression:
+        Identifier: process
+      Arguments:
+        Integer: 25
+        Function:
+          Block:
+            Variables:
+              Variable: console
+            Expression:
+              Call:
+                Expression:
+                  Member: log
+                    Identifier: console
+                Arguments:
+                  String: "CALLBACK"

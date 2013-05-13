@@ -30,7 +30,18 @@ void GPEVisitor::visit(ast::expr::Call &call)
         }
     }
 
+    llvm::Value *thisValue;
+    if (m_scope.thisValue() == nullptr)
+    {
+        thisValue = Ecma_Undefined_create(m_context, m_module, m_irBuilder);
+    }
+    else
+    {
+        thisValue = m_scope.thisValue();
+        m_scope.thisValue(nullptr);
+    }
+
     llvm::Value *argv = m_irBuilder.CreateStructGEP(args, 0);
 
-    m_value = Ecma_call(m_context, m_module, m_irBuilder, callee, argcValue, argv);
+    m_value = Ecma_call(m_context, m_module, m_irBuilder, callee, m_scope.env(), thisValue, argcValue, argv);
 }

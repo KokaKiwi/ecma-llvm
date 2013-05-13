@@ -1,10 +1,17 @@
+#include <string>
 #include "ecma/runtime/capi.h"
 #include "ecma/runtime/type/integer.h"
 
 using namespace ecma;
 using namespace ecma::runtime;
+using namespace ecma::runtime::type;
 
-type::Integer *Ecma_Integer_create(int value)
+Integer *Ecma_Integer_create(int value)
 {
-    return new type::Integer(value);
+    return new Integer(value);
+}
+
+std::string Integer::toString(void) const
+{
+    return "[Integer]";
 }

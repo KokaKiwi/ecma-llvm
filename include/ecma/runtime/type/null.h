@@ -13,6 +13,8 @@ namespace ecma
             {
             public:
                 inline Null() {}
+
+                virtual std::string toString(void) const;
             };
         }
     }

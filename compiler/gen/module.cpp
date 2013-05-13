@@ -8,6 +8,7 @@
 #include "ecma/gen/code.h"
 #include "ecma/gen/helper/type.h"
 #include "ecma/gen/scope.h"
+#include "ecma/runtime/capi.call.h"
 
 using namespace ecma;
 using namespace ecma::gen;
@@ -27,7 +28,9 @@ llvm::Module *ModuleBuilder::build(llvm::LLVMContext &context, llvm::Module *mod
     irBuilder.CreateBr(entryBlock);
     irBuilder.SetInsertPoint(entryBlock);
 
-    Scope scope(context, module);
+    llvm::Value *env = Ecma_Object_create(context, module, irBuilder);
+    env->setName("env");
+    Scope scope(context, module, env);
 
     gen::CodeBuilder(m_program)
         .build(context, module, irBuilder, scope);

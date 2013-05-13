@@ -2,7 +2,7 @@
 #define ECMA_GEN_SCOPE_H_
 
 #include <string>
-#include <map>
+#include <vector>
 #include <llvm/LLVMContext.h>
 #include <llvm/Module.h>
 #include <llvm/BasicBlock.h>
@@ -16,13 +16,37 @@ namespace ecma
         class Scope
         {
         public:
-            inline Scope(llvm::LLVMContext &context, llvm::Module *module, Scope *parent = nullptr): m_context(context), m_module(module), m_parent(parent) {}
+            class Resolver
+            {
+            public:
+                inline bool has(const std::string &name)
+                {
+                    return std::find(m_variables.begin(), m_variables.end(), name) != m_variables.end();
+                }
 
-            llvm::Value *declare(llvm::IRBuilder<> &irBuilder, const std::string &name, llvm::Value *initializer = nullptr);
+                inline void add(const std::string &name)
+                {
+                    m_variables.push_back(name);
+                }
+
+            private:
+                std::vector<std::string> m_variables;
+            };
+
+            inline Scope(llvm::LLVMContext &context, llvm::Module *module, llvm::Value *env, Resolver *resolver = new Resolver(), Scope *parent = nullptr)
+                : m_context(context)
+                , m_module(module)
+                , m_env(env)
+                , m_resolver(resolver)
+                , m_parent(parent)
+                , m_thisValue(nullptr)
+            {}
+
+            Scope &declare(llvm::IRBuilder<> &irBuilder, const std::string &name, llvm::Value *initializer = nullptr);
             llvm::Value *get(llvm::IRBuilder<> &irBuilder, const std::string &name);
-            llvm::Value *set(llvm::IRBuilder<> &irBuilder, const std::string &name, llvm::Value *value);
+            Scope &set(llvm::IRBuilder<> &irBuilder, const std::string &name, llvm::Value *value);
 
-            llvm::Value *descriptor(const std::string &name);
+            bool has(const std::string &name);
 
             inline const llvm::LLVMContext &context(void) const
             {
@@ -39,12 +63,34 @@ namespace ecma
                 return m_parent;
             }
 
+            inline llvm::Value *env(void) const
+            {
+                return m_env;
+            }
+
+            inline llvm::Value *thisValue(void) const
+            {
+                return m_thisValue;
+            }
+            inline Scope &thisValue(llvm::Value *thisValue)
+            {
+                m_thisValue = thisValue;
+                return *this;
+            }
+
+            inline Resolver *resolver(void) const
+            {
+                return m_resolver;
+            }
+
         private:
             llvm::LLVMContext &m_context;
             llvm::Module *m_module;
             Scope *m_parent;
+            llvm::Value *m_env;
+            llvm::Value *m_thisValue;
 
-            std::map<std::string, llvm::Value *> m_variables;
+            Resolver *m_resolver;
         };
     }
 }

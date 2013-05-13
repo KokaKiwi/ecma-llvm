@@ -12,6 +12,7 @@
 #   LLVM_INCLUDE_DIR, the LLVM include directory.
 #   LLVM_LIB_DIR, the LLVM libraries directory.
 #   LLVM_BIN_DIR, the LLVM binaries directory.
+#   LLVM_CMAKE_DIR, the LLVM cmake modules directory.
 
 find_program(LLVM_CONFIG
     NAMES "${LLVM_PATH}/bin/llvm-config" "llvm-config"
@@ -73,6 +74,8 @@ if (LLVM_CONFIG)
         OUTPUT_VARIABLE LLVM_BIN_DIR
         OUTPUT_STRIP_TRAILING_WHITESPACE
     )
+
+    set(LLVM_CMAKE_DIR /usr/share/llvm/cmake)
 endif (LLVM_CONFIG)
 
 # handle the QUIETLY and REQUIRED arguments and set LLVM_FOUND to TRUE if

@@ -10,5 +10,6 @@ using namespace ecma::gen;
 void SVisitor::visit(ast::stmt::decl::Function &function)
 {
     llvm::Value *fn = FunctionBuilder(function.name(), function.literal()).build(m_context, m_module, m_irBuilder, m_scope);
+    fn->setName(function.name());
     m_scope.set(m_irBuilder, function.name(), fn);
 }

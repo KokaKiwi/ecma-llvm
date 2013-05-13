@@ -28,6 +28,7 @@ namespace ecma
             virtual void visit(ast::expr::Array &array);
             virtual void visit(ast::expr::Call &call);
             virtual void visit(ast::expr::Conditional &cond);
+            virtual void visit(ast::expr::This &thisExpr);
 
             virtual void visit(ast::expr::literal::Integer &integer);
             virtual void visit(ast::expr::literal::Boolean &boolean);

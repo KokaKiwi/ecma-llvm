@@ -1,15 +1,32 @@
 #!/usr/bin/env node
 
-function swap(elems)
+var stdio = null;
+
+function print(data)
 {
-    var tmp = elems[0];
-    elems[0] = elems[1];
-    elems[1] = tmp;
+    stdio.write(data);
 }
 
-function index()
+var console = {
+    log: function(msg)
+    {
+        print(msg + "\n");
+    }
+};
+
+function process(data, cb)
 {
-    return 2;
+    console.log(data);
+    if (cb)
+    {
+        cb(data);
+        return true;
+    }
+    return false;
 }
 
-var tab = [0, 0, 0, 0, 0, 0, 0, 'Hello world!'];
+process("Hello", function(data) {
+    console.log("Callback: " + data);
+});
+
+stdio[10] = 20;

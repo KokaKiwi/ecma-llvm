@@ -1,14 +1,11 @@
-
 // Base functions
-ECMA_FUNCTION(Ecma_malloc, void *, unsigned int size, unsigned int count)
-
 ECMA_FUNCTION(Ecma_setProperty, void, ecma::runtime::Object *instance, char *name, ecma::runtime::Object *value)
 ECMA_FUNCTION(Ecma_getProperty, ecma::runtime::Object *, ecma::runtime::Object *instance, char *name)
 
 ECMA_FUNCTION(Ecma_setIndex, void, ecma::runtime::Object *instance, ecma::runtime::Object *index, ecma::runtime::Object *value)
 ECMA_FUNCTION(Ecma_getIndex, ecma::runtime::Object *, ecma::runtime::Object *instance, ecma::runtime::Object *index)
 
-ECMA_FUNCTION(Ecma_call, ecma::runtime::Object *, ecma::runtime::Object *callee, int argc, ecma::runtime::Object **argv)
+ECMA_FUNCTION(Ecma_call, ecma::runtime::Object *, ecma::runtime::Object *callee, ecma::runtime::Object *env, ecma::runtime::Object *thisValue, int argc, ecma::runtime::Object **argv)
 
 ECMA_FUNCTION(Ecma_boolCast, bool, ecma::runtime::Object *object)
 

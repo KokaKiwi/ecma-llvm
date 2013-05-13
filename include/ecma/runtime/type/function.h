@@ -12,7 +12,7 @@ namespace ecma
             class Function: public Object
             {
             public:
-                using Signature = Object *(int argc, Object **argv);
+                using Signature = Object *(Object *env, Object *thisValue, int argc, Object **argv);
 
                 inline Function(Signature *ptr): m_ptr(ptr) {}
 
@@ -25,6 +25,10 @@ namespace ecma
                     m_ptr = ptr;
                     return *this;
                 }
+
+                virtual Object *call(Object *env, Object *thisValue, int argc, Object **argv);
+
+                virtual std::string toString(void) const;
 
             private:
                 Signature *m_ptr;

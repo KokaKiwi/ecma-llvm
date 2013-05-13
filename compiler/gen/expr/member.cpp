@@ -16,5 +16,7 @@ void LSEVisitor::visit(ast::expr::Member &member)
 void GPEVisitor::visit(ast::expr::Member &member)
 {
     llvm::Value *instance = GPEVisitor(m_context, m_module, m_irBuilder, m_scope).run(*member.expr());
+    m_scope.thisValue(instance);
     m_value = Ecma_getProperty(m_context, m_module, m_irBuilder, instance, gen::helper::string(m_irBuilder, member.name()));
+    m_value->setName(member.name());
 }

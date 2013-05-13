@@ -33,11 +33,18 @@ llvm::Value *FunctionBuilder::build(llvm::LLVMContext &context, llvm::Module *mo
     fIrBuilder.SetInsertPoint(entryBlock);
 
     llvm::Function::ArgumentListType::iterator fArgs = function->getArgumentList().begin();
+    llvm::Value *envValue = fArgs++;
+    llvm::Value *thisValue = fArgs++;
     llvm::Value *argc = fArgs++;
     llvm::Value *argv = fArgs++;
 
-    Scope fScope(context, module, &scope);
+    Scope upScope(context, module, envValue, scope.resolver());
+    llvm::Value *env = Ecma_Object_create(context, module, fIrBuilder);
+    env->setName("env");
+    Scope fScope(context, module, env, new Scope::Resolver(), &upScope);
 
+    fScope.thisValue(thisValue);
+    // fScope.declare(fIrBuilder, "this", thisValue);
     // fScope.declare(fIrBuilder, "argc", Ecma_Integer_create(context, module, fIrBuilder, argc));
 
     int i = 0;

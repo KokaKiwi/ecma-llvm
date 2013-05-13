@@ -9,65 +9,75 @@
 #include <llvm/Value.h>
 #include "ecma/gen/scope.h"
 #include "ecma/gen/helper/type.h"
+#include "ecma/gen/helper/string.h"
 #include "ecma/runtime/object.h"
+#include "ecma/runtime/capi.call.h"
 
 using namespace ecma;
 using namespace ecma::gen;
 
-llvm::Value *Scope::declare(llvm::IRBuilder<> &irBuilder, const std::string &name, llvm::Value *initializer)
+Scope &Scope::declare(llvm::IRBuilder<> &irBuilder, const std::string &name, llvm::Value *initializer)
 {
-    if (m_variables.find(name) != m_variables.end())
+    if (m_resolver->has(name))
     {
         throw std::runtime_error("Multiple variable redefinition.");
     }
 
-    llvm::Value *dummy = irBuilder.CreateAlloca(gen::helper::type<runtime::Object *>(m_context), nullptr, name);
-    m_variables[name] = dummy;
-
-    if (initializer)
+    if (initializer == nullptr)
     {
-        set(irBuilder, name, initializer);
+        initializer = Ecma_Undefined_create(m_context, m_module, irBuilder);
     }
+    Ecma_setProperty(m_context, m_module, irBuilder, m_env, gen::helper::string(irBuilder, name), initializer);
+    m_resolver->add(name);
 
-    return dummy;
+    return *this;
 }
 
 llvm::Value *Scope::get(llvm::IRBuilder<> &irBuilder, const std::string &name)
 {
-    llvm::Value *dummy = descriptor(name);
-
-    if (dummy == nullptr)
+    if (m_resolver->has(name))
     {
-        throw std::runtime_error("Undeclared variable: " + name);
-    }
-
-    return irBuilder.CreateLoad(dummy, name);
-}
-
-llvm::Value *Scope::set(llvm::IRBuilder<> &irBuilder, const std::string &name, llvm::Value *value)
-{
-    llvm::Value *dummy = descriptor(name);
-
-    if (dummy == nullptr)
-    {
-        dummy = declare(irBuilder, name);
-    }
-
-    return irBuilder.CreateStore(value, dummy);
-}
-
-llvm::Value *Scope::descriptor(const std::string &name)
-{
-    auto it = m_variables.find(name);
-
-    if (it != m_variables.end())
-    {
-        return it->second;
+        llvm::Value *value = Ecma_getProperty(m_context, m_module, irBuilder, m_env, gen::helper::string(irBuilder, name));
+        value->setName(name);
+        return value;
     }
     if (m_parent != nullptr)
     {
-        return m_parent->descriptor(name);
+        return m_parent->get(irBuilder, name);
     }
 
-    return nullptr;
+    m_resolver->add(name);
+    throw std::runtime_error("Undeclared variable: " + name);
+}
+
+Scope &Scope::set(llvm::IRBuilder<> &irBuilder, const std::string &name, llvm::Value *value)
+{
+    if (m_resolver->has(name))
+    {
+        Ecma_setProperty(m_context, m_module, irBuilder, m_env, gen::helper::string(irBuilder, name), value);
+    }
+    else if (m_parent != nullptr)
+    {
+        m_parent->set(irBuilder, name, value);
+    }
+    else
+    {
+        declare(irBuilder, name, value);
+    }
+
+    return *this;
+}
+
+bool Scope::has(const std::string &name)
+{
+    if (m_resolver->has(name))
+    {
+        return true;
+    }
+    if (m_parent != nullptr)
+    {
+        return m_parent->has(name);
+    }
+
+    return false;
 }

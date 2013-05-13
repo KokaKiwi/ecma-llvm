@@ -1,51 +1,85 @@
 Block:
-  Named function: swap
-    Function: elems
-      Block:
-        Variables:
-          Variable: tmp
-            Index:
-              Expression:
-                Identifier: elems
-              Index:
-                Integer: 0
-        Expression:
-          Assign: Assign
-            Left:
-              Index:
-                Expression:
-                  Identifier: elems
-                Index:
-                  Integer: 0
-            Right:
-              Index:
-                Expression:
-                  Identifier: elems
-                Index:
-                  Integer: 1
-        Expression:
-          Assign: Assign
-            Left:
-              Index:
-                Expression:
-                  Identifier: elems
-                Index:
-                  Integer: 1
-            Right:
-              Identifier: tmp
-  Named function: index
-    Function:
-      Block:
-        Return:
-          Integer: 2
   Variables:
-    Variable: tab
-      Array:
-        Integer: 0
-        Integer: 0
-        Integer: 0
-        Integer: 0
-        Integer: 0
-        Integer: 0
-        Integer: 0
-        String: "Hello world!"
+    Variable: stdio
+      Null
+  Named function: print
+    Function: data
+      Block:
+        Expression:
+          Call:
+            Expression:
+              Member: write
+                Identifier: stdio
+            Arguments:
+              Identifier: data
+  Variables:
+    Variable: console
+      Object:
+        Property: log
+          Function: msg
+            Block:
+              Expression:
+                Call:
+                  Expression:
+                    Identifier: print
+                  Arguments:
+                    Binary: Plus
+                      Left:
+                        Identifier: msg
+                      Right:
+                        String: "
+"
+  Named function: process
+    Function: data cb
+      Block:
+        Expression:
+          Call:
+            Expression:
+              Member: log
+                Identifier: console
+            Arguments:
+              Identifier: data
+        If:
+          Expression:
+            Identifier: cb
+          Then:
+            Block:
+              Expression:
+                Call:
+                  Expression:
+                    Identifier: cb
+                  Arguments:
+                    Identifier: data
+              Return:
+                Boolean: true
+        Return:
+          Boolean: false
+  Expression:
+    Call:
+      Expression:
+        Identifier: process
+      Arguments:
+        String: "Hello"
+        Function: data
+          Block:
+            Expression:
+              Call:
+                Expression:
+                  Member: log
+                    Identifier: console
+                Arguments:
+                  Binary: Plus
+                    Left:
+                      String: "Callback: "
+                    Right:
+                      Identifier: data
+  Expression:
+    Assign: Assign
+      Left:
+        Index:
+          Expression:
+            Identifier: stdio
+          Index:
+            Integer: 10
+      Right:
+        Integer: 20

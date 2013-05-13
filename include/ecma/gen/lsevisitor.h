@@ -22,6 +22,7 @@ namespace ecma
             virtual void visit(ast::expr::Identifier &id);
             virtual void visit(ast::expr::Member &member);
             virtual void visit(ast::expr::Index &index);
+            virtual void visit(ast::expr::This &thisExpr);
 
             inline void run(ast::Node &node)
             {

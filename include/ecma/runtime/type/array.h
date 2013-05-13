@@ -1,6 +1,7 @@
 #ifndef ECMA_RUNTIME_TYPE_ARRAY_H_
 #define ECMA_RUNTIME_TYPE_ARRAY_H_
 
+#include <string>
 #include "ecma/runtime/object.h"
 
 namespace ecma
@@ -33,6 +34,8 @@ namespace ecma
                     m_elems = elems;
                     return *this;
                 }
+
+                virtual std::string toString(void) const;
 
             private:
                 int m_size;

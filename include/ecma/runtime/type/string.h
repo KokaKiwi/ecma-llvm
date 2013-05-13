@@ -24,6 +24,8 @@ namespace ecma
                     return *this;
                 }
 
+                virtual std::string toString(void) const;
+
             private:
                 char *m_value;
             };

@@ -30,6 +30,9 @@ ast: !omap
         Identifier:
             gen: false
             type: expr
+        Extern:
+            gen: false
+            type: expr
         Assign:
             gen: false
             type: expr

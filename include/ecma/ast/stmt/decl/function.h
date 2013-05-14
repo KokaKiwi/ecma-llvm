@@ -15,7 +15,7 @@ namespace ecma
                 class Function: public ast::Statement
                 {
                 public:
-                    inline Function(const std::string &name, ast::expr::literal::Function *literal): m_name(name), m_literal(literal) {}
+                    inline Function(const std::string &name, ast::expr::literal::Function *literal = nullptr): m_name(name), m_literal(literal) {}
 
                     inline const std::string &name(void) const
                     {

@@ -1,4 +1,5 @@
 #include <string>
+#include <sstream>
 #include "ecma/runtime/capi.h"
 #include "ecma/runtime/type/integer.h"
 
@@ -13,5 +14,9 @@ Integer *Ecma_Integer_create(int value)
 
 std::string Integer::toString(void) const
 {
-    return "[Integer]";
+    std::stringstream ss;
+
+    ss << m_value;
+
+    return ss.str();
 }

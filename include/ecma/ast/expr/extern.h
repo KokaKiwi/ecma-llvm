@@ -1,5 +1,5 @@
-#ifndef ECMA_AST_EXPR_IDENTIFIER_H_
-#define ECMA_AST_EXPR_IDENTIFIER_H_
+#ifndef ECMA_AST_EXPR_EXTERN_H_
+#define ECMA_AST_EXPR_EXTERN_H_
 
 #include <string>
 #include "ecma/ast/expression.h"
@@ -10,16 +10,16 @@ namespace ecma
     {
         namespace expr
         {
-            class Identifier: public Expression
+            class Extern: public Expression
             {
             public:
-                inline Identifier(const std::string &name): m_name(name) {}
+                inline Extern(const std::string &name): m_name(name) {}
 
                 inline const std::string &name(void) const
                 {
                     return m_name;
                 }
-                inline Identifier &name(std::string &name)
+                inline Extern &name(std::string &name)
                 {
                     m_name = name;
                     return *this;
@@ -37,4 +37,4 @@ namespace ecma
     }
 }
 
-#endif /* ECMA_AST_EXPR_IDENTIFIER_H_ */
+#endif /* ECMA_AST_EXPR_EXTERN_H_ */

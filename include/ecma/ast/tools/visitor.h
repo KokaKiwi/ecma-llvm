@@ -17,6 +17,7 @@ namespace ecma
             class Array;
             class Object;
             class Identifier;
+            class Extern;
             class Assign;
             class Call;
             class Member;
@@ -107,6 +108,11 @@ namespace ecma
                 virtual inline void visit(ast::expr::Identifier &node)
                 {
                     throw std::runtime_error("Unknown AST branch (ast::expr::Identifier).");
+                }
+
+                virtual inline void visit(ast::expr::Extern &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ast::expr::Extern).");
                 }
 
                 virtual inline void visit(ast::expr::Assign &node)

@@ -8,6 +8,7 @@
 #include "ecma/ast/expr/array.h"
 #include "ecma/ast/expr/object.h"
 #include "ecma/ast/expr/identifier.h"
+#include "ecma/ast/expr/extern.h"
 #include "ecma/ast/expr/assign.h"
 #include "ecma/ast/expr/call.h"
 #include "ecma/ast/expr/member.h"

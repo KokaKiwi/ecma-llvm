@@ -3,6 +3,7 @@
 
 #include <string>
 #include <llvm/Value.h>
+#include <llvm/Function.h>
 #include <llvm/LLVMContext.h>
 #include <llvm/IRBuilder.h>
 #include "ecma/ast/expr/literal/function.h"
@@ -17,7 +18,7 @@ namespace ecma
         public:
             inline FunctionBuilder(const std::string &name = "", ast::expr::literal::Function *function = nullptr): m_name(name), m_function(function) {}
 
-            llvm::Value *build(llvm::LLVMContext &context, llvm::Module *module, llvm::IRBuilder<> &irBuilder, Scope &scope);
+            llvm::Function *build(llvm::LLVMContext &context, llvm::Module *module, llvm::IRBuilder<> &irBuilder, Scope &scope);
 
             inline const std::string &name(void) const
             {

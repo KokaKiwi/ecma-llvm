@@ -494,6 +494,11 @@ namespace ecma
                     stream() << spaces() << "Identifier: " << identifier.name() << std::endl;
                 }
 
+                inline void visit(ast::expr::Extern &expr)
+                {
+                    stream() << spaces() << "Extern: " << expr.name() << std::endl;
+                }
+
                 inline void visit(ast::expr::This &node)
                 {
                     stream() << spaces() << "This" << std::endl;

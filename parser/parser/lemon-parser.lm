@@ -39,7 +39,7 @@
 %right If.
 %left Else.
 
-%left Do In For New Try Var Case Null This True With Break Catch False While.
+%left Do In For New Try Var Case Null This True With Break Catch False While Extern.
 %left Return Switch TypeOf Default Finally Continue Function Undefined InstanceOf.
 
 %left Plus Minus Mul Div Mod.
@@ -99,6 +99,7 @@ function_declaration(A) ::= Function Identifier(B) LParen function_params(C) RPa
 statement(A) ::= block(B). { A = B; }
 statement(A) ::= varstatement(B) Semicolon. { A = B; }
 statement(A) ::= emptystatement. { A = nullptr; }
+statement(A) ::= externstatement(B) Semicolon. { A = B; }
 statement(A) ::= exprstatement(B) Semicolon. { A = B; }
 statement(A) ::= iterstatement(B). { A = B; }
 statement(A) ::= ifstatement(B). { A = B; }
@@ -113,6 +114,7 @@ statement(A) ::= trystatement(B). { A = B; }
 
 %type openstatement { ast::Statement * }
 openstatement(A) ::= varstatement(B). { A = B; }
+openstatement(A) ::= externstatement(B). { A = B; }
 openstatement(A) ::= exprstatement(B). { A = B; }
 openstatement(A) ::= contstatement(B). { A = B; }
 openstatement(A) ::= breakstatement(B). { A = B; }
@@ -126,6 +128,9 @@ block(A) ::= LBrace statements(B) RBrace. { A = B; }
 
 %type varstatement { ast::stmt::decl::Variables * }
 varstatement(A) ::= Var vardecls(B). { A = B; }
+
+%type externstatement { ast::Statement * }
+externstatement(A) ::= Extern Identifier(B) Semicolon. { A = new ast::stmt::decl::Function(*B); delete B; }
 
 emptystatement ::= Semicolon.
 
@@ -213,6 +218,7 @@ finally(A) ::= Finally block(B). { A = B; }
 %type leftexpression { ast::Expression * }
 leftexpression(A) ::= newexpression(B). { A = B; }
 leftexpression(A) ::= callexpression(B). { A = B; }
+leftexpression(A) ::= externexpression(B). { A = B; }
 
 %type statements { ast::stmt::Block * }
 statements(A) ::= statement(B). { A = new ast::stmt::Block(); A->statements().push_back(B); }
@@ -257,6 +263,9 @@ newexpression(A) ::= memberexpression(B). { A = B; }
 %type vardecl { ast::stmt::decl::Variables::Variable * }
 vardecl(A) ::= Identifier(B). { A = new ast::stmt::decl::Variables::Variable(*B); delete B; }
 vardecl(A) ::= Identifier(B) Assign down_expression(C). { A = new ast::stmt::decl::Variables::Variable(*B, C); delete B; }
+
+%type externexpression { ast::Expression * }
+externexpression(A) ::= Extern Identifier(B). { A = new ast::expr::Extern(*B); delete B; }
 
 /* Level 7 */
 

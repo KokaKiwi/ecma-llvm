@@ -16,10 +16,9 @@
 using namespace ecma;
 using namespace ecma::gen;
 
-llvm::Value *FunctionBuilder::build(llvm::LLVMContext &context, llvm::Module *module, llvm::IRBuilder<> &irBuilder, Scope &scope)
+llvm::Function *FunctionBuilder::build(llvm::LLVMContext &context, llvm::Module *module, llvm::IRBuilder<> &irBuilder, Scope &scope)
 {
     llvm::Function *function = llvm::Function::Create(gen::helper::type<runtime::type::Function::Signature>(context), llvm::GlobalVariable::ExternalLinkage, m_name, module);
-    llvm::Value *functionObject = Ecma_Function_create(context, module, irBuilder, function);
 
     llvm::BasicBlock *bootstrapBlock = llvm::BasicBlock::Create(context, "bootstrap");
     llvm::BasicBlock *entryBlock = llvm::BasicBlock::Create(context, "entry");
@@ -67,5 +66,5 @@ llvm::Value *FunctionBuilder::build(llvm::LLVMContext &context, llvm::Module *mo
         fIrBuilder.CreateRet(Ecma_Undefined_create(context, module, fIrBuilder));
     }
 
-    return functionObject;
+    return function;
 }

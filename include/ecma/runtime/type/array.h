@@ -1,7 +1,7 @@
 #ifndef ECMA_RUNTIME_TYPE_ARRAY_H_
 #define ECMA_RUNTIME_TYPE_ARRAY_H_
 
-#include <string>
+#include <vector>
 #include "ecma/runtime/object.h"
 
 namespace ecma
@@ -13,33 +13,22 @@ namespace ecma
             class Array: public Object
             {
             public:
-                inline Array(int size, Object **elems): m_size(size), m_elems(elems) {}
+                Array(int size, Object **elems);
 
-                inline int size(void) const
-                {
-                    return m_size;
-                }
-                inline Array &size(int size)
-                {
-                    m_size = size;
-                    return *this;
-                }
+                virtual std::string toString(void) const;
 
-                inline Object **elems(void) const
+                inline const std::vector<Object *> &elems(void) const
                 {
                     return m_elems;
                 }
-                inline Array &elems(Object **elems)
+                inline Array &elems(std::vector<Object *> &elems)
                 {
                     m_elems = elems;
                     return *this;
                 }
 
-                virtual std::string toString(void) const;
-
             private:
-                int m_size;
-                Object **m_elems;
+                std::vector<Object *> m_elems;
             };
         }
     }

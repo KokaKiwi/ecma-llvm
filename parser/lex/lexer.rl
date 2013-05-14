@@ -70,6 +70,7 @@ Lexeme *Lexer::consume(void)
             'false'             => { type = Lexeme::Type::False; fbreak; };
             'throw'             => { type = Lexeme::Type::Throw; fbreak; };
             'while'             => { type = Lexeme::Type::While; fbreak; };
+            'extern'            => { type = Lexeme::Type::Extern; fbreak; };
             'return'            => { type = Lexeme::Type::Return; fbreak; };
             'switch'            => { type = Lexeme::Type::Switch; fbreak; };
             'typeof'            => { type = Lexeme::Type::TypeOf; fbreak; };

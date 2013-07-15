@@ -193,5 +193,5 @@ Object *Object::operatorDecrementation() const
 
 Object *Object::operatorTypeOf() const
 {
-    return Ecma_Undefined_create();
+    return new type::String("object");
 }

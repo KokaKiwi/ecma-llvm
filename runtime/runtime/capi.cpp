@@ -167,3 +167,12 @@ extern "C" Object *Ecma_print(Object *env, Object *thisValue, int argc, Object *
     }
     return Ecma_Undefined_create();
 }
+
+extern "C" Object *Ecma_convertToString(Object *env, Object *thisValue, int argc, Object **argv)
+{
+    if (argc > 0)
+    {
+        return Ecma_toString(argv[0]);
+    }
+    return Ecma_Undefined_create();
+}

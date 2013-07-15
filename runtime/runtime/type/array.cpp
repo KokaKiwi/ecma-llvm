@@ -24,16 +24,18 @@ Array::Array(int size, Object **elems)
 std::string Array::toString(void) const
 {
     std::stringstream ss;
+    int i = 0;
 
     ss << "[";
 
     for (Object *elem : m_elems)
     {
         ss << elem->toString();
-        if (elem != *m_elems.end())
+        if (i < m_elems.size() - 1)
         {
             ss << ", ";
         }
+        i++;
     }
 
     ss << "]";

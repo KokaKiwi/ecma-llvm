@@ -18,7 +18,7 @@ include_directories(include)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
 
-configure_file(include/config.h.in include/config.h @ONLY)
+configure_file(include/config.cmake.h include/config.h @ONLY)
 
 add_subdirectory(parser)
 add_subdirectory(runtime)

@@ -1,4 +1,5 @@
 Block:
+<<<<<<< Updated upstream:samples/complex.log
   Named function: LCMCalculator
     Function: x y
       Block:
@@ -323,3 +324,5 @@ Block:
                           Member: lcm
                             Identifier: obj
 Compilation error: Unknown AST branch (ast::stmt::Throw).
+=======
+>>>>>>> Stashed changes:tests/complex.log

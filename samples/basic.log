@@ -1,17 +1,7 @@
 Block:
   Variables:
-    Variable: stdio
-      Null
-  Named function: print
-    Function: data
-      Block:
-        Expression:
-          Call:
-            Expression:
-              Member: write
-                Identifier: stdio
-            Arguments:
-              Identifier: data
+    Variable: print
+      Extern: Ecma_print
   Variables:
     Variable: console
       Object:
@@ -29,38 +19,43 @@ Block:
                       Right:
                         String: "
 "
-  Named function: process
-    Function: data cb
-      Block:
-        Expression:
-          Call:
-            Expression:
-              Member: log
-                Identifier: console
-            Arguments:
-              Identifier: data
-        If:
-          Expression:
-            Identifier: cb
-          Then:
+        Property: fn
+          Function: data cb
             Block:
-              Expression:
-                Call:
-                  Expression:
-                    Identifier: cb
-                  Arguments:
-                    Identifier: data
-              Return:
-                Boolean: true
-        Return:
-          Boolean: false
+              Variables:
+                Variable: i
+                  Integer: 0
+              While:
+                Expression:
+                  Binary: Lesser
+                    Left:
+                      Identifier: i
+                    Right:
+                      Member: length
+                        Identifier: data
+                Then:
+                  Block:
+                    Expression:
+                      Call:
+                        Expression:
+                          Identifier: cb
+                        Arguments:
+                          Index:
+                            Expression:
+                              Identifier: data
+                            Index:
+                              Identifier: i
   Expression:
     Call:
       Expression:
-        Identifier: process
+        Member: fn
+          Identifier: console
       Arguments:
-        String: "Hello"
-        Function: data
+        Array:
+          Integer: 1
+          Integer: 2
+          Integer: 3
+        Function: item
           Block:
             Expression:
               Call:
@@ -68,18 +63,4 @@ Block:
                   Member: log
                     Identifier: console
                 Arguments:
-                  Binary: Plus
-                    Left:
-                      String: "Callback: "
-                    Right:
-                      Identifier: data
-  Expression:
-    Assign: Assign
-      Left:
-        Index:
-          Expression:
-            Identifier: stdio
-          Index:
-            Integer: 10
-      Right:
-        Integer: 20
+                  Identifier: item

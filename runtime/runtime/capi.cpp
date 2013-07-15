@@ -36,11 +36,6 @@ bool Ecma_boolCast(Object *object)
     return object->boolCast();
 }
 
-Object *Ecma_toString(Object *object)
-{
-    return new type::String(object->toString());
-}
-
 Object *Ecma_Operator_LogicalOr(Object *left, Object *right)
 {
     return left->operatorLogicalOr(right);
@@ -157,22 +152,4 @@ Object *Ecma_Operator_Decrementation(Object *object)
 Object *Ecma_Operator_TypeOf(Object *object)
 {
     return object->operatorTypeOf();
-}
-
-extern "C" Object *Ecma_print(Object *env, Object *thisValue, int argc, Object **argv)
-{
-    if (argc > 0)
-    {
-        std::cout << argv[0]->toString();
-    }
-    return Ecma_Undefined_create();
-}
-
-extern "C" Object *Ecma_convertToString(Object *env, Object *thisValue, int argc, Object **argv)
-{
-    if (argc > 0)
-    {
-        return Ecma_toString(argv[0]);
-    }
-    return Ecma_Undefined_create();
 }

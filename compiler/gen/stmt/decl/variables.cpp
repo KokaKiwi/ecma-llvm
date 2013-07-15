@@ -12,8 +12,8 @@ void SVisitor::visit(ast::stmt::decl::Variables &vars)
     {
         if (var->initializer() != nullptr)
         {
-            GPEVisitor visitor(m_context, m_module, m_irBuilder, m_scope);
-            llvm::Value *initializer = visitor.run(*var->initializer());
+            llvm::Value *initializer = GPEVisitor(m_context, m_module, m_irBuilder, m_scope).run(*var->initializer());
+            initializer->setName(var->name());
 
             m_scope.declare(m_irBuilder, var->name(), initializer);
         }

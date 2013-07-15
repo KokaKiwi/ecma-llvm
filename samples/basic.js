@@ -1,32 +1,22 @@
 #!/usr/bin/env node
 
-var stdio = null;
-
-function print(data)
-{
-    stdio.write(data);
-}
+var print = extern Ecma_print;
 
 var console = {
     log: function(msg)
     {
         print(msg + "\n");
+    },
+    fn: function(data, cb)
+    {
+        var i = 0;
+        while (i < data.length)
+        {
+            cb(data[i]);
+        }
     }
 };
 
-function process(data, cb)
-{
-    console.log(data);
-    if (cb)
-    {
-        cb(data);
-        return true;
-    }
-    return false;
-}
-
-process("Hello", function(data) {
-    console.log("Callback: " + data);
+console.fn([1, 2, 3], function(item) {
+    console.log(item);
 });
-
-stdio[10] = 20;

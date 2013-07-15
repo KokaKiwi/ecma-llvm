@@ -9,8 +9,6 @@ ECMA_FUNCTION(Ecma_call, ecma::runtime::Object *, ecma::runtime::Object *callee,
 
 ECMA_FUNCTION(Ecma_boolCast, bool, ecma::runtime::Object *object)
 
-ECMA_FUNCTION(Ecma_toString, ecma::runtime::Object *, ecma::runtime::Object *object)
-
 ECMA_FUNCTION(Ecma_Operator_LogicalOr, ecma::runtime::Object *, ecma::runtime::Object *, ecma::runtime::Object *)
 ECMA_FUNCTION(Ecma_Operator_LogicalAnd, ecma::runtime::Object *, ecma::runtime::Object *, ecma::runtime::Object *)
 ECMA_FUNCTION(Ecma_Operator_BitwiseOr, ecma::runtime::Object *, ecma::runtime::Object *, ecma::runtime::Object *)

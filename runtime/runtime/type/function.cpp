@@ -1,4 +1,5 @@
 #include <string>
+#include <iostream>
 #include "ecma/runtime/capi.h"
 #include "ecma/runtime/type/function.h"
 

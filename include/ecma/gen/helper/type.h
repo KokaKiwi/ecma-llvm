@@ -1,10 +1,10 @@
 #ifndef ECMA_GEN_HELPER_TYPE_H_
 #define ECMA_GEN_HELPER_TYPE_H_
 
-#include <llvm/TypeBuilder.h>
-#include <llvm/LLVMContext.h>
-#include <llvm/Module.h>
-#include <llvm/Type.h>
+#include <llvm/IR/TypeBuilder.h>
+#include <llvm/IR/LLVMContext.h>
+#include <llvm/IR/Module.h>
+#include <llvm/IR/Type.h>
 #include "ecma/runtime/object.h"
 #include "ecma/runtime/type/integer.h"
 #include "ecma/runtime/type/string.h"

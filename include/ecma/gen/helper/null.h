@@ -1,10 +1,10 @@
 #ifndef ECMA_GEN_HELPER_NULL_H_
 #define ECMA_GEN_HELPER_NULL_H_
 
-#include <llvm/Constants.h>
-#include <llvm/DerivedTypes.h>
-#include <llvm/LLVMContext.h>
-#include <llvm/Value.h>
+#include <llvm/IR/Constants.h>
+#include <llvm/IR/DerivedTypes.h>
+#include <llvm/IR/LLVMContext.h>
+#include <llvm/IR/Value.h>
 
 #include "ecma/gen/helper/type.h"
 

@@ -1,9 +1,9 @@
-#include <llvm/Module.h>
-#include <llvm/LLVMContext.h>
-#include <llvm/Function.h>
-#include <llvm/BasicBlock.h>
-#include <llvm/IRBuilder.h>
-#include <llvm/Constants.h>
+#include <llvm/IR/Module.h>
+#include <llvm/IR/LLVMContext.h>
+#include <llvm/IR/Function.h>
+#include <llvm/IR/BasicBlock.h>
+#include <llvm/IR/IRBuilder.h>
+#include <llvm/IR/Constants.h>
 #include "ecma/gen/module.h"
 #include "ecma/gen/code.h"
 #include "ecma/gen/helper/type.h"

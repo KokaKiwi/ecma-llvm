@@ -1,5 +1,5 @@
-#include <llvm/Value.h>
-#include <llvm/DerivedTypes.h>
+#include <llvm/IR/Value.h>
+#include <llvm/IR/DerivedTypes.h>
 #include "ecma/gen/gpevisitor.h"
 #include "ecma/ast/expr/array.h"
 #include "ecma/runtime/capi.call.h"

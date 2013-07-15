@@ -1,9 +1,9 @@
 #ifndef ECMA_GEN_SVISITOR_H_
 #define ECMA_GEN_SVISITOR_H_
 
-#include <llvm/LLVMContext.h>
-#include <llvm/Module.h>
-#include <llvm/IRBuilder.h>
+#include <llvm/IR/LLVMContext.h>
+#include <llvm/IR/Module.h>
+#include <llvm/IR/IRBuilder.h>
 #include "ecma/gen/scope.h"
 #include "ecma/ast/tools/visitor.h"
 #include "ecma/ast/ast.h"

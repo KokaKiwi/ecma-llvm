@@ -1,7 +1,7 @@
 #include <string>
 #include <sstream>
-#include <llvm/Constants.h>
-#include <llvm/Function.h>
+#include <llvm/IR/Constants.h>
+#include <llvm/IR/Function.h>
 #include "ecma/gen/gpevisitor.h"
 #include "ecma/gen/function.h"
 #include "ecma/ast/expr/literal/integer.h"

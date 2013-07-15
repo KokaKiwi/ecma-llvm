@@ -1,6 +1,6 @@
 #include <vector>
-#include <llvm/Constants.h>
-#include <llvm/DerivedTypes.h>
+#include <llvm/IR/Constants.h>
+#include <llvm/IR/DerivedTypes.h>
 #include "ecma/gen/gpevisitor.h"
 #include "ecma/gen/lsevisitor.h"
 #include "ecma/ast/expr/call.h"

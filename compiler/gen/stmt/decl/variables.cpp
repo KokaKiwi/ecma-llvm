@@ -1,4 +1,4 @@
-#include <llvm/Value.h>
+#include <llvm/IR/Value.h>
 #include "ecma/gen/svisitor.h"
 #include "ecma/gen/gpevisitor.h"
 #include "ecma/ast/stmt/decl/variables.h"

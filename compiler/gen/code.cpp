@@ -1,6 +1,6 @@
-#include <llvm/LLVMContext.h>
-#include <llvm/Module.h>
-#include <llvm/IRBuilder.h>
+#include <llvm/IR/LLVMContext.h>
+#include <llvm/IR/Module.h>
+#include <llvm/IR/IRBuilder.h>
 #include "ecma/ast/statement.h"
 #include "ecma/gen/code.h"
 #include "ecma/gen/scope.h"

@@ -1,8 +1,8 @@
 #include <stdexcept>
-#include <llvm/Value.h>
-#include <llvm/BasicBlock.h>
-#include <llvm/Constants.h>
-#include <llvm/Function.h>
+#include <llvm/IR/Value.h>
+#include <llvm/IR/BasicBlock.h>
+#include <llvm/IR/Constants.h>
+#include <llvm/IR/Function.h>
 #include "ecma/gen/code.h"
 #include "ecma/gen/svisitor.h"
 #include "ecma/gen/gpevisitor.h"

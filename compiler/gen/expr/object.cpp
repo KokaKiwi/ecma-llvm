@@ -1,4 +1,4 @@
-#include <llvm/Value.h>
+#include <llvm/IR/Value.h>
 #include "ecma/gen/gpevisitor.h"
 #include "ecma/ast/expr/object.h"
 #include "ecma/runtime/capi.call.h"

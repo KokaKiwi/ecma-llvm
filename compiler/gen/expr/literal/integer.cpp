@@ -1,4 +1,4 @@
-#include <llvm/Constants.h>
+#include <llvm/IR/Constants.h>
 #include "ecma/gen/gpevisitor.h"
 #include "ecma/ast/expr/literal/integer.h"
 #include "ecma/runtime/capi.call.h"

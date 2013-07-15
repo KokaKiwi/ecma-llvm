@@ -2,7 +2,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
-#include <llvm/Module.h>
+#include <llvm/IR/Module.h>
 #include <llvm/Support/raw_ostream.h>
 #include "ecma/parser/exception.h"
 #include "ecma/toolchain/source.h"

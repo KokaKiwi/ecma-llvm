@@ -1,7 +1,7 @@
 #include <map>
 #include <utility>
 #include <stdexcept>
-#include <llvm/Value.h>
+#include <llvm/IR/Value.h>
 #include "ecma/gen/gpevisitor.h"
 #include "ecma/ast/expr/unary.h"
 #include "ecma/runtime/capi.call.h"

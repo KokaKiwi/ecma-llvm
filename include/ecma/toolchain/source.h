@@ -14,11 +14,7 @@ namespace ecma
         public:
             inline Source(const std::string &name, const std::string &source): m_name(name), m_source(source) {}
 
-            ast::stmt::Block *parse(bool debug) const;
-            inline ast::stmt::Block *parse(void) const
-            {
-                return parse(false);
-            }
+            ast::stmt::Block *parse(bool debug = false) const;
 
             inline const std::string &name(void) const
             {

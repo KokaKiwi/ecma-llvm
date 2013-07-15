@@ -1,0 +1,11 @@
+Block:
+  Named function: Ecma_print
+  Variables:
+    Variable: print
+      Identifier: Ecma_print
+  Expression:
+    Call:
+      Expression:
+        Identifier: print
+      Arguments:
+        String: "Hello world!"

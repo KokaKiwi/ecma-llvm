@@ -322,3 +322,4 @@ Block:
                         Expression:
                           Member: lcm
                             Identifier: obj
+Compilation error: Unknown AST branch (ast::stmt::Throw).

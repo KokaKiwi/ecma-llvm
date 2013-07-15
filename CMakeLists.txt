@@ -24,3 +24,14 @@ add_subdirectory(parser)
 add_subdirectory(runtime)
 add_subdirectory(compiler)
 add_subdirectory(ecmac)
+
+add_subdirectory(tests)
+
+if (ECMA_TESTS)
+    add_custom_target(run_tests
+        COMMAND
+            bin/ecma_tests
+        DEPENDS
+            ecma_tests
+    )
+endif (ECMA_TESTS)

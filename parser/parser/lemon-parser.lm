@@ -99,7 +99,7 @@ function_declaration(A) ::= Function Identifier(B) LParen function_params(C) RPa
 statement(A) ::= block(B). { A = B; }
 statement(A) ::= varstatement(B) Semicolon. { A = B; }
 statement(A) ::= emptystatement. { A = nullptr; }
-statement(A) ::= externstatement(B) Semicolon. { A = B; }
+statement(A) ::= externstatement(B). { A = B; }
 statement(A) ::= exprstatement(B) Semicolon. { A = B; }
 statement(A) ::= iterstatement(B). { A = B; }
 statement(A) ::= ifstatement(B). { A = B; }
@@ -114,7 +114,6 @@ statement(A) ::= trystatement(B). { A = B; }
 
 %type openstatement { ast::Statement * }
 openstatement(A) ::= varstatement(B). { A = B; }
-openstatement(A) ::= externstatement(B). { A = B; }
 openstatement(A) ::= exprstatement(B). { A = B; }
 openstatement(A) ::= contstatement(B). { A = B; }
 openstatement(A) ::= breakstatement(B). { A = B; }

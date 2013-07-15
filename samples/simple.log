@@ -1,11 +1,20 @@
 Block:
-  Named function: Ecma_print
   Variables:
-    Variable: print
-      Identifier: Ecma_print
-  Expression:
-    Call:
-      Expression:
-        Identifier: print
-      Arguments:
-        String: "Hello world!"
+    Variable: Fruit
+      Function: name
+        Block:
+          Expression:
+            Assign: Assign
+              Left:
+                Member: name
+                  This
+              Right:
+                Identifier: name
+  Variables:
+    Variable: kiwi
+      New:
+        Expression:
+          Identifier: Fruit
+        Arguments:
+          String: "Kiwi"
+Compilation error: Unknown AST branch (ast::expr::New).

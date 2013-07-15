@@ -1,6 +1,6 @@
 
-extern Ecma_print;
+var Fruit = function(name) {
+    this.name = name;
+};
 
-var print = Ecma_print;
-
-print("Hello world!");
+var kiwi = new Fruit("Kiwi");

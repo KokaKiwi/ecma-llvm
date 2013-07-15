@@ -1,99 +1,83 @@
-	.file	"../tests/basic.ll"
+	.file	"../samples/basic.ll"
 	.text
 	.globl	main
 	.align	16, 0x90
 	.type	main,@function
 main:                                   # @main
 	.cfi_startproc
-# BB#0:                                 # %entry
-	pushq	%r15
-.Ltmp4:
-	.cfi_def_cfa_offset 16
-	pushq	%r14
-.Ltmp5:
-	.cfi_def_cfa_offset 24
-	pushq	%rbx
-.Ltmp6:
-	.cfi_def_cfa_offset 32
-	subq	$16, %rsp
-.Ltmp7:
-	.cfi_def_cfa_offset 48
-.Ltmp8:
-	.cfi_offset %rbx, -32
-.Ltmp9:
-	.cfi_offset %r14, -24
-.Ltmp10:
-	.cfi_offset %r15, -16
+# BB#0:                                 # %bootstrap
+	subq	$72, %rsp
+.Ltmp1:
+	.cfi_def_cfa_offset 80
 	callq	Ecma_Object_create
-	movq	%rax, %r15
+	movq	%rax, 48(%rsp)          # 8-byte Spill
 	callq	Ecma_Null_create
-	movq	%r15, %rdi
-	movl	$.L__unnamed_1, %esi
+	leaq	__unnamed_1, %rsi
+	movq	48(%rsp), %rdi          # 8-byte Reload
 	movq	%rax, %rdx
 	callq	Ecma_setProperty
-	movl	$print, %edi
+	leaq	print, %rdi
 	callq	Ecma_Function_create
-	movq	%r15, %rdi
-	movl	$.L__unnamed_2, %esi
+	leaq	__unnamed_2, %rsi
+	movq	48(%rsp), %rdi          # 8-byte Reload
 	movq	%rax, %rdx
 	callq	Ecma_setProperty
 	callq	Ecma_Object_create
-	movq	%rax, %rbx
-	movl	$__unnamed_3, %edi
+	leaq	__unnamed_3, %rdi
+	movq	%rax, 40(%rsp)          # 8-byte Spill
 	callq	Ecma_Function_create
-	movq	%rbx, %rdi
-	movl	$.L__unnamed_4, %esi
+	leaq	__unnamed_4, %rsi
+	movq	40(%rsp), %rdi          # 8-byte Reload
 	movq	%rax, %rdx
 	callq	Ecma_setProperty
-	movq	%r15, %rdi
-	movl	$.L__unnamed_5, %esi
-	movq	%rbx, %rdx
+	leaq	__unnamed_5, %rsi
+	movq	48(%rsp), %rdi          # 8-byte Reload
+	movq	40(%rsp), %rdx          # 8-byte Reload
 	callq	Ecma_setProperty
-	movl	$process, %edi
+	leaq	process, %rdi
 	callq	Ecma_Function_create
-	movq	%r15, %rdi
-	movl	$.L__unnamed_6, %esi
+	leaq	__unnamed_6, %rsi
+	movq	48(%rsp), %rdi          # 8-byte Reload
 	movq	%rax, %rdx
 	callq	Ecma_setProperty
-	movq	%r15, %rdi
-	movl	$.L__unnamed_7, %esi
+	leaq	__unnamed_6, %rsi
+	movq	48(%rsp), %rdi          # 8-byte Reload
 	callq	Ecma_getProperty
-	movq	%rax, %r14
-	movl	$.L__unnamed_8, %edi
+	leaq	__unnamed_7, %rdi
+	movq	%rax, 32(%rsp)          # 8-byte Spill
 	callq	Ecma_String_create
-	movq	%rax, (%rsp)
-	movl	$__unnamed_9, %edi
+	leaq	__unnamed_8, %rdi
+	leaq	56(%rsp), %r8
+	movq	%rax, 56(%rsp)
+	movq	%r8, 24(%rsp)           # 8-byte Spill
 	callq	Ecma_Function_create
-	leaq	(%rsp), %rbx
-	movq	%rax, 8(%rsp)
+	movq	%rax, 64(%rsp)
 	callq	Ecma_Undefined_create
-	movq	%r14, %rdi
-	movq	%r15, %rsi
-	movq	%rax, %rdx
 	movl	$2, %ecx
-	movq	%rbx, %r8
+	movq	32(%rsp), %rdi          # 8-byte Reload
+	movq	48(%rsp), %rsi          # 8-byte Reload
+	movq	%rax, %rdx
+	movq	24(%rsp), %r8           # 8-byte Reload
 	callq	Ecma_call
 	movl	$20, %edi
+	movq	%rax, 16(%rsp)          # 8-byte Spill
 	callq	Ecma_Integer_create
-	movq	%rax, %r14
-	movq	%r15, %rdi
-	movl	$.L__unnamed_10, %esi
+	leaq	__unnamed_1, %rsi
+	movq	48(%rsp), %rdi          # 8-byte Reload
+	movq	%rax, 8(%rsp)           # 8-byte Spill
 	callq	Ecma_getProperty
-	movq	%rax, %rbx
 	movl	$10, %edi
+	movq	%rax, (%rsp)            # 8-byte Spill
 	callq	Ecma_Integer_create
-	movq	%rbx, %rdi
+	movq	(%rsp), %rdi            # 8-byte Reload
 	movq	%rax, %rsi
-	movq	%r14, %rdx
+	movq	8(%rsp), %rdx           # 8-byte Reload
 	callq	Ecma_setIndex
-	xorl	%eax, %eax
-	addq	$16, %rsp
-	popq	%rbx
-	popq	%r14
-	popq	%r15
+	movl	$0, %eax
+	addq	$72, %rsp
 	ret
-.Ltmp11:
-	.size	main, .Ltmp11-main
+.Ltmp2:
+	.size	main, .Ltmp2-main
 	.cfi_endproc
 
 	.globl	print
@@ -101,134 +85,89 @@ main:                                   # @main
 	.type	print,@function
 print:                                  # @print
 	.cfi_startproc
-# BB#0:                                 # %entry
-	pushq	%r15
-.Ltmp16:
-	.cfi_def_cfa_offset 16
-	pushq	%r14
-.Ltmp17:
-	.cfi_def_cfa_offset 24
-	pushq	%rbx
-.Ltmp18:
-	.cfi_def_cfa_offset 32
-	subq	$16, %rsp
-.Ltmp19:
-	.cfi_def_cfa_offset 48
-.Ltmp20:
-	.cfi_offset %rbx, -32
-.Ltmp21:
-	.cfi_offset %r14, -24
-.Ltmp22:
-	.cfi_offset %r15, -16
-	movq	%rcx, %r15
-	movq	%rdi, %r14
+# BB#0:                                 # %bootstrap
+	subq	$56, %rsp
+.Ltmp4:
+	.cfi_def_cfa_offset 64
+	movq	%rdi, 40(%rsp)          # 8-byte Spill
+	movq	%rcx, 32(%rsp)          # 8-byte Spill
 	callq	Ecma_Object_create
-	movq	%rax, %rbx
-	movq	(%r15), %rdx
-	movq	%rbx, %rdi
-	movl	$.L__unnamed_11, %esi
+	leaq	__unnamed_9, %rsi
+	movq	32(%rsp), %rcx          # 8-byte Reload
+	movq	(%rcx), %rdx
+	movq	%rax, %rdi
+	movq	%rax, 24(%rsp)          # 8-byte Spill
 	callq	Ecma_setProperty
-	movq	%r14, %rdi
-	movl	$.L__unnamed_12, %esi
+	leaq	__unnamed_1, %rsi
+	movq	40(%rsp), %rdi          # 8-byte Reload
 	callq	Ecma_getProperty
-	movq	%rax, %r14
-	movq	%r14, %rdi
-	movl	$.L__unnamed_13, %esi
+	leaq	__unnamed_10, %rsi
+	movq	%rax, %rdi
+	movq	%rax, 16(%rsp)          # 8-byte Spill
 	callq	Ecma_getProperty
-	movq	%rax, %r15
-	movq	%rbx, %rdi
-	movl	$.L__unnamed_14, %esi
+	leaq	__unnamed_9, %rsi
+	movq	24(%rsp), %rdi          # 8-byte Reload
+	movq	%rax, 8(%rsp)           # 8-byte Spill
 	callq	Ecma_getProperty
-	leaq	8(%rsp), %r8
-	movq	%rax, 8(%rsp)
-	movq	%r15, %rdi
-	movq	%rbx, %rsi
-	movq	%r14, %rdx
 	movl	$1, %ecx
+	leaq	48(%rsp), %r8
+	movq	%rax, 48(%rsp)
+	movq	8(%rsp), %rdi           # 8-byte Reload
+	movq	24(%rsp), %rsi          # 8-byte Reload
+	movq	16(%rsp), %rdx          # 8-byte Reload
 	callq	Ecma_call
+	movq	%rax, (%rsp)            # 8-byte Spill
 	callq	Ecma_Undefined_create
-	addq	$16, %rsp
-	popq	%rbx
-	popq	%r14
-	popq	%r15
+	addq	$56, %rsp
 	ret
-.Ltmp23:
-	.size	print, .Ltmp23-print
+.Ltmp5:
+	.size	print, .Ltmp5-print
 	.cfi_endproc
 
-	.globl	__unnamed_3
 	.align	16, 0x90
 	.type	__unnamed_3,@function
-__unnamed_3:                            # @29
+__unnamed_3:                            # @12
 	.cfi_startproc
-# BB#0:                                 # %entry
-	pushq	%r15
-.Ltmp30:
-	.cfi_def_cfa_offset 16
-	pushq	%r14
-.Ltmp31:
-	.cfi_def_cfa_offset 24
-	pushq	%r13
-.Ltmp32:
-	.cfi_def_cfa_offset 32
-	pushq	%r12
-.Ltmp33:
-	.cfi_def_cfa_offset 40
-	pushq	%rbx
-.Ltmp34:
-	.cfi_def_cfa_offset 48
-	subq	$16, %rsp
-.Ltmp35:
-	.cfi_def_cfa_offset 64
-.Ltmp36:
-	.cfi_offset %rbx, -48
-.Ltmp37:
-	.cfi_offset %r12, -40
-.Ltmp38:
-	.cfi_offset %r13, -32
-.Ltmp39:
-	.cfi_offset %r14, -24
-.Ltmp40:
-	.cfi_offset %r15, -16
-	movq	%rcx, %rbx
-	movq	%rsi, %r14
-	movq	%rdi, %r15
+# BB#0:                                 # %bootstrap
+	subq	$72, %rsp
+.Ltmp7:
+	.cfi_def_cfa_offset 80
+	movq	%rsi, 56(%rsp)          # 8-byte Spill
+	movq	%rdi, 48(%rsp)          # 8-byte Spill
+	movq	%rcx, 40(%rsp)          # 8-byte Spill
 	callq	Ecma_Object_create
-	movq	%rax, %r13
-	movq	(%rbx), %rdx
-	movq	%r13, %rdi
-	movl	$.L__unnamed_15, %esi
+	leaq	__unnamed_11, %rsi
+	movq	40(%rsp), %rcx          # 8-byte Reload
+	movq	(%rcx), %rdx
+	movq	%rax, %rdi
+	movq	%rax, 32(%rsp)          # 8-byte Spill
 	callq	Ecma_setProperty
-	movq	%r15, %rdi
-	movl	$.L__unnamed_16, %esi
+	leaq	__unnamed_2, %rsi
+	movq	48(%rsp), %rdi          # 8-byte Reload
 	callq	Ecma_getProperty
-	movq	%rax, %r15
-	movq	%r13, %rdi
-	movl	$.L__unnamed_17, %esi
+	leaq	__unnamed_11, %rsi
+	movq	32(%rsp), %rdi          # 8-byte Reload
+	movq	%rax, 24(%rsp)          # 8-byte Spill
 	callq	Ecma_getProperty
-	movq	%rax, %r12
-	movl	$.L__unnamed_18, %edi
+	leaq	__unnamed_12, %rdi
+	movq	%rax, 16(%rsp)          # 8-byte Spill
 	callq	Ecma_String_create
-	movq	%r12, %rdi
+	movq	16(%rsp), %rdi          # 8-byte Reload
 	movq	%rax, %rsi
 	callq	Ecma_Operator_Plus
-	leaq	8(%rsp), %r8
-	movq	%rax, 8(%rsp)
-	movq	%r15, %rdi
-	movq	%r13, %rsi
-	movq	%r14, %rdx
 	movl	$1, %ecx
+	leaq	64(%rsp), %r8
+	movq	%rax, 64(%rsp)
+	movq	24(%rsp), %rdi          # 8-byte Reload
+	movq	32(%rsp), %rsi          # 8-byte Reload
+	movq	56(%rsp), %rdx          # 8-byte Reload
 	callq	Ecma_call
+	movq	%rax, 8(%rsp)           # 8-byte Spill
 	callq	Ecma_Undefined_create
-	addq	$16, %rsp
-	popq	%rbx
-	popq	%r12
-	popq	%r13
-	popq	%r14
-	popq	%r15
+	addq	$72, %rsp
 	ret
-.Ltmp41:
-	.size	__unnamed_3, .Ltmp41-__unnamed_3
+.Ltmp8:
+	.size	__unnamed_3, .Ltmp8-__unnamed_3
 	.cfi_endproc
 
 	.globl	process
@@ -236,324 +175,213 @@ __unnamed_3:                            # @29
 	.type	process,@function
 process:                                # @process
 	.cfi_startproc
-# BB#0:                                 # %entry
+# BB#0:                                 # %bootstrap
 	pushq	%rbp
-.Ltmp45:
+.Ltmp11:
 	.cfi_def_cfa_offset 16
-.Ltmp46:
+.Ltmp12:
 	.cfi_offset %rbp, -16
 	movq	%rsp, %rbp
-.Ltmp47:
+.Ltmp13:
 	.cfi_def_cfa_register %rbp
-	pushq	%r15
-	pushq	%r14
-	pushq	%r13
-	pushq	%r12
-	pushq	%rbx
-	pushq	%rax
-.Ltmp48:
-	.cfi_offset %rbx, -56
-.Ltmp49:
-	.cfi_offset %r12, -48
-.Ltmp50:
-	.cfi_offset %r13, -40
-.Ltmp51:
-	.cfi_offset %r14, -32
-.Ltmp52:
-	.cfi_offset %r15, -24
-	movq	%rcx, %rbx
-	movq	%rdi, %r14
+	subq	$112, %rsp
+	movq	%rdi, -16(%rbp)         # 8-byte Spill
+	movq	%rcx, -24(%rbp)         # 8-byte Spill
 	callq	Ecma_Object_create
-	movq	%rax, %r13
-	movq	(%rbx), %rdx
-	movq	%r13, %rdi
-	movl	$.L__unnamed_19, %esi
+	leaq	__unnamed_9, %rsi
+	movq	-24(%rbp), %rcx         # 8-byte Reload
+	movq	(%rcx), %rdx
+	movq	%rax, %rdi
+	movq	%rax, -32(%rbp)         # 8-byte Spill
 	callq	Ecma_setProperty
-	movq	8(%rbx), %rdx
-	movq	%r13, %rdi
-	movl	$.L__unnamed_20, %esi
+	leaq	__unnamed_13, %rsi
+	movq	-24(%rbp), %rax         # 8-byte Reload
+	movq	8(%rax), %rdx
+	movq	-32(%rbp), %rdi         # 8-byte Reload
 	callq	Ecma_setProperty
-	movq	%r14, %rdi
-	movl	$.L__unnamed_21, %esi
+	leaq	__unnamed_5, %rsi
+	movq	-16(%rbp), %rdi         # 8-byte Reload
 	callq	Ecma_getProperty
-	movq	%rax, %r14
-	movq	%r14, %rdi
-	movl	$.L__unnamed_22, %esi
+	leaq	__unnamed_4, %rsi
+	movq	%rax, %rdi
+	movq	%rax, -40(%rbp)         # 8-byte Spill
 	callq	Ecma_getProperty
-	movq	%rax, %rbx
-	movq	%r13, %rdi
-	movl	$.L__unnamed_23, %esi
+	leaq	__unnamed_9, %rsi
+	movq	-32(%rbp), %rdi         # 8-byte Reload
+	movq	%rax, -48(%rbp)         # 8-byte Spill
 	callq	Ecma_getProperty
-	leaq	-48(%rbp), %r8
-	movq	%rax, -48(%rbp)
-	movq	%rbx, %rdi
-	movq	%r13, %rsi
-	movq	%r14, %rdx
 	movl	$1, %ecx
+	leaq	-8(%rbp), %r8
+	movq	%rax, -8(%rbp)
+	movq	-48(%rbp), %rdi         # 8-byte Reload
+	movq	-32(%rbp), %rsi         # 8-byte Reload
+	movq	-40(%rbp), %rdx         # 8-byte Reload
 	callq	Ecma_call
-	movq	%r13, %rdi
-	movl	$.L__unnamed_24, %esi
+	leaq	__unnamed_13, %rsi
+	movq	-32(%rbp), %rdi         # 8-byte Reload
+	movq	%rax, -56(%rbp)         # 8-byte Spill
 	callq	Ecma_getProperty
 	movq	%rax, %rdi
 	callq	Ecma_boolCast
 	testb	$1, %al
-	je	.LBB3_2
-# BB#1:                                 # %then
+	jne	.LBB3_1
+	jmp	.LBB3_2
+.LBB3_1:                                # %then
+	leaq	__unnamed_9, %rsi
+	movq	%rsi, -64(%rbp)         # 8-byte Spill
 	callq	Ecma_Object_create
-	movq	%rax, %r14
-	movq	%r13, %rdi
-	movl	$.L__unnamed_25, %esi
+	movl	$__unnamed_13, %esi
+	movq	-32(%rbp), %rdi         # 8-byte Reload
+	movq	%rax, -72(%rbp)         # 8-byte Spill
 	callq	Ecma_getProperty
-	movq	%rax, %r12
-	movq	%rsp, %rbx
-	leaq	-16(%rbx), %r15
-	movq	%r15, %rsp
-	movq	%r13, %rdi
-	movl	$.L__unnamed_26, %esi
+	movq	%rsp, %rsi
+	addq	$-16, %rsi
+	movq	%rsi, %rsp
+	movq	-72(%rbp), %rdi         # 8-byte Reload
+	movq	-32(%rbp), %rcx         # 8-byte Reload
+	movq	%rdi, -80(%rbp)         # 8-byte Spill
+	movq	%rcx, %rdi
+	movq	-64(%rbp), %rdx         # 8-byte Reload
+	movq	%rsi, -88(%rbp)         # 8-byte Spill
+	movq	%rdx, %rsi
+	movq	%rax, -96(%rbp)         # 8-byte Spill
 	callq	Ecma_getProperty
-	movq	%rax, -16(%rbx)
+	movq	-88(%rbp), %rcx         # 8-byte Reload
+	movq	%rax, (%rcx)
 	callq	Ecma_Undefined_create
-	movq	%r12, %rdi
-	movq	%r14, %rsi
-	movq	%rax, %rdx
 	movl	$1, %ecx
-	movq	%r15, %r8
+	movq	-96(%rbp), %rdi         # 8-byte Reload
+	movq	-80(%rbp), %rsi         # 8-byte Reload
+	movq	%rax, %rdx
+	movq	-88(%rbp), %r8          # 8-byte Reload
 	callq	Ecma_call
 	movl	$1, %edi
+	movq	%rax, -104(%rbp)        # 8-byte Spill
+	callq	Ecma_Boolean_create
+	movq	%rax, -112(%rbp)        # 8-byte Spill
 	jmp	.LBB3_3
 .LBB3_2:                                # %finally
-	xorl	%edi, %edi
-.LBB3_3:                                # %finally
+	movl	$0, %edi
 	callq	Ecma_Boolean_create
-	leaq	-40(%rbp), %rsp
-	popq	%rbx
-	popq	%r12
-	popq	%r13
-	popq	%r14
-	popq	%r15
+	movq	%rax, -112(%rbp)        # 8-byte Spill
+.LBB3_3:                                # %UnifiedReturnBlock
+	movq	-112(%rbp), %rax        # 8-byte Reload
+	movq	%rbp, %rsp
 	popq	%rbp
 	ret
-.Ltmp53:
-	.size	process, .Ltmp53-process
+.Ltmp14:
+	.size	process, .Ltmp14-process
 	.cfi_endproc
 
-	.globl	__unnamed_9
 	.align	16, 0x90
-	.type	__unnamed_9,@function
-__unnamed_9:                            # @30
+	.type	__unnamed_8,@function
+__unnamed_8:                            # @13
 	.cfi_startproc
-# BB#0:                                 # %entry
-	pushq	%r15
-.Ltmp59:
-	.cfi_def_cfa_offset 16
-	pushq	%r14
-.Ltmp60:
-	.cfi_def_cfa_offset 24
-	pushq	%r12
-.Ltmp61:
-	.cfi_def_cfa_offset 32
-	pushq	%rbx
-.Ltmp62:
-	.cfi_def_cfa_offset 40
-	pushq	%rax
-.Ltmp63:
-	.cfi_def_cfa_offset 48
-.Ltmp64:
-	.cfi_offset %rbx, -40
-.Ltmp65:
-	.cfi_offset %r12, -32
-.Ltmp66:
-	.cfi_offset %r14, -24
-.Ltmp67:
-	.cfi_offset %r15, -16
-	movq	%rcx, %rbx
-	movq	%rdi, %r14
+# BB#0:                                 # %bootstrap
+	subq	$72, %rsp
+.Ltmp16:
+	.cfi_def_cfa_offset 80
+	movq	%rdi, 56(%rsp)          # 8-byte Spill
+	movq	%rcx, 48(%rsp)          # 8-byte Spill
 	callq	Ecma_Object_create
-	movq	%rax, %r12
-	movq	(%rbx), %rdx
-	movq	%r12, %rdi
-	movl	$.L__unnamed_27, %esi
+	leaq	__unnamed_9, %rsi
+	movq	48(%rsp), %rcx          # 8-byte Reload
+	movq	(%rcx), %rdx
+	movq	%rax, %rdi
+	movq	%rax, 40(%rsp)          # 8-byte Spill
 	callq	Ecma_setProperty
-	movq	%r14, %rdi
-	movl	$.L__unnamed_28, %esi
+	leaq	__unnamed_5, %rsi
+	movq	56(%rsp), %rdi          # 8-byte Reload
 	callq	Ecma_getProperty
-	movq	%rax, %r14
-	movq	%r14, %rdi
-	movl	$.L__unnamed_29, %esi
+	leaq	__unnamed_4, %rsi
+	movq	%rax, %rdi
+	movq	%rax, 32(%rsp)          # 8-byte Spill
 	callq	Ecma_getProperty
-	movq	%rax, %r15
-	movl	$.L__unnamed_30, %edi
+	leaq	__unnamed_14, %rdi
+	movq	%rax, 24(%rsp)          # 8-byte Spill
 	callq	Ecma_String_create
-	movq	%rax, %rbx
-	movq	%r12, %rdi
-	movl	$.L__unnamed_31, %esi
+	leaq	__unnamed_9, %rsi
+	movq	40(%rsp), %rdi          # 8-byte Reload
+	movq	%rax, 16(%rsp)          # 8-byte Spill
 	callq	Ecma_getProperty
-	movq	%rbx, %rdi
+	movq	16(%rsp), %rdi          # 8-byte Reload
 	movq	%rax, %rsi
 	callq	Ecma_Operator_Plus
-	leaq	(%rsp), %r8
-	movq	%rax, (%rsp)
-	movq	%r15, %rdi
-	movq	%r12, %rsi
-	movq	%r14, %rdx
 	movl	$1, %ecx
+	leaq	64(%rsp), %r8
+	movq	%rax, 64(%rsp)
+	movq	24(%rsp), %rdi          # 8-byte Reload
+	movq	40(%rsp), %rsi          # 8-byte Reload
+	movq	32(%rsp), %rdx          # 8-byte Reload
 	callq	Ecma_call
+	movq	%rax, 8(%rsp)           # 8-byte Spill
 	callq	Ecma_Undefined_create
-	addq	$8, %rsp
-	popq	%rbx
-	popq	%r12
-	popq	%r14
-	popq	%r15
+	addq	$72, %rsp
 	ret
-.Ltmp68:
-	.size	__unnamed_9, .Ltmp68-__unnamed_9
+.Ltmp17:
+	.size	__unnamed_8, .Ltmp17-__unnamed_8
 	.cfi_endproc
 
-	.type	.L__unnamed_1,@object   # @0
+	.type	__unnamed_10,@object    # @0
 	.section	.rodata.str1.1,"aMS",@progbits,1
-.L__unnamed_1:
-	.asciz	 "stdio"
-	.size	.L__unnamed_1, 6
-
-	.type	.L__unnamed_11,@object  # @1
-.L__unnamed_11:
-	.asciz	 "data"
-	.size	.L__unnamed_11, 5
-
-	.type	.L__unnamed_12,@object  # @2
-.L__unnamed_12:
-	.asciz	 "stdio"
-	.size	.L__unnamed_12, 6
-
-	.type	.L__unnamed_13,@object  # @3
-.L__unnamed_13:
+__unnamed_10:
 	.asciz	 "write"
-	.size	.L__unnamed_13, 6
+	.size	__unnamed_10, 6
 
-	.type	.L__unnamed_14,@object  # @4
-.L__unnamed_14:
-	.asciz	 "data"
-	.size	.L__unnamed_14, 5
-
-	.type	.L__unnamed_2,@object   # @5
-.L__unnamed_2:
+	.type	__unnamed_2,@object     # @1
+__unnamed_2:
 	.asciz	 "print"
-	.size	.L__unnamed_2, 6
+	.size	__unnamed_2, 6
 
-	.type	.L__unnamed_15,@object  # @6
-.L__unnamed_15:
+	.type	__unnamed_11,@object    # @2
+__unnamed_11:
 	.asciz	 "msg"
-	.size	.L__unnamed_15, 4
+	.size	__unnamed_11, 4
 
-	.type	.L__unnamed_16,@object  # @7
-.L__unnamed_16:
-	.asciz	 "print"
-	.size	.L__unnamed_16, 6
-
-	.type	.L__unnamed_17,@object  # @8
-.L__unnamed_17:
-	.asciz	 "msg"
-	.size	.L__unnamed_17, 4
-
-	.type	.L__unnamed_18,@object  # @9
-.L__unnamed_18:
+	.type	__unnamed_12,@object    # @3
+__unnamed_12:
 	.asciz	 "\n"
-	.size	.L__unnamed_18, 2
+	.size	__unnamed_12, 2
 
-	.type	.L__unnamed_4,@object   # @10
-.L__unnamed_4:
-	.asciz	 "log"
-	.size	.L__unnamed_4, 4
-
-	.type	.L__unnamed_5,@object   # @11
-.L__unnamed_5:
-	.asciz	 "console"
-	.size	.L__unnamed_5, 8
-
-	.type	.L__unnamed_19,@object  # @12
-.L__unnamed_19:
-	.asciz	 "data"
-	.size	.L__unnamed_19, 5
-
-	.type	.L__unnamed_20,@object  # @13
-.L__unnamed_20:
+	.type	__unnamed_13,@object    # @4
+__unnamed_13:
 	.asciz	 "cb"
-	.size	.L__unnamed_20, 3
+	.size	__unnamed_13, 3
 
-	.type	.L__unnamed_21,@object  # @14
-.L__unnamed_21:
-	.asciz	 "console"
-	.size	.L__unnamed_21, 8
-
-	.type	.L__unnamed_22,@object  # @15
-.L__unnamed_22:
-	.asciz	 "log"
-	.size	.L__unnamed_22, 4
-
-	.type	.L__unnamed_23,@object  # @16
-.L__unnamed_23:
-	.asciz	 "data"
-	.size	.L__unnamed_23, 5
-
-	.type	.L__unnamed_24,@object  # @17
-.L__unnamed_24:
-	.asciz	 "cb"
-	.size	.L__unnamed_24, 3
-
-	.type	.L__unnamed_25,@object  # @18
-.L__unnamed_25:
-	.asciz	 "cb"
-	.size	.L__unnamed_25, 3
-
-	.type	.L__unnamed_26,@object  # @19
-.L__unnamed_26:
-	.asciz	 "data"
-	.size	.L__unnamed_26, 5
-
-	.type	.L__unnamed_6,@object   # @20
-.L__unnamed_6:
+	.type	__unnamed_6,@object     # @5
+__unnamed_6:
 	.asciz	 "process"
-	.size	.L__unnamed_6, 8
+	.size	__unnamed_6, 8
 
-	.type	.L__unnamed_7,@object   # @21
-.L__unnamed_7:
-	.asciz	 "process"
-	.size	.L__unnamed_7, 8
-
-	.type	.L__unnamed_8,@object   # @22
-.L__unnamed_8:
+	.type	__unnamed_7,@object     # @6
+__unnamed_7:
 	.asciz	 "Hello"
-	.size	.L__unnamed_8, 6
+	.size	__unnamed_7, 6
 
-	.type	.L__unnamed_27,@object  # @23
-.L__unnamed_27:
-	.asciz	 "data"
-	.size	.L__unnamed_27, 5
-
-	.type	.L__unnamed_28,@object  # @24
-.L__unnamed_28:
+	.type	__unnamed_5,@object     # @7
+__unnamed_5:
 	.asciz	 "console"
-	.size	.L__unnamed_28, 8
+	.size	__unnamed_5, 8
 
-	.type	.L__unnamed_29,@object  # @25
-.L__unnamed_29:
+	.type	__unnamed_4,@object     # @8
+__unnamed_4:
 	.asciz	 "log"
-	.size	.L__unnamed_29, 4
+	.size	__unnamed_4, 4
 
-	.type	.L__unnamed_30,@object  # @26
-.L__unnamed_30:
+	.type	__unnamed_14,@object    # @9
+__unnamed_14:
 	.asciz	 "Callback: "
-	.size	.L__unnamed_30, 11
+	.size	__unnamed_14, 11
 
-	.type	.L__unnamed_31,@object  # @27
-.L__unnamed_31:
+	.type	__unnamed_9,@object     # @10
+__unnamed_9:
 	.asciz	 "data"
-	.size	.L__unnamed_31, 5
+	.size	__unnamed_9, 5
 
-	.type	.L__unnamed_10,@object  # @28
-.L__unnamed_10:
+	.type	__unnamed_1,@object     # @11
+__unnamed_1:
 	.asciz	 "stdio"
-	.size	.L__unnamed_10, 6
+	.size	__unnamed_1, 6
 
 
 	.section	".note.GNU-stack","",@progbits

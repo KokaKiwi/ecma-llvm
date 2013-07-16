@@ -1,2 +1,5 @@
 build
 *.pyc
+samples/*
+!samples/*.js
+!samples/*.ll

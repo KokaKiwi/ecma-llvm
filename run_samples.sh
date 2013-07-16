@@ -1,6 +1,7 @@
 #!/bin/bash
 
 HERE=$(dirname $0)
+HERE=$(cd ${HERE} && pwd)
 ECMAC="${HERE}/build/bin/ecmac"
 LIBSDIR="${HERE}/build/lib"
 

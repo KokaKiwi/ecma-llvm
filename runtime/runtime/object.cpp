@@ -33,12 +33,12 @@ Object *Object::getProperty(const std::string &name) const
 
 void Object::setIndex(Object *index, Object *value)
 {
-
+    setProperty(index->toString(), value);
 }
 
 Object *Object::getIndex(Object *index) const
 {
-    return Ecma_Undefined_create();
+    return getProperty(index->toString());
 }
 
 Object *Object::call(Object *env, Object *thisValue, int argc, Object **argv)
@@ -48,7 +48,7 @@ Object *Object::call(Object *env, Object *thisValue, int argc, Object **argv)
 
 bool Object::boolCast(void) const
 {
-    return true;
+    return !m_properties.empty();
 }
 
 Object *Object::operatorLogicalOr(Object *other) const

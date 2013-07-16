@@ -34,11 +34,11 @@ namespace ecma
                 return ecma::gen::helper::call(context, module, irBuilder, function, args...);
             }
 
-            #define CREATE_CALLEE(NAME)                                         \
-            template<typename... T>                                             \
+            #define CREATE_CALLEE(NAME)                                                                                         \
+            template<typename... T>                                                                                             \
             inline llvm::Value *NAME(llvm::LLVMContext &context, llvm::Module *module, llvm::IRBuilder<> &irBuilder, T... args) \
-            {                                                                   \
-                return ecma::gen::helper::call(context, module, irBuilder, #NAME, args...);        \
+            {                                                                                                                   \
+                return ecma::gen::helper::call(context, module, irBuilder, #NAME, args...);                                     \
             }
         }
     }

@@ -8,3 +8,5 @@ build
 samples/*
 !samples/*.js
 !samples/*.ll
+
+*.sublime-*

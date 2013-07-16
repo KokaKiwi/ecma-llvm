@@ -13,7 +13,6 @@ add_executable(ecmac ${ecmac_SOURCES})
 target_link_libraries(ecmac
     EcmaParser
     EcmaCompiler
-    EcmaRuntime
     ${LLVM_LIBRARIES_ALL}
     ${LLVM_LDFLAGS}
 )

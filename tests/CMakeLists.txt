@@ -17,7 +17,6 @@ if (CXXTEST_FOUND)
         target_link_libraries(ecma_tests
             EcmaParser
             EcmaCompiler
-            EcmaRuntime
             ${LLVM_LIBRARIES_ALL}
             ${LLVM_LDFLAGS}
         )

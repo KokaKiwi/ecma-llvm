@@ -22,6 +22,7 @@ namespace llvm
         }
     };
 
+/*
     template<bool XCompile>
     struct TypeBuilder<ecma::runtime::Object, XCompile>
     {
@@ -66,6 +67,7 @@ namespace llvm
     struct TypeBuilder<ecma::runtime::type::Array, XCompile>
         : public TypeBuilder<ecma::runtime::Object, XCompile>
     {};
+*/
 }
 
 namespace ecma

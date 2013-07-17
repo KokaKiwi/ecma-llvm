@@ -1,6 +1,6 @@
 language: cpp
 before_install:
-    -   sudo apt-get install cmake llvm-dev ragel lemon
+    -   sudo apt-get install cmake llvm-dev ragel lemon cxxtest
 compiler:
     -   gcc
     -   clang

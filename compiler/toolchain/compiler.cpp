@@ -13,7 +13,7 @@ using namespace ecma::toolchain;
 
 Compiler::Compiler(): m_context()
 {
-    llvm::StructType::create(m_context, "Object");
+    // llvm::StructType::create(m_context, "Object");
 }
 
 llvm::Module *Compiler::build(const std::string &name, const Source &source)

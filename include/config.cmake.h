@@ -5,4 +5,6 @@
 
 #cmakedefine DEBUG
 
+#cmakedefine LLVM_NEW
+
 #endif /* CONFIG_H_ */

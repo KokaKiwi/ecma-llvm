@@ -18,14 +18,18 @@ include_directories(include)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/include)
 
-configure_file(include/config.cmake.h include/config.h @ONLY)
-
 add_subdirectory(parser)
 add_subdirectory(runtime)
 add_subdirectory(compiler)
 add_subdirectory(ecmac)
 
 add_subdirectory(tests)
+
+find_package(LLVM REQUIRED)
+if (LLVM_VERSION EQUAL "3.3" OR LLVM_VERSION GREATER "3.3")
+    set(LLVM_NEW TRUE)
+endif (LLVM_VERSION EQUAL "3.3" OR LLVM_VERSION GREATER "3.3")
+configure_file(include/config.cmake.h include/config.h @ONLY)
 
 if (ECMA_TESTS)
     add_custom_target(run_tests

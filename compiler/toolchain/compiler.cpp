@@ -1,7 +1,5 @@
-#include <llvm/IR/Module.h>
-#include <llvm/Analysis/Verifier.h>
-#include <llvm/IR/DerivedTypes.h>
 #include "config.h"
+#include "ecma/llvm_ir.h"
 #include "ecma/ast/stmt/block.h"
 #include "ecma/toolchain/source.h"
 #include "ecma/toolchain/compiler.h"

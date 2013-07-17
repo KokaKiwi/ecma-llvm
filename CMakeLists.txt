@@ -26,7 +26,7 @@ add_subdirectory(ecmac)
 add_subdirectory(tests)
 
 find_package(LLVM REQUIRED)
-string(REGEX REPLACE "[.]" "" LLVM_VERSION_NUMBER ${LLVM_VERSION})
+string(REPLACE "." "" LLVM_VERSION_NUMBER ${LLVM_VERSION})
 configure_file(include/config.cmake.h include/config.h @ONLY)
 
 if (ECMA_TESTS)

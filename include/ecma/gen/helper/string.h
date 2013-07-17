@@ -2,8 +2,7 @@
 #define ECMA_GEN_HELPER_STRING_H_
 
 #include <string>
-#include <llvm/IR/Value.h>
-#include <llvm/IR/IRBuilder.h>
+#include "ecma/llvm_ir.h"
 
 namespace ecma
 {

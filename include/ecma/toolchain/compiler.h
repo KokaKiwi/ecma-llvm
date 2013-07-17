@@ -2,8 +2,7 @@
 #define ECMA_TOOLCHAIN_COMPILER_H_
 
 #include <string>
-#include <llvm/IR/Module.h>
-#include <llvm/IR/LLVMContext.h>
+#include "ecma/llvm_ir.h"
 #include "ecma/toolchain/source.h"
 #include "ecma/ast/stmt/block.h"
 

@@ -12,6 +12,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 set(OFLAGS "-ggdb3")
 # set(OFLAGS "-O4 -march=native -msse -msse2 -msse3 -mmmx -m3dnow")
 
+set(CMAKE_C_FLAGS "-std=c99 ${OFLAGS}")
 set(CMAKE_CXX_FLAGS "-std=c++0x -Wno-deprecated-writable-strings ${OFLAGS}")
 
 include_directories(include)

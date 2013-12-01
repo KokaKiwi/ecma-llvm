@@ -30,8 +30,11 @@ int main(int argc, char **argv)
         }
         else if (argc == 2)
         {
-            program = toolchain::Source::fromFile(argv[1]).parse(DEBUG);
-            moduleName = argv[1];
+            toolchain::Source source = toolchain::Source::fromFile(argv[1]);
+            program = source.parse(DEBUG);
+            std::string::size_type epos = source.name().find('.');
+            moduleName = source.name();
+            moduleName.erase(epos, moduleName.length() - epos);
         }
         else
         {

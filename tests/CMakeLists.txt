@@ -7,30 +7,17 @@ include_directories(${LLVM_INCLUDE_DIR})
 
 find_package(CxxTest)
 if (CXXTEST_FOUND)
-    macro (ecma_add_tests)
-        foreach (test ${ARGN})
-            set(TEST_NAME test_${test})
-            list(APPEND ecma_TESTS_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_NAME}.h)
-        endforeach (test)
-
-        cxxtest_add_test(ecma_tests ecma_tests.cpp ${ecma_TESTS_SOURCES})
-        target_link_libraries(ecma_tests
-            EcmaParser
-            EcmaCompiler
-            ${LLVM_LIBRARIES_ALL}
-            ${LLVM_LDFLAGS}
-        )
-    endmacro (ecma_add_tests)
-
     include_directories(${CXXTEST_INCLUDE_DIR})
     enable_testing()
 
-    set(ecma_TESTS
-        basic
+    file(GLOB_RECURSE ecma_tests_SOURCES *.h)
+    cxxtest_add_test(ecma_tests ecma_tests.cpp ${ecma_tests_SOURCES})
+    target_link_libraries(ecma_tests
+        EcmaParser
+        EcmaCompiler
+        ${LLVM_LIBRARIES_ALL}
+        ${LLVM_LDFLAGS}
     )
-
-    ecma_add_tests(${ecma_TESTS})
-
     set(ECMA_TESTS ON PARENT_SCOPE)
 else (CXXTEST_FOUND)
     set(ECMA_TESTS OFF PARENT_SCOPE)

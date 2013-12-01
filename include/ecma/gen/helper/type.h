@@ -1,15 +1,15 @@
 #ifndef ECMA_GEN_HELPER_TYPE_H_
 #define ECMA_GEN_HELPER_TYPE_H_
 
-#include "ecma/llvm_ir.h"
-#include "ecma/runtime/object.h"
-#include "ecma/runtime/type/integer.h"
-#include "ecma/runtime/type/string.h"
-#include "ecma/runtime/type/boolean.h"
-#include "ecma/runtime/type/null.h"
-#include "ecma/runtime/type/undefined.h"
-#include "ecma/runtime/type/function.h"
-#include "ecma/runtime/type/array.h"
+// #include "ecma/llvm_ir.h"
+// #include "ecma/runtime/object.h"
+// #include "ecma/runtime/type/integer.h"
+// #include "ecma/runtime/type/string.h"
+// #include "ecma/runtime/type/boolean.h"
+// #include "ecma/runtime/type/null.h"
+// #include "ecma/runtime/type/undefined.h"
+// #include "ecma/runtime/type/function.h"
+// #include "ecma/runtime/type/array.h"
 
 namespace llvm
 {
@@ -76,10 +76,10 @@ namespace ecma
     {
         namespace helper
         {
-            template<typename T>
+            template<typename T, bool XCompile = false>
             inline auto type(llvm::LLVMContext &context) -> decltype(llvm::TypeBuilder<T, false>::get(context))
             {
-                return llvm::TypeBuilder<T, false>::get(context);
+                return llvm::TypeBuilder<T, XCompile>::get(context);
             }
         }
     }

@@ -97,20 +97,20 @@ function_declaration(A) ::= Function Identifier(B) LParen function_params(C) RPa
 
 %type statement { ast::Statement * }
 statement(A) ::= block(B). { A = B; }
-statement(A) ::= varstatement(B) Semicolon. { A = B; }
 statement(A) ::= emptystatement. { A = nullptr; }
 statement(A) ::= externstatement(B). { A = B; }
-statement(A) ::= exprstatement(B) Semicolon. { A = B; }
 statement(A) ::= iterstatement(B). { A = B; }
 statement(A) ::= ifstatement(B). { A = B; }
-statement(A) ::= contstatement(B) Semicolon. { A = B; }
-statement(A) ::= breakstatement(B) Semicolon. { A = B; }
-statement(A) ::= returnstatement(B) Semicolon. { A = B; }
 statement(A) ::= withstatement(B). { A = B; }
 statement(A) ::= labelstatement(B). { A = B; }
 statement(A) ::= switchstatement(B). { A = B; }
-statement(A) ::= throwstatement(B) Semicolon. { A = B; }
 statement(A) ::= trystatement(B). { A = B; }
+statement(A) ::= varstatement(B) Semicolon. { A = B; }
+statement(A) ::= exprstatement(B) Semicolon. { A = B; }
+statement(A) ::= contstatement(B) Semicolon. { A = B; }
+statement(A) ::= breakstatement(B) Semicolon. { A = B; }
+statement(A) ::= returnstatement(B) Semicolon. { A = B; }
+statement(A) ::= throwstatement(B) Semicolon. { A = B; }
 
 %type openstatement { ast::Statement * }
 openstatement(A) ::= varstatement(B). { A = B; }

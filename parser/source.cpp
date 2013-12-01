@@ -1,5 +1,7 @@
 #include <string>
+#include <iostream>
 #include <fstream>
+#include <libgen.h>
 #include "ecma/toolchain/source.h"
 #include "ecma/lex/lexer.h"
 #include "ecma/parser/parser.h"
@@ -26,8 +28,8 @@ Source Source::fromString(const std::string &source)
 Source Source::fromFile(const std::string &path)
 {
     std::ifstream stream(path);
-    std::string::size_type position = path.rfind('/');
-    std::string filename = position != std::string::npos ? path.substr(position) : path;
+    std::string::size_type pos = path.rfind('/');
+    std::string filename = path.substr(pos + 1, path.length() - (pos + 1));
 
     std::istreambuf_iterator<char> eos;
     std::string source(std::istreambuf_iterator<char>(stream), eos);

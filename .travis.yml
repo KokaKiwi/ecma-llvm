@@ -9,4 +9,4 @@ script:
     -   cd build
     -   cmake ..
     -   make
-    # -   make run_tests
+    -   make test

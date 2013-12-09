@@ -185,12 +185,25 @@ def p_value_func(p):
     '''
     p[0] = p[1]
 
+def p_value_list(p):
+    '''
+        value : list
+    '''
+    p[0] = p[1]
+
 # Function
 def p_func(p):
     '''
         func : IDENT '(' list_items ')'
     '''
     p[0] = Func(p[1], params = p[3])
+
+# List
+def p_list(p):
+    '''
+        list : '[' list_items ']'
+    '''
+    p[0] = p[2]
 
 # List items
 def p_list_items(p):

@@ -1,0 +1,35 @@
+%token_prefix       ECMA_TOKEN_TYPE_
+%token_type         { lex::Token * }
+%name               ecma_parse
+
+%include
+{
+    #include <cassert>
+    #include <stdio.h>
+    #include "ecma/lex/token.h"
+
+    using namespace ecma;
+}
+
+%token_destructor
+{
+    delete $$;
+}
+
+%left THROW VAR FOR IF.
+%left LPAREN RPAREN.
+
+/* Rule 'toto' */
+
+toto(A) ::= IF(B).
+{
+    A = B;
+}
+
+/* Rule 'program' */
+%start_symbol program
+
+program(A) ::= toto(B).
+{
+    A = B;
+}

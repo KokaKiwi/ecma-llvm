@@ -1,0 +1,18 @@
+
+#[tokens("keywords",
+    IF      =   'if',
+    FOR     =   'for',
+    VAR     =   'var',
+    THROW   =   'throw',
+)];
+
+#[tokens("symbols",
+    LPAREN  =   '(',
+    RPAREN  =   ')',
+)];
+
+#[start]
+program ::=
+
+;
+

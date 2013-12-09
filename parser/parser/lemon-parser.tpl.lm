@@ -1,0 +1,20 @@
+%token_prefix       ECMA_TOKEN_TYPE_
+%token_type         { lex::Token * }
+%name               ecma_parse
+
+%include
+{
+    #include <cassert>
+    #include <stdio.h>
+    #include "ecma/lex/token.h"
+
+    using namespace ecma;
+}
+
+%token_destructor
+{
+    delete $$;
+}
+
+{{ tokens }}
+{{ rules }}

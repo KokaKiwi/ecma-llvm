@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 project(ecma-llvm)
+set(PROJECT_VERSION "0.1.0")
 
 # Paths
 set(PROJECT_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
@@ -55,3 +56,17 @@ if (USE_CLANG)
 else (USE_CLANG)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
 endif (USE_CLANG)
+
+# Dependencies
+## LLVM
+find_package(LLVM REQUIRED)
+string(REPLACE "." "" LLVM_VERSION_NUMBER ${LLVM_VERSION})
+configure_file(include/config.cmake.h include/config.h @ONLY)
+
+## Paths
+include_directories(${PROJECT_SOURCE_DIR}/include)
+include_directories(${PROJECT_BUILD_DIR}/include)
+
+## Parser
+add_subdirectory(parser)
+# list(APPEND ecma_LIBRARIES)

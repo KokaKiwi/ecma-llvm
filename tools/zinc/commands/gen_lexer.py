@@ -25,11 +25,12 @@ class GenLexerCommand(BaseCommand):
                 def output_token(token):
                     if isinstance(token, (Regex)):
                         fmt = '{}'
+                        token = token[:]
                     else:
                         fmt = '"{}"'
                     return fmt.format(token)
 
-                s += '{token:11s} =>  {{ type = ECMA_TOKEN({name:s}); fbreak; }};\n'.format(name = name, token = output_token(token))
+                s += '{token:23s} =>  {{ type = ECMA_TOKEN({name:s}); fbreak; }};\n'.format(name = name, token = output_token(token))
             s += '\n'
 
         return s

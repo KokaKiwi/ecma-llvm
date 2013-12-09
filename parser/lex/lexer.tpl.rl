@@ -44,15 +44,15 @@ Lexer::~Lexer()
 Token *Lexer::consume()
 {
     %%{
-        spaces          =   (' '|'\t')+;
-        newline         =   ('\n'|'\r\n');
+        spaces                      =   (' '|'\t')+;
+        newline                     =   ('\n'|'\r\n');
 
         main := |*
             {{ smart_indent(lexer, 12) }}
-            spaces      =>  { type = ECMA_TOKEN(SPACES); fbreak; };
-            newline     =>  { type = ECMA_TOKEN(NEWLINE); fbreak; };
+            spaces                  =>  { type = ECMA_TOKEN(SPACES); fbreak; };
+            newline                 =>  { type = ECMA_TOKEN(NEWLINE); fbreak; };
 
-            any         =>  { type = ECMA_TOKEN(UNKNOWN); fbreak; };
+            any                     =>  { type = ECMA_TOKEN(UNKNOWN); fbreak; };
         *|;
     }%%
 

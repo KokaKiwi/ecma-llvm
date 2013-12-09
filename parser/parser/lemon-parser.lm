@@ -16,20 +16,27 @@
     delete $$;
 }
 
-%left THROW VAR FOR IF.
-%left LPAREN RPAREN.
+%left VAR.
+%left SEMICOLON.
+%left IDENT.
 
-/* Rule 'toto' */
+/* Rule 'module' */
+%start_symbol module
 
-toto(A) ::= IF(B).
-{
-    A = B;
-}
+module ::= statements.
+{}
 
-/* Rule 'program' */
-%start_symbol program
+/* Rule 'statements' */
 
-program(A) ::= toto(B).
-{
-    A = B;
-}
+statements ::= statements statement.
+{}
+
+/* Rule 'statement' */
+
+statement ::= var_statement SEMICOLON.
+{}
+
+/* Rule 'var_statement' */
+
+var_statement ::= VAR IDENT.
+{}

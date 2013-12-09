@@ -44,24 +44,23 @@ Lexer::~Lexer()
 Token *Lexer::consume()
 {
     %%{
-        spaces          =   (' '|'\t')+;
-        newline         =   ('\n'|'\r\n');
+        spaces                      =   (' '|'\t')+;
+        newline                     =   ('\n'|'\r\n');
 
         main := |*
             # keywords
-            "throw"     =>  { type = ECMA_TOKEN(THROW); fbreak; };
-            "var"       =>  { type = ECMA_TOKEN(VAR); fbreak; };
-            "for"       =>  { type = ECMA_TOKEN(FOR); fbreak; };
-            "if"        =>  { type = ECMA_TOKEN(IF); fbreak; };
+            "var"                   =>  { type = ECMA_TOKEN(VAR); fbreak; };
 
             # symbols
-            "("         =>  { type = ECMA_TOKEN(LPAREN); fbreak; };
-            ")"         =>  { type = ECMA_TOKEN(RPAREN); fbreak; };
+            ";"                     =>  { type = ECMA_TOKEN(SEMICOLON); fbreak; };
 
-            spaces      =>  { type = ECMA_TOKEN(SPACES); fbreak; };
-            newline     =>  { type = ECMA_TOKEN(NEWLINE); fbreak; };
+            # values
+            [a-zA-Z_][a-zA-Z0-9_]*  =>  { type = ECMA_TOKEN(IDENT); fbreak; };
 
-            any         =>  { type = ECMA_TOKEN(UNKNOWN); fbreak; };
+            spaces                  =>  { type = ECMA_TOKEN(SPACES); fbreak; };
+            newline                 =>  { type = ECMA_TOKEN(NEWLINE); fbreak; };
+
+            any                     =>  { type = ECMA_TOKEN(UNKNOWN); fbreak; };
         *|;
     }%%
 

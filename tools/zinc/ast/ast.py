@@ -22,6 +22,9 @@ class Func(object):
 
         return default
 
+    def __getattr__(self, name):
+        return self.param(name)
+
     def __str__(self):
         return '%s(%s)' % (self.name, ', '.join(map(str, self.params)))
 

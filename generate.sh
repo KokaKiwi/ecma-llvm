@@ -45,3 +45,11 @@ echo "Generate parser..."
 PARSER_SRC="${PARSER_DIR}/parser/lemon-parser.tpl.lm"
 PARSER_DST="${PARSER_DIR}/parser/lemon-parser.lm"
 zinc gen_parser ${PARSER_SRC} ${PARSER_DST}
+
+# Generate AST headers
+echo "Generate AST headers..."
+AST_INCLUDE_DIR="${INCLUDE_DIR}/ecma/ast"
+AST_NAMESPACE="ecma::ast"
+rm -rf ${AST_INCLUDE_DIR}
+mkdir -p ${AST_INCLUDE_DIR}
+zinc gen_ast --namespace ${AST_NAMESPACE} ${AST_INCLUDE_DIR}

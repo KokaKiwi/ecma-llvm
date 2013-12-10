@@ -1,3 +1,4 @@
+// Tokens
 #[tokens("keywords",
     VAR         =   'var',
 )];
@@ -10,6 +11,39 @@
     IDENT       =   r'[a-zA-Z_][a-zA-Z0-9_]*',
 )];
 
+// AST
+#[ast(
+    name = 'Node',
+)];
+
+#[ast(
+    name = 'Expression',
+    parent = 'Node',
+)];
+
+#[ast(
+    name = 'Statement',
+    parent = 'Node',
+)];
+
+#[ast(
+    name = 'IfStatement',
+    namespace = 'stmt',
+    parent = 'Statement',
+    items = [
+        item('expr',
+            type = type(
+                type('ast::Expression',
+                    pointer = true
+                ),
+                list = true,
+                pointer = true,
+            ),
+        ),
+    ],
+)];
+
+// Rules
 #[start]
 module ::=
     statements,

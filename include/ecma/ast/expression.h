@@ -1,6 +1,8 @@
 #ifndef ECMA_AST_EXPRESSION_H_
 #define ECMA_AST_EXPRESSION_H_
 
+#include "ecma/ast/tools/visitor.h"
+
 namespace ecma
 {
     namespace ast
@@ -10,6 +12,11 @@ namespace ecma
             public:
                 inline Expression()
                 {}
+
+                inline void accept(tools::Visitor &visitor)
+                {
+                    visitor.visit(*this);
+                }
 
             private:
         };

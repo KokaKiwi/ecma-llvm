@@ -2,6 +2,7 @@
 #define ECMA_AST_STMT_IFSTATEMENT_H_
 
 #include <vector>
+#include "ecma/ast/tools/visitor.h"
 #include <memory>
 
 namespace ecma
@@ -28,6 +29,11 @@ namespace ecma
                     inline std::vector<std::unique_ptr<ast::Expression>> *expr()
                     {
                         return m_expr.release();
+                    }
+
+                    inline void accept(tools::Visitor &visitor)
+                    {
+                        visitor.visit(*this);
                     }
 
                 private:

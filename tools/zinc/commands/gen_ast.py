@@ -5,6 +5,30 @@ from core.utils import *
 
 HEADER_CONSTANT = '{name:s}_H_'
 
+def write_namespace(namespace, w):
+    class NamespaceWriter(SubWBuffer):
+        def __init__(self, namespace, w):
+            super().__init__(w)
+            self.namespace = namespace
+
+        def __enter__(self):
+            for name in self.namespace:
+                self += 'namespace {:s}'.format(name)
+                self += '{'
+                self.indent += 4
+            return super().__enter__()
+
+        def __exit__(self, *args):
+            for name in self.namespace:
+                self.indent -= 4
+                self += '}'
+            super().__exit__(*args)
+
+    if isinstance(namespace, (str)):
+        namespace = [namespace]
+
+    return NamespaceWriter(namespace, w)
+
 class NodeGenerator(Writeable):
     def __init__(self, ast, node):
         self.ast = ast
@@ -26,11 +50,12 @@ class NodeGenerator(Writeable):
     def write_body(self, w):
         self.write_includes(w)
 
-        with self.write_namespace(self.node.namespace, w) as ww:
+        with write_namespace(self.node.namespace, w) as ww:
             self.write_class(ww)
 
     def write_includes(self, w):
         includes = set([
+            '"{:s}"'.format(os.path.join(self.ast.path, 'tools', 'visitor.h')),
         ])
         includes |= self.node.includes
 
@@ -66,6 +91,7 @@ class NodeGenerator(Writeable):
     def write_class_public(self, w):
         self.write_class_constructor(w)
         self.write_class_methods(w)
+        self.write_class_accept(w)
 
     def write_class_constructor(self, w):
         s = 'inline {:s}()'.format(self.node.name)
@@ -170,33 +196,22 @@ class NodeGenerator(Writeable):
 
         w += '}'
 
+    def write_class_accept(self, w):
+        w.writeln()
+        w += 'inline void accept(tools::Visitor &visitor)'
+        w += '{'
+
+        with w.sub_indent() as ww:
+            ww += 'visitor.visit(*this);'
+
+        w += '}'
+
     def write_class_members(self, w):
         for item in self.node.items.values():
             self.write_class_member(w, item)
 
     def write_class_member(self, w, item):
         w += '{:s} {:s};'.format(item.type, item.varname)
-
-    def write_namespace(self, namespace, w):
-        class NamespaceWriter(SubWBuffer):
-            def __init__(self, namespace, w):
-                super().__init__(w)
-                self.namespace = namespace
-
-            def __enter__(self):
-                for name in self.namespace:
-                    self += 'namespace {:s}'.format(name)
-                    self += '{'
-                    self.indent += 4
-                return super().__enter__()
-
-            def __exit__(self, *args):
-                for name in self.namespace:
-                    self.indent -= 4
-                    self += '}'
-                super().__exit__(*args)
-
-        return NamespaceWriter(namespace, w)
 
 class GenASTCommand(BaseCommand):
     name = 'gen_ast'
@@ -210,6 +225,7 @@ class GenASTCommand(BaseCommand):
 
         self.gen_tree(args.dest, ast)
         self.gen_ast(args.dest, ast)
+        self.gen_visitor(args.dest, ast)
 
     def gen_tree(self, dest, ast, tree = None):
         if tree is None:
@@ -247,7 +263,7 @@ class GenASTCommand(BaseCommand):
         header_constant = '_'.join(header_constant)
         header_constant = HEADER_CONSTANT.format(name = header_constant.upper())
 
-        incdir = ast.namespace.replace('::', '/')
+        incdir = ast.path
 
         w += '#ifndef {:s}'.format(header_constant)
         w += '#define {:s}'.format(header_constant)
@@ -265,3 +281,76 @@ class GenASTCommand(BaseCommand):
 
         w.writeln()
         w += '#endif /* {:s} */'.format(header_constant)
+
+    def gen_visitor(self, dest, ast):
+        path = os.path.join(dest, 'tools', 'visitor.h')
+
+        dname = os.path.dirname(path)
+        if not os.path.exists(dname):
+            os.makedirs(dname)
+
+        with open(path, 'w+') as f:
+            w = Writer(f)
+            self.write_visitor(w, ast)
+            w.flush()
+
+    def write_visitor(self, w, ast):
+        header_constant = ast.namespace.split('::') + ['tools', 'visitor']
+        header_constant = '_'.join(header_constant)
+        header_constant = HEADER_CONSTANT.format(name = header_constant.upper())
+
+        w += '#ifndef {:s}'.format(header_constant)
+        w += '#define {:s}'.format(header_constant)
+        w.writeln()
+
+        def write_tree(w, tree):
+            for (name, node) in tree.items():
+                if isinstance(node, (dict)):
+                    w.writeln()
+                    with write_namespace(name, w) as ww:
+                        write_tree(ww, node)
+                else:
+                    w += 'class {name:s};'.format(name = node.name)
+
+        with write_namespace(ast.namespace.split('::'), w) as ww:
+            write_tree(ww, ast.tree)
+
+            if len(ast.tree) > 0:
+                ww.writeln()
+
+            with write_namespace('tools', ww) as www:
+                self.write_visitor_class(www, ast)
+
+        w.writeln()
+        w += '#endif /* {:s} */'.format(header_constant)
+
+    def write_visitor_class(self, w, ast):
+        w += 'class Visitor'
+        w += '{'
+
+        def write_tree(w, namespace, tree):
+            for (name, node) in tree.items():
+                if isinstance(node, (dict)):
+                    write_tree(w, namespace + [name], node)
+                else:
+                    self.write_visitor_node(w, namespace, ast, node)
+
+        w += 'public:'
+        with w.sub_indent() as ww:
+            ww += 'inline ~Visitor() {}'
+            write_tree(ww, ast.namespace.split('::'), ast.tree)
+
+        w += '};'
+
+    def write_visitor_node(self, w, namespace, ast, node):
+        ntype = namespace + [node.name]
+        ntype = '::'.join(ntype)
+
+        w.writeln()
+        w += 'virtual inline void visit({ntype:s} &node)'.format(ntype = ntype)
+        w += '{'
+
+        with w.sub_indent() as ww:
+            ww += 'throw std::runtime_error("Unknown AST branch ({ntype:s}).");'.format(ntype = ntype)
+
+        w += '}'

@@ -137,3 +137,7 @@ class AST(object):
             namespace += node_namespace
 
             place_node(self.tree, node_namespace, Node(namespace, node))
+
+    @property
+    def path(self):
+        return self.namespace.replace('::', '/')

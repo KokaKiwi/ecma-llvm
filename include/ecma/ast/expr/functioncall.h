@@ -2,6 +2,7 @@
 #define ECMA_AST_EXPR_FUNCTIONCALL_H_
 
 #include <vector>
+#include "ecma/ast/tools/visitor.h"
 #include <memory>
 
 namespace ecma
@@ -52,6 +53,11 @@ namespace ecma
                     {
                         m_nargs = nargs;
                         return *this;
+                    }
+
+                    inline void accept(tools::Visitor &visitor)
+                    {
+                        visitor.visit(*this);
                     }
 
                 private:

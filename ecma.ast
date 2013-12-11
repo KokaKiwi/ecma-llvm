@@ -18,18 +18,18 @@
 
 #[ast(
     name = 'Expression',
-    parent = 'Node',
+    parent = 'ast::Node',
 )];
 
 #[ast(
     name = 'Statement',
-    parent = 'Node',
+    parent = 'ast::Node',
 )];
 
 #[ast(
     name = 'IfStatement',
     namespace = 'stmt',
-    parent = 'Statement',
+    parent = 'ast::Statement',
     items = [
         item('expr',
             type = type(
@@ -37,8 +37,33 @@
                     pointer = true
                 ),
                 list = true,
+            ),
+        ),
+    ],
+)];
+
+#[ast(
+    name = 'FunctionCall',
+    namespace = 'expr',
+    parent = 'ast::Expression',
+    items = [
+        item('callee',
+            type = type(
+                'ast::Expression',
                 pointer = true,
             ),
+        ),
+        item('args',
+            type = type(
+                type(
+                    'ast::Expression',
+                    pointer = true,
+                ),
+                list = true,
+            ),
+        ),
+        item('nargs',
+            type = 'int'
         ),
     ],
 )];

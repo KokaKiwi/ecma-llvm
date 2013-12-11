@@ -4,7 +4,8 @@ from ast import ast as ast_ast
 class Item(object):
     VARNAME     = 'm_{name:s}'
 
-    def __init__(self, name, attrs):
+    def __init__(self, node, name, attrs):
+        self.node = node
         self.name = name
         self.attrs = attrs
 
@@ -15,28 +16,34 @@ class Item(object):
 
     def prepare_type(self):
         ty = self.type
-        self.pointer = ty.param('pointer', False)
+        self.rawtype = ty
+        if isinstance(ty, (str)):
+            self.pointer = self.list = False
+        else:
+            self.pointer = ty.param('pointer', False)
+            self.list = ty.param('list', False)
+            self.type = self.resolve_type(ty)
 
-        self.type = self.resolve_type(self.type)
-
-    def resolve_type(self, ty, sub = False):
+    def resolve_type(self, ty, nowrap = False):
         name = ty.params[0]
         if isinstance(name, (ast_ast.Func)) and name.name == 'type':
-            name = self.resolve_type(name, sub = True)
+            name = self.resolve_type(name)
 
-        if ty.pointer and sub:
-            name = '*{:s}'.format(name)
+        force_pointer = False
         if ty.list:
+            self.node.includes.add('<vector>')
             name = 'std::vector<{:s}>'.format(name)
+            force_pointer = True
+
+        if ty.pointer or (force_pointer and not nowrap):
+            self.node.includes.add('<memory>')
+            name = 'std::unique_ptr<{:s}>'.format(name)
 
         return name
 
     @property
     def varname(self):
         name = self.VARNAME.format(name = self.name)
-
-        if self.pointer:
-            name = '*{:s}'.format(name)
 
         return name
 
@@ -47,6 +54,9 @@ class Node(object):
     def __init__(self, namespace, attrs):
         self.namespace = namespace
         self.attrs = attrs
+        self.includes = set()
+
+        self.type = '::'.join(namespace + [self.name])
 
         self.prepare()
 
@@ -60,7 +70,7 @@ class Node(object):
             name = item.params[0]
             attrs = ast_ast.Node(item.params[1:])
 
-            self.items[name] = Item(name, attrs)
+            self.items[name] = Item(self, name, attrs)
 
     @property
     def basename(self):
@@ -76,6 +86,18 @@ class Node(object):
     @property
     def header_filename(self):
         return '{:s}.h'.format(self.basename)
+
+    @property
+    def parents(self):
+        parents = self.attrs.parents
+        if parents:
+            return parents
+
+        parent = self.attrs.parent
+        if parent:
+            return [parent]
+
+        return []
 
     def __getattr__(self, name):
         return self.attrs.__getattr__(name)

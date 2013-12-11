@@ -34,13 +34,14 @@ def gen_from_template(src, dst, **kwargs):
 
 class WBuffer(object):
     def __init__(self):
-        self.content = ''
+        self.data = ''
 
         self.indent = 0
         self.indent_char = ' '
+        self.auto_nl = True
 
     def write_raw(self, data = ''):
-        self.content += str(data)
+        self.data += str(data)
 
     def write(self, data = ''):
         self.write_raw(textwrap.indent(str(data), self.indent * self.indent_char))
@@ -51,19 +52,28 @@ class WBuffer(object):
     line = writeln
 
     def __add__(self, other):
-        self.writeln(other)
+        if self.auto_nl:
+            self.writeln(other)
+        else:
+            self.write(other)
         return self
 
     def sub(self):
         return SubWBuffer(self)
 
+    def sub_indent(self, indent = 4):
+        sub = self.sub()
+        sub.indent += 4
+
+        return sub
+
     def flush(self):
-        content = self.content
-        self.content = ''
-        return content
+        data = self.data
+        self.data = ''
+        return data
 
     def __str__(self):
-        return self.content
+        return self.data
 
 class SubWBuffer(WBuffer):
     def __init__(self, writer):

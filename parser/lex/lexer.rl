@@ -49,13 +49,10 @@ Token *Lexer::consume()
 
         main := |*
             # keywords
-            "var"                   =>  { type = ECMA_TOKEN(VAR); fbreak; };
 
             # symbols
-            ";"                     =>  { type = ECMA_TOKEN(SEMICOLON); fbreak; };
 
             # values
-            [a-zA-Z_][a-zA-Z0-9_]*  =>  { type = ECMA_TOKEN(IDENT); fbreak; };
 
             spaces                  =>  { type = ECMA_TOKEN(SPACES); fbreak; };
             newline                 =>  { type = ECMA_TOKEN(NEWLINE); fbreak; };

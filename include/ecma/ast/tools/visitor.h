@@ -9,16 +9,6 @@ namespace ecma
         class Expression;
         class Statement;
 
-        namespace stmt
-        {
-            class IfStatement;
-        }
-
-        namespace expr
-        {
-            class FunctionCall;
-        }
-
         namespace tools
         {
             class Visitor
@@ -39,16 +29,6 @@ namespace ecma
                 virtual inline void visit(ecma::ast::Statement &node)
                 {
                     throw std::runtime_error("Unknown AST branch (ecma::ast::Statement).");
-                }
-
-                virtual inline void visit(ecma::ast::stmt::IfStatement &node)
-                {
-                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::IfStatement).");
-                }
-
-                virtual inline void visit(ecma::ast::expr::FunctionCall &node)
-                {
-                    throw std::runtime_error("Unknown AST branch (ecma::ast::expr::FunctionCall).");
                 }
             };
         }

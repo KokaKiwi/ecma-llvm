@@ -1,14 +1,11 @@
 // Tokens
 #[tokens("keywords",
-    VAR         =   'var',
 )];
 
 #[tokens("symbols",
-    SEMICOLON   =   ';',
 )];
 
 #[tokens("values",
-    IDENT       =   r'[a-zA-Z_][a-zA-Z0-9_]*',
 )];
 
 // AST
@@ -26,62 +23,7 @@
     parent = 'ast::Node',
 )];
 
-#[ast(
-    name = 'IfStatement',
-    namespace = 'stmt',
-    parent = 'ast::Statement',
-    items = [
-        item('expr',
-            type = type(
-                type('ast::Expression',
-                    pointer = true
-                ),
-                list = true,
-            ),
-        ),
-    ],
-)];
-
-#[ast(
-    name = 'FunctionCall',
-    namespace = 'expr',
-    parent = 'ast::Expression',
-    items = [
-        item('callee',
-            type = type(
-                'ast::Expression',
-                pointer = true,
-            ),
-        ),
-        item('args',
-            type = type(
-                type(
-                    'ast::Expression',
-                    pointer = true,
-                ),
-                list = true,
-            ),
-        ),
-        item('nargs',
-            type = 'int'
-        ),
-    ],
-)];
-
 // Rules
 #[start]
 module ::=
-    statements,
-;
-
-statements ::=
-    statements statement,
-;
-
-statement ::=
-    var_statement ';',
-;
-
-var_statement ::=
-    'var' IDENT,
 ;

@@ -16,27 +16,12 @@
     delete $$;
 }
 
-%left VAR.
-%left SEMICOLON.
-%left IDENT.
+%left .
+%left .
+%left .
 
 /* Rule 'module' */
 %start_symbol module
 
-module ::= statements.
-{}
-
-/* Rule 'statements' */
-
-statements ::= statements statement.
-{}
-
-/* Rule 'statement' */
-
-statement ::= var_statement SEMICOLON.
-{}
-
-/* Rule 'var_statement' */
-
-var_statement ::= VAR IDENT.
+module ::= .
 {}

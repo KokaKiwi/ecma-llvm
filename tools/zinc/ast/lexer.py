@@ -56,7 +56,7 @@ def t_NONE(t):
     return t
 
 def t_BOOLEAN(t):
-    r'([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee]|[Yy][Ee][Ss]|[Nn][Oo])'
+    r'([Tt][Rr][Uu][Ee]|[Ff][Aa][Ll][Ss][Ee])'
     if t.value in ('true', 'yes'):
         t.value = True
     else:

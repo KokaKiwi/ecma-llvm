@@ -44,6 +44,20 @@ Lexer::~Lexer()
 Token *Lexer::consume()
 {
     %%{
+        # Number literal
+        integer                     =   [0-9]+;
+        exponent                    =   ('e'|'E') integer;
+        decimal                     =   (
+                integer ('.' (integer)? (exponent)?)?
+            |   '.' integer (exponent)?
+        );
+        signed                      =   ('+'|'-')* decimal;
+
+        hex                         =   ('0x'|'0X') [0-9a-fA-F]+;
+
+        number                      =   (signed | hex);
+
+        # Misc symbols
         spaces                      =   (' '|'\t')+;
         newline                     =   ('\n'|'\r\n');
 

@@ -179,6 +179,12 @@ def p_value_named(p):
     '''
     p[0] = Named(p[1], p[3])
 
+def p_value_named_string(p):
+    '''
+        value : STRING '=' value
+    '''
+    p[0] = Named(p[1], p[3])
+
 def p_value_func(p):
     '''
         value : func
@@ -246,6 +252,7 @@ def p_error(p):
         print('Unexpected EOF.')
 
     errors.append(p)
+    exit(1)
     yacc.restart()
 
 # Main

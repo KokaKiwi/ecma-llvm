@@ -1,11 +1,124 @@
 // Tokens
 #[tokens("keywords",
+    BREAK                   =   "break",
+    CASE                    =   "case",
+    CATCH                   =   "catch",
+    CONTINUE                =   "continue",
+    DEBUGGER                =   "debugger",
+    DEFAULT                 =   "default",
+    DELETE                  =   "delete",
+    DO                      =   "do",
+    ELSE                    =   "else",
+    FINALLY                 =   "finally",
+    FOR                     =   "for",
+    FUNCTION                =   "function",
+    IF                      =   "if",
+    IN                      =   "in",
+    INSTANCEOF              =   "instanceof",
+    NEW                     =   "new",
+    RETURN                  =   "return",
+    SWITCH                  =   "switch",
+    THIS                    =   "this",
+    THROW                   =   "throw",
+    TRY                     =   "try",
+    TYPEOF                  =   "typeof",
+    VAR                     =   "var",
+    VOID                    =   "void",
+    WHILE                   =   "while",
+    WITH                    =   "with",
+)];
+
+#[tokens("future keywords",
+    CLASS                   =   "class",
+    CONST                   =   "const",
+    ENUM                    =   "enum",
+    EXPORT                  =   "export",
+    EXTENDS                 =   "extends",
+    IMPORT                  =   "import",
+    SUPER                   =   "super",
+)];
+
+#[tokens("future keywords (strict)",
+    IMPLEMENTS              =   "implements",
+    INTERFACE               =   "interface",
+    LET                     =   "let",
+    PACKAGE                 =   "package",
+    PRIVATE                 =   "private",
+    PROTECTED               =   "protected",
+    PUBLIC                  =   "public",
+    STATIC                  =   "static",
+    YIELD                   =   "yield",
 )];
 
 #[tokens("symbols",
+    LBRACE                  =   "{",
+    RBRACE                  =   "}",
+    LPAREN                  =   "(",
+    RPAREN                  =   ")",
+    LBRACKET                =   "[",
+    RBRACKET                =   "]",
+
+    DOT                     =   ".",
+    SEMICOLON               =   ";",
+    COMMA                   =   ",",
+    QUESTION                =   "?",
+    COLON                   =   ":",
+
+    LESSER                  =   "<",
+    GREATER                 =   ">",
+    LESSER_EQ               =   "<=",
+    GREATER_EQ              =   ">=",
+    EQUAL                   =   "==",
+    NOT_EQUAL               =   "!=",
+    STRICT_EQUAL            =   "===",
+    STRICT_NOT_EQUAL        =   "!==",
+
+    PLUS                    =   "+",
+    MINUS                   =   "-",
+    MUL                     =   "*",
+    MOD                     =   "%",
+    DIV                     =   "/",
+
+    INCREMENT               =   "++",
+    DECREMENT               =   "--",
+
+    LEFT_SHIFT              =   "<<",
+    RIGHT_SHIFT             =   ">>",
+    ZERO_RIGHT_SHIFT        =   ">>>",
+
+    BITWISE_AND             =   "&",
+    BITWISE_OR              =   "|",
+    BITWISE_XOR             =   "^",
+
+    LOGIC_AND               =   "&&",
+    LOGIC_OR                =   "||",
+
+    ASSIGN                  =   "=",
+    PLUS_ASSIGN             =   "+=",
+    MINUS_ASSIGN            =   "-=",
+    MUL_ASSIGN              =   "*=",
+    MOD_ASSIGN              =   "%=",
+    DIV_ASSIGN              =   "/=",
+
+    LEFT_SHIFT_ASSIGN       =   "<<=",
+    RIGHT_SHIFT_ASSIGN      =   ">>=",
+    ZERO_RIGHT_SHIFT_ASSIGN =   ">>>=",
+
+    BITWISE_AND_ASSIGN      =   "&=",
+    BITWISE_OR_ASSIGN       =   "|=",
+    BITWISE_XOR_ASSIGN      =   "^=",
+
+    NOT                     =   "!",
+    INV                     =   "~",
 )];
 
-#[tokens("values",
+#[tokens("literal",
+    // null
+    LIT_NULL                =   "null",
+
+    // boolean
+    LIT_TRUE                =   "true",
+    LIT_FALSE               =   "false",
 )];
 
 // AST

@@ -31,12 +31,12 @@ class Item(object):
 
         force_pointer = False
         if ty.list:
-            self.node.includes.add('<vector>')
+            self.node.add_include('<vector>')
             name = 'std::vector<{:s}>'.format(name)
             force_pointer = True
 
         if ty.pointer or (force_pointer and not nowrap):
-            self.node.includes.add('<memory>')
+            self.node.add_include('<memory>')
             name = 'std::unique_ptr<{:s}>'.format(name)
 
         return name
@@ -54,11 +54,19 @@ class Node(object):
     def __init__(self, namespace, attrs):
         self.namespace = namespace
         self.attrs = attrs
-        self.includes = set()
+        self.includes = []
 
         self.type = '::'.join(namespace + [self.name])
 
         self.prepare()
+
+    def add_include(self, inc):
+        if isinstance(inc, (list)):
+            for i in inc:
+                self.add_include(i)
+        else:
+            if inc not in self.includes:
+                self.includes.append(inc)
 
     def prepare(self):
         self.prepare_items()

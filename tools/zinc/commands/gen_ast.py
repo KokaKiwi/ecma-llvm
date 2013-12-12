@@ -54,10 +54,11 @@ class NodeGenerator(Writeable):
             self.write_class(ww)
 
     def write_includes(self, w):
-        includes = set([
+        includes = []
+        includes += self.node.includes
+        includes += [
             '"{:s}"'.format(os.path.join(self.ast.path, 'tools', 'visitor.h')),
-        ])
-        includes |= self.node.includes
+        ]
 
         for inc in includes:
             w += '#include {:s}'.format(inc)

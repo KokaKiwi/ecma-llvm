@@ -154,4 +154,48 @@
 // Rules
 #[start]
 module ::=
+    primary_expr,
+;
+
+/// Expression
+primary_expr ::=
+    'this',
+    IDENT,
+    literal,
+    array,
+;
+
+assign_expr ::=
+    primary_expr,
+;
+
+/// Literal
+literal ::=
+    'null',
+    'true',
+    'false',
+    NUMBER,
+    STRING,
+    REGEXP,
+;
+
+/// Array literal
+array ::=
+    '[' ']',
+    '[' array_elision ']',
+    '[' array_element_list ']',
+    '[' array_element_list ',' ']',
+    '[' array_element_list ',' array_elision ']',
+;
+
+array_elision ::=
+    ',',
+    array_elision ',',
+;
+
+array_element_list ::=
+    assign_expr,
+    array_elision assign_expr,
+    array_element_list ',' assign_expr,
+    array_element_list ',' array_elision assign_expr,
 ;

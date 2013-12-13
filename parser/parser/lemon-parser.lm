@@ -25,5 +25,83 @@
 /* Rule 'module' */
 %start_symbol module
 
-module ::= .
+module ::= primary_expr.
+{}
+
+/* Rule 'primary_expr' */
+
+primary_expr ::= THIS.
+{}
+
+primary_expr ::= IDENT.
+{}
+
+primary_expr ::= literal.
+{}
+
+primary_expr ::= array.
+{}
+
+/* Rule 'assign_expr' */
+
+assign_expr ::= primary_expr.
+{}
+
+/* Rule 'literal' */
+
+literal ::= LIT_NULL.
+{}
+
+literal ::= LIT_TRUE.
+{}
+
+literal ::= LIT_FALSE.
+{}
+
+literal ::= NUMBER.
+{}
+
+literal ::= STRING.
+{}
+
+literal ::= REGEXP.
+{}
+
+/* Rule 'array' */
+
+array ::= LBRACKET RBRACKET.
+{}
+
+array ::= LBRACKET array_elision RBRACKET.
+{}
+
+array ::= LBRACKET array_element_list RBRACKET.
+{}
+
+array ::= LBRACKET array_element_list COMMA RBRACKET.
+{}
+
+array ::= LBRACKET array_element_list COMMA array_elision RBRACKET.
+{}
+
+/* Rule 'array_elision' */
+
+array_elision ::= COMMA.
+{}
+
+array_elision ::= array_elision COMMA.
+{}
+
+/* Rule 'array_element_list' */
+
+array_element_list ::= assign_expr.
+{}
+
+array_element_list ::= array_elision assign_expr.
+{}
+
+array_element_list ::= array_element_list COMMA assign_expr.
+{}
+
+array_element_list ::= array_element_list COMMA array_elision assign_expr.
 {}

@@ -119,6 +119,21 @@
     // boolean
     LIT_TRUE                =   "true",
     LIT_FALSE               =   "false",
+
+    // undefined
+    LIT_UNDEFINED           =   "undefined",
+
+    // number
+    NUMBER                  =   number,
+
+    // string
+    STRING                  =   string,
+
+    // regexp
+    REGEXP                  =   regexp,
+
+    // ident
+    IDENT                   =   ident,
 )];
 
 // AST

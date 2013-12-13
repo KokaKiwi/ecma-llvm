@@ -44,6 +44,18 @@ Lexer::~Lexer()
 Token *Lexer::consume()
 {
     %%{
+        # Comment
+        single_comment              =   '//' [^\n]* '\n';
+        multi_comment               =   '/*' any* :>> '*/';
+
+        comment                     =   (single_comment | multi_comment);
+
+        # Identifier
+        ident_start                 =   (alpha | '$' | '_');
+        ident_part                  =   (ident_start | digit);
+
+        ident                       =   ident_start ident_part*;
+
         # Number literal
         integer                     =   [0-9]+;
         exponent                    =   ('e'|'E') integer;
@@ -53,9 +65,40 @@ Token *Lexer::consume()
         );
         signed                      =   ('+'|'-')* decimal;
 
-        hex                         =   ('0x'|'0X') [0-9a-fA-F]+;
+        hex_base                    =   [0-9a-fA-F]+;
+        hex                         =   ('0x'|'0X') hex_base;
 
         number                      =   (signed | hex);
+
+        # String literal
+        escape_char                 =   ('"'|'\''|'\\'|ascii - ([0-9]|'x'|'u'));
+        escape_int                  =   integer;
+        escape_hex                  =   'x' hex_base;
+
+        escape                      =   '\\' (escape_char | escape_int | escape_hex);
+
+        double_str_char             =   (any - ('"'|'\\') | escape);
+        single_str_char             =   (any - ('\''|'\\') | escape);
+
+        string                      =   ('"' double_str_char* '"' | '\'' single_str_char* '\'');
+
+        # Regexp
+        regexp_non_term             =   any - ('\n');
+
+        regexp_escape               =   '\\' regexp_non_term;
+
+        regexp_class_char           =   (regexp_non_term - (']'|'\\') | regexp_escape);
+        regexp_class                =   '[' regexp_class_char* ']';
+
+        regexp_body_char            =   (regexp_escape | regexp_class);
+
+        regexp_body_first           =   (regexp_non_term - ('*'|'\\'|'/'|'[') | regexp_body_char);
+        regexp_body_chars           =   (regexp_non_term - ('\\'|'/'|'[') | regexp_body_char);
+        regexp_body                 =   regexp_body_first regexp_body_chars*;
+
+        regexp_flags                =   ident_part+;
+
+        regexp                      =   '/' regexp_body? '/' regexp_flags?;
 
         # Misc symbols
         spaces                      =   (' '|'\t')+;
@@ -65,6 +108,8 @@ Token *Lexer::consume()
             {{ smart_indent(lexer, 12) }}
             spaces                  =>  { type = ECMA_TOKEN(SPACES); fbreak; };
             newline                 =>  { type = ECMA_TOKEN(NEWLINE); fbreak; };
+
+            comment                 =>  { type = ECMA_TOKEN(COMMENT); fbreak; };
 
             any                     =>  { type = ECMA_TOKEN(UNKNOWN); fbreak; };
         *|;
@@ -84,6 +129,25 @@ Token *Lexer::consume()
 
     uint size = m_te - m_ts;
     Token::Position pos = m_pos;
+
+    if (type == ECMA_TOKEN(UNKNOWN))
+    {
+        // TODO: Throw an error here.
+    }
+
+    for (uint i = 0; i < size; i++)
+    {
+        char c = m_ts[i];
+        if (c == '\n')
+        {
+            m_pos.first++;
+            m_pos.second = 1;
+        }
+        else
+        {
+            m_pos.second++;
+        }
+    }
 
     return new Token(type, std::string(m_ts, size), pos);
 }

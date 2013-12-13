@@ -6,9 +6,11 @@
 
 using namespace ecma;
 
-static std::string SOURCE = "\n\
-     \n\
-";
+#include "sample.cpp"
+#define sample_js ___parser_sample_js
+#define sample_js_len ___parser_sample_js_len
+
+static std::string SOURCE = std::string((char *) sample_js, sample_js_len);
 
 int main(int argc, char **argv)
 {

@@ -23,7 +23,7 @@ class GenLexerCommand(BaseCommand):
             s += '# {:s}\n'.format(g_name)
             for (name, token) in g_tokens.items():
                 def output_token(token):
-                    if isinstance(token, (Regex)):
+                    if isinstance(token, (Regex, Ident)):
                         fmt = '{}'
                         token = token[:]
                     else:

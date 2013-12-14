@@ -19,11 +19,19 @@ lemon_generate(ecma_parser_gen "${PROJECT_BUILD_DIR}" ".cpp" parser/lemon-parser
 # Build library
 set(ecma_parser_SOURCES
     lexer.cpp
-    ${ecma_parser_gen_SOURCE}
     lex/token.cpp
+    ${ecma_parser_gen_SOURCE}
+    parser/parser.cpp
+    parser/exception.cpp
 )
 
 add_library(ecma_parser STATIC ${ecma_parser_SOURCES})
 
-add_executable(ecmap main.cpp)
-target_link_libraries(ecmap ecma_parser)
+# Variables
+set(ecma_parser_INCLUDE_DIRS
+    ${PROJECT_BUILD_DIR}
+PARENT_SCOPE)
+
+set(ecma_parser_LIBRARIES
+    ecma_parser
+PARENT_SCOPE)

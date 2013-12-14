@@ -1,19 +1,37 @@
 %token_prefix       ECMA_TOKEN_TYPE_
 %token_type         { lex::Token * }
+%extra_argument     { parser::Parser *parser }
 %name               ecma_parse
 
 %include
 {
     #include <cassert>
-    #include <stdio.h>
+    #include <cstdio>
+    #include <memory>
+    #include <vector>
+    #include <string>
     #include "ecma/lex/token.h"
+    #include "ecma/parser/parser.h"
+    #include "ecma/parser/exception.h"
+
+    #include "ecma/ast/ast.h"
 
     using namespace ecma;
 }
 
-%token_destructor
-{
-    delete $$;
+%syntax_error {
+    std::vector<std::string> expected;
+
+    int n = sizeof(yyTokenName) / sizeof(*yyTokenName);
+    for (int i = 0; i < n; i++)
+    {
+        int a = yy_find_shift_action(yypParser, static_cast<YYCODETYPE>(i));
+        if (a < YY_ERROR_ACTION)
+        {
+            expected.push_back(yyTokenName[i]);
+        }
+    }
+    throw parser::UnexpectedToken(*TOKEN, expected);
 }
 
 {{ tokens }}

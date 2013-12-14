@@ -300,6 +300,14 @@ class GenASTCommand(BaseCommand):
         header_constant = '_'.join(header_constant)
         header_constant = HEADER_CONSTANT.format(name = header_constant.upper())
 
+        includes = [
+            '<stdexcept>',
+        ]
+        for inc in includes:
+            w += '#include {:s}'.format(inc)
+
+        w.writeln()
+
         w += '#ifndef {:s}'.format(header_constant)
         w += '#define {:s}'.format(header_constant)
         w.writeln()

@@ -2,6 +2,7 @@
 #include <utility>
 #include "ecma/lex/lexer.h"
 #include "ecma/lex/token.h"
+#include "ecma/lex/exception.h"
 
 %% machine ecma_lexer;
 %% write data;
@@ -130,9 +131,11 @@ Token *Lexer::consume()
     uint size = m_te - m_ts;
     Token::Position pos = m_pos;
 
+    std::string token(m_ts, size);
+
     if (type == ECMA_TOKEN(UNKNOWN))
     {
-        // TODO: Throw an error here.
+        throw UnknownTokenException(token);
     }
 
     for (uint i = 0; i < size; i++)
@@ -149,5 +152,5 @@ Token *Lexer::consume()
         }
     }
 
-    return new Token(type, std::string(m_ts, size), pos);
+    return new Token(type, token, pos);
 }

@@ -69,4 +69,14 @@ include_directories(${PROJECT_BUILD_DIR}/include)
 
 ## Parser
 add_subdirectory(parser)
-# list(APPEND ecma_LIBRARIES)
+include_directories(${ecma_parser_INCLUDE_DIRS})
+list(APPEND ecma_LIBRARIES ${ecma_parser_LIBRARIES})
+
+## Utils
+add_subdirectory(utils)
+list(APPEND ecma_LIBRARIES ${ecma_utils_LIBRARIES})
+
+# Binaries
+## Parser
+add_executable(ecmap parser/main.cpp)
+target_link_libraries(ecmap ${ecma_LIBRARIES})

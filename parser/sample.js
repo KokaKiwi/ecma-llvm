@@ -1,1 +1,1 @@
-var r = /[a-z]+/i;
+var toto = 25;

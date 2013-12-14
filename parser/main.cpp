@@ -2,7 +2,9 @@
 #include <string>
 #include <iostream>
 #include "ecma/lex/lexer.h"
-#include "ecma/lex/token.h"
+#include "ecma/parser/parser.h"
+#include "ecma/parser/exception.h"
+#include "ecma/utils/messages.h"
 
 using namespace ecma;
 
@@ -15,17 +17,21 @@ static std::string SOURCE = std::string((char *) sample_js, sample_js_len);
 int main(int argc, char **argv)
 {
     lex::Lexer lexer(SOURCE);
-    lex::Token *token = nullptr;
+    parser::Parser parser;
 
-    do
+    utils::Messages::SetSourceName("sample.js");
+    utils::Messages::SetSource(SOURCE);
+
+    try
     {
-        delete token;
-
-        token = lexer.consume();
-        std::cout << *token << std::endl;
+        parser.parse(lexer);
     }
-    while (token->type() != lex::Token::Type::END);
-    delete token;
+    catch (parser::UnexpectedToken &e)
+    {
+        e.printMessage();
+    }
+
+    utils::Messages::Summary();
 
     return EXIT_SUCCESS;
 }

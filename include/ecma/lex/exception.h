@@ -12,8 +12,11 @@ namespace ecma
         class UnknownTokenException: public std::exception
         {
         public:
-            inline UnknownTokenException(const std::string &token)
+            typedef std::pair<uint, uint> Position;
+
+            inline UnknownTokenException(const std::string &token, const Position &pos)
                 : m_token(token)
+                , m_pos(pos)
             {}
 
             inline const std::string &token() const
@@ -21,8 +24,16 @@ namespace ecma
                 return m_token;
             }
 
+            inline const Position &pos() const
+            {
+                return m_pos;
+            }
+
+            void printMessage();
+
         private:
             std::string m_token;
+            Position m_pos;
         };
     }
 }

@@ -2,6 +2,7 @@
 #include <string>
 #include <iostream>
 #include "ecma/lex/lexer.h"
+#include "ecma/lex/exception.h"
 #include "ecma/parser/parser.h"
 #include "ecma/parser/exception.h"
 #include "ecma/utils/messages.h"
@@ -27,6 +28,10 @@ int main(int argc, char **argv)
         parser.parse(lexer);
     }
     catch (parser::UnexpectedToken &e)
+    {
+        e.printMessage();
+    }
+    catch (lex::UnknownTokenException &e)
     {
         e.printMessage();
     }

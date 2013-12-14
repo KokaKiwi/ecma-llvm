@@ -242,7 +242,7 @@ Token *Lexer::consume()
 
     if (type == ECMA_TOKEN(UNKNOWN))
     {
-        throw UnknownTokenException(token);
+        throw UnknownTokenException(token, pos);
     }
 
     for (uint i = 0; i < size; i++)

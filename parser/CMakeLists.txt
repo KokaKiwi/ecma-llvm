@@ -20,6 +20,7 @@ lemon_generate(ecma_parser_gen "${PROJECT_BUILD_DIR}" ".cpp" parser/lemon-parser
 set(ecma_parser_SOURCES
     lexer.cpp
     lex/token.cpp
+    lex/exception.cpp
     ${ecma_parser_gen_SOURCE}
     parser/parser.cpp
     parser/exception.cpp

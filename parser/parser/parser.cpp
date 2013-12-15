@@ -1,3 +1,5 @@
+#include <cstdlib>
+#include <cstdio>
 #include <memory>
 #include <vector>
 #include <algorithm>
@@ -29,6 +31,11 @@ void Parser::parse(lex::Lexer &lexer)
         ECMA_TOKEN(NEWLINE),
         ECMA_TOKEN(COMMENT),
     };
+
+    if (m_debug)
+    {
+        ecma_parseTrace(stderr, (char *)"[ecma-llvm] ");
+    }
 
     while (true)
     {

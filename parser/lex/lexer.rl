@@ -127,7 +127,9 @@ Token *Lexer::consume()
             "void"                  =>  { type = ECMA_TOKEN(VOID); fbreak; };
             "with"                  =>  { type = ECMA_TOKEN(WITH); fbreak; };
             "for"                   =>  { type = ECMA_TOKEN(FOR); fbreak; };
+            "get"                   =>  { type = ECMA_TOKEN(GET); fbreak; };
             "new"                   =>  { type = ECMA_TOKEN(NEW); fbreak; };
+            "set"                   =>  { type = ECMA_TOKEN(SET); fbreak; };
             "try"                   =>  { type = ECMA_TOKEN(TRY); fbreak; };
             "var"                   =>  { type = ECMA_TOKEN(VAR); fbreak; };
             "do"                    =>  { type = ECMA_TOKEN(DO); fbreak; };

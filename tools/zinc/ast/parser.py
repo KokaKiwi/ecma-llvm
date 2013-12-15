@@ -87,15 +87,34 @@ def p_rule_values_empty(p):
 # Rule value
 def p_rule_value(p):
     '''
-        rule_value : rule_items FAT_ARROW rule_mapping
+        rule_value : value_attrs rule_items FAT_ARROW rule_mapping
     '''
-    p[0] = RuleValue(items = p[1], mapping = p[3])
+    p[0] = RuleValue(items = p[2], mapping = p[4], attrs = p[1])
 
 def p_rule_value_no_mapping(p):
     '''
-        rule_value : rule_items ','
+        rule_value : value_attrs rule_items ','
     '''
-    p[0] = RuleValue(items = p[1])
+    p[0] = RuleValue(items = p[2], attrs = p[1])
+
+def p_rule_value_empty(p):
+    '''
+        rule_value : value_attrs ','
+    '''
+    p[0] = RuleValue(attrs = p[1])
+
+# Rule value attributes
+def p_value_attrs(p):
+    '''
+        value_attrs : '[' list_items ']'
+    '''
+    p[0] = p[2]
+
+def p_value_attrs_none(p):
+    '''
+        value_attrs :
+    '''
+    p[0] = []
 
 # Rule items
 def p_rule_items(p):
@@ -113,15 +132,28 @@ def p_rule_items_single(p):
 # Rule item
 def p_rule_item_ident(p):
     '''
-        rule_item : IDENT
+        rule_item : IDENT item_attrs
     '''
-    p[0] = Ident(p[1])
+    p[0] = ASTItem(Ident(p[1]), attrs = p[2])
 
 def p_rule_item_string(p):
     '''
-        rule_item : STRING
+        rule_item : STRING item_attrs
     '''
-    p[0] = p[1]
+    p[0] = ASTItem(p[1], attrs = p[2])
+
+# Rule item attributes
+def p_item_attrs(p):
+    '''
+        item_attrs : '(' list_items ')'
+    '''
+    p[0] = p[2]
+
+def p_item_attrs_none(p):
+    '''
+        item_attrs :
+    '''
+    p[0] = []
 
 # Rule mapping
 def p_rule_mapping(p):

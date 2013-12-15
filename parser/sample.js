@@ -1,1 +1,9 @@
-var toto = 25;
+
+var hello = /[a-z]+/i;
+hello.render();
+
+var toto = function() {
+    return hello;
+};
+
+toto();

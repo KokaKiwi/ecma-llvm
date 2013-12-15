@@ -28,7 +28,7 @@ t_IDENT             = r'[\-_\w]+'
 t_ASSIGN            = r'::='
 t_FAT_ARROW         = r'=>'
 
-t_ignore            = ' \t\n'
+t_ignore            = ' \t'
 t_ignore_COMMENT    = '//[^\n]*\n'
 
 t_raw_ignore        = t_ignore

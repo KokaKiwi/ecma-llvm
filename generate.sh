@@ -53,9 +53,3 @@ AST_NAMESPACE="ecma::ast"
 rm -rf ${AST_INCLUDE_DIR}
 mkdir -p ${AST_INCLUDE_DIR}
 zinc gen_ast --namespace ${AST_NAMESPACE} ${AST_INCLUDE_DIR}
-
-# Dev
-echo "Generate sample data file..."
-DATA_SRC="${PARSER_DIR}/sample.js"
-DATA_DST="${PARSER_DIR}/sample.cpp"
-xxd -i ${DATA_SRC} > ${DATA_DST}

@@ -1,3 +1,5 @@
+import copy
+
 # Value
 class Named(object):
     def __init__(self, name, value = None):
@@ -79,6 +81,14 @@ class AST(Node):
 
         super().__init__(attrs)
 
+    def get_def(self, name):
+        for d in self.defs:
+            rule = d.rule
+            if rule.name == name:
+                return d
+
+        return None
+
     def __str__(self):
         s = ''
 
@@ -120,17 +130,24 @@ class Rule(object):
 
         return s
 
-class RuleValue(object):
-    def __init__(self, items = [], mapping = None):
+class RuleValue(Node):
+    def __init__(self, items = [], attrs = [], mapping = None):
+        super().__init__(attrs)
         self.items = items
         self.mapping = mapping
 
     def __str__(self):
         s = ''
 
+        s += '[%s]' % (', '.join(map(str, self.attrs)))
         s += ' '.join(map(str, self.items))
 
         if self.mapping is not None:
             s += ' => %s' % (self.mapping)
 
         return s
+
+class ASTItem(Node):
+    def __init__(self, value, attrs = []):
+        super().__init__(attrs)
+        self.value = value

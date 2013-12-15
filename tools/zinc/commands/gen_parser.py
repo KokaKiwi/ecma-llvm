@@ -25,7 +25,25 @@ class GenParserCommand(BaseCommand):
 
         for (g_name, g_tokens) in lexer.tokens.items():
             tokens = list(g_tokens.keys())
-            s += '%left {:s}.\n'.format(' '.join(tokens))
+            left = []
+            right = []
+
+            for token in tokens:
+                if token in lexer.prec.keys():
+                    prec = lexer.prec[token]
+                    if prec == 'left':
+                        left.append(token)
+                    elif prec == 'right':
+                        right.append(token)
+                else:
+                    left.append(token)
+
+            if len(left) > 0:
+                s += '%left {:s}.\n'.format(' '.join(left))
+
+            if len(right) > 0:
+                s += '%right {:s}.\n'.format(' '.join(right))
+
 
         return s
 
@@ -51,7 +69,7 @@ class GenParserCommand(BaseCommand):
                 if m is not None:
                     s += '({:s})'.format(m)
 
-                s += ' ::= {:s}.\n'.format(' '.join(map(str, value.items)))
+                s += ' ::= {:s}.\n'.format(' '.join(map(lambda item: str(item.item.value), value.items)))
                 s += '{{{:s}}}\n'.format(value.mapping)
 
         return s

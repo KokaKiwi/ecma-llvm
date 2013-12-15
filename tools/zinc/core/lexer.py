@@ -11,6 +11,7 @@ class Lexer(object):
         self.tokens = OrderedDict()
 
         self.prepare_ast()
+        self.prepare_prec()
 
         self.sort_tokens()
 
@@ -32,6 +33,15 @@ class Lexer(object):
                 self.tokens[name] = OrderedDict()
 
             self.tokens[name].update(tokens)
+
+    def prepare_prec(self):
+        self.prec = OrderedDict()
+
+        precs = self.ast.attr('prec', raw = True)
+        for prec in precs:
+            for param in prec.params:
+                if isinstance(param, (Named)):
+                    self.prec[param.name] = param.value
 
     def sort_tokens(self):
         sorted_tokens = OrderedDict()

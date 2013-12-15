@@ -24,6 +24,7 @@ set(ecma_parser_SOURCES
     ${ecma_parser_gen_SOURCE}
     parser/parser.cpp
     parser/exception.cpp
+    toolchain/source.cpp
 )
 
 add_library(ecma_parser STATIC ${ecma_parser_SOURCES})

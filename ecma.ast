@@ -12,11 +12,13 @@
     FINALLY                 =   "finally",
     FOR                     =   "for",
     FUNCTION                =   "function",
+    GET                     =   "get",
     IF                      =   "if",
     IN                      =   "in",
     INSTANCEOF              =   "instanceof",
     NEW                     =   "new",
     RETURN                  =   "return",
+    SET                     =   "set",
     SWITCH                  =   "switch",
     THIS                    =   "this",
     THROW                   =   "throw",
@@ -136,6 +138,11 @@
     IDENT                   =   ident,
 )];
 
+#[prec(
+    IF                      =   right,
+    ELSE                    =   right,
+)];
+
 // AST
 #[ast(
     name = 'Node',
@@ -154,7 +161,226 @@
 // Rules
 #[start]
 module ::=
-    primary_expr,
+    ,
+    source_elements,
+;
+
+ident_name ::=
+    IDENT,
+;
+
+/// Function
+function_decl ::=
+    'function' IDENT '(' ')' '{' function_body '}',
+    'function' IDENT '(' formal_params ')' '{' function_body '}',
+;
+
+function_expr ::=
+    'function' IDENT '(' ')' '{' function_body '}',
+    'function' IDENT '(' formal_params ')' '{' function_body '}',
+    'function' '(' ')' '{' function_body '}',
+    'function' '(' formal_params ')' '{' function_body '}',
+;
+
+formal_params ::=
+    IDENT,
+    formal_params ',' IDENT,
+;
+
+function_body ::=
+    ,
+    source_elements,
+;
+
+source_elements ::=
+    source_element,
+    source_elements source_element,
+;
+
+source_element ::=
+    stmt,
+    function_decl,
+;
+
+/// Statement
+stmt ::=
+    block,
+    var_stmt,
+    empty_stmt,
+    expr_stmt,
+    if_stmt,
+    iter_stmt,
+    cont_stmt,
+    break_stmt,
+    return_stmt,
+    with_stmt,
+    switch_stmt,
+    label_stmt,
+    throw_stmt,
+    try_stmt,
+    debug_stmt,
+;
+
+#[unused]
+open_stmt ::=
+    stmt,
+    block_empty,
+;
+
+block ::=
+    '{' stmt_list '}',
+;
+
+block_empty ::=
+    '{' '}',
+;
+
+block_stmt ::=
+    block,
+    block_empty,
+;
+
+stmt_list ::=
+    stmt,
+    stmt_list stmt,
+;
+
+var_stmt ::=
+    'var' var_decls ';',
+;
+
+var_decls ::=
+    var_decl,
+    var_decls ',' var_decl,
+;
+
+var_decls_no_in ::=
+    var_decl_no_in,
+    var_decls_no_in ',' var_decl_no_in,
+;
+
+var_decl ::=
+    IDENT,
+    IDENT init,
+;
+
+var_decl_no_in ::=
+    IDENT,
+    IDENT init_no_in,
+;
+
+init ::=
+    '=' assign_expr,
+;
+
+init_no_in ::=
+    '=' assign_expr_no_in,
+;
+
+empty_stmt ::=
+    ';',
+;
+
+expr_stmt ::=
+    expr_no_fn ';',
+;
+
+if_stmt ::=
+    'if' '(' expr ')' stmt,
+    'if' '(' expr ')' stmt 'else' stmt,
+;
+
+iter_stmt ::=
+    'do' stmt 'while' '(' expr ')',
+    'while' '(' expr ')' stmt,
+    'for' '(' for_init ';' for_cond ';' for_loop ')' stmt,
+    'for' '(' 'var' var_decls_no_in ';' for_cond ';' for_loop ')' stmt,
+    'for' '(' left_hand_expr 'in' expr ')' stmt,
+    'for' '(' 'var' var_decl_no_in 'in' expr ')' stmt,
+;
+
+for_init ::=
+    ,
+    expr_no_in,
+;
+
+for_cond ::=
+    ,
+    expr,
+;
+
+for_loop ::=
+    ,
+    expr,
+;
+
+cont_stmt ::=
+    'continue' ';',
+    'continue' IDENT ';',
+;
+
+break_stmt ::=
+    'break' ';',
+    'break' IDENT ';',
+;
+
+return_stmt ::=
+    'return' ';',
+    'return' expr ';',
+;
+
+with_stmt ::=
+    'with' '(' expr ')' stmt,
+;
+
+switch_stmt ::=
+    'switch' '(' expr ')' case_block,
+;
+
+case_block ::=
+    '{' '}',
+    '{' case_clauses '}',
+;
+
+case_clauses ::=
+    case_clause,
+    case_clauses case_clause,
+;
+
+case_clause ::=
+    case_key ':',
+    case_key ':' stmt_list,
+;
+
+case_key ::=
+    'case' expr,
+    'default',
+;
+
+label_stmt ::=
+    IDENT ':' stmt,
+;
+
+throw_stmt ::=
+    'throw' expr ';',
+;
+
+try_stmt ::=
+    'try' block_stmt catch,
+    'try' block_stmt finally,
+    'try' block_stmt catch finally,
+;
+
+catch ::=
+    'catch' '(' IDENT ')' block_stmt,
+;
+
+finally ::=
+    'finally' block_stmt,
+;
+
+debug_stmt ::=
+    'debugger' ';',
 ;
 
 /// Expression
@@ -163,15 +389,151 @@ primary_expr ::=
     IDENT,
     literal,
     array,
+    object,
+    '(' expr ')',
+;
+
+member_expr ::=
+    primary_expr,
+    [variant = '{}_no_fn'] function_expr,
+    member_expr(variants = ['{}_no_fn']) '[' expr ']',
+    member_expr(variants = ['{}_no_fn']) '.' ident_name,
+    'new' member_expr arguments,
+;
+
+new_expr ::=
+    member_expr(variants = ['{}_no_fn']),
+    'new' new_expr,
+;
+
+call_expr ::=
+    member_expr(variants = ['{}_no_fn']) arguments,
+    call_expr(variants = ['{}_no_fn']) arguments,
+    call_expr(variants = ['{}_no_fn']) '[' expr ']',
+    call_expr(variants = ['{}_no_fn']) '.' ident_name,
+;
+
+left_hand_expr ::=
+    new_expr(variants = ['{}_no_fn']),
+    call_expr(variants = ['{}_no_fn']),
+;
+
+postfix_expr ::=
+    left_hand_expr(variants = ['{}_no_fn']),
+    left_hand_expr(variants = ['{}_no_fn']) '++',
+    left_hand_expr(variants = ['{}_no_fn']) '--',
+;
+
+unary_expr ::=
+    postfix_expr(variants = ['{}_no_fn']),
+    'delete' unary_expr,
+    'void' unary_expr,
+    'typeof' unary_expr,
+    '++' unary_expr,
+    '--' unary_expr,
+    '+' unary_expr,
+    '-' unary_expr,
+    '~' unary_expr,
+    '!' unary_expr,
+;
+
+mul_expr ::=
+    unary_expr(variants = ['{}_no_fn']),
+    mul_expr(variants = ['{}_no_fn']) '*' unary_expr,
+    mul_expr(variants = ['{}_no_fn']) '/' unary_expr,
+    mul_expr(variants = ['{}_no_fn']) '%' unary_expr,
+;
+
+add_expr ::=
+    mul_expr(variants = ['{}_no_fn']),
+    add_expr(variants = ['{}_no_fn']) '+' mul_expr,
+    add_expr(variants = ['{}_no_fn']) '-' mul_expr,
+;
+
+shift_expr ::=
+    add_expr(variants = ['{}_no_fn']),
+    shift_expr(variants = ['{}_no_fn']) '<<' add_expr,
+    shift_expr(variants = ['{}_no_fn']) '>>' add_expr,
+    shift_expr(variants = ['{}_no_fn']) '>>>' add_expr,
+;
+
+rel_expr ::=
+    shift_expr(variants = ['{}_no_fn']),
+    rel_expr(variants = ['{}_no_fn', '{}_no_in']) '<' shift_expr,
+    rel_expr(variants = ['{}_no_fn', '{}_no_in']) '>' shift_expr,
+    rel_expr(variants = ['{}_no_fn', '{}_no_in']) '<=' shift_expr,
+    rel_expr(variants = ['{}_no_fn', '{}_no_in']) '>=' shift_expr,
+    rel_expr(variants = ['{}_no_fn', '{}_no_in']) 'instanceof' shift_expr,
+    [variant = '{}_no_in'] rel_expr(variants = ['{}_no_fn']) 'in' shift_expr,
+;
+
+eq_expr ::=
+    rel_expr(variants = ['{}_no_fn', '{}_no_in']),
+    eq_expr(variants = ['{}_no_fn', '{}_no_in']) '==' rel_expr(variants = ['{}_no_in']),
+    eq_expr(variants = ['{}_no_fn', '{}_no_in']) '!=' rel_expr(variants = ['{}_no_in']),
+    eq_expr(variants = ['{}_no_fn', '{}_no_in']) '===' rel_expr(variants = ['{}_no_in']),
+    eq_expr(variants = ['{}_no_fn', '{}_no_in']) '!==' rel_expr(variants = ['{}_no_in']),
+;
+
+bit_and_expr ::=
+    eq_expr(variants = ['{}_no_fn', '{}_no_in']),
+    bit_and_expr(variants = ['{}_no_fn', '{}_no_in']) '&' eq_expr(variants = ['{}_no_in']),
+;
+
+bit_xor_expr ::=
+    bit_and_expr(variants = ['{}_no_fn', '{}_no_in']),
+    bit_xor_expr(variants = ['{}_no_fn', '{}_no_in']) '^' bit_and_expr(variants = ['{}_no_in']),
+;
+
+bit_or_expr ::=
+    bit_xor_expr(variants = ['{}_no_fn', '{}_no_in']),
+    bit_or_expr(variants = ['{}_no_fn', '{}_no_in']) '|' bit_xor_expr(variants = ['{}_no_in']),
+;
+
+logic_and_expr ::=
+    bit_or_expr(variants = ['{}_no_fn', '{}_no_in']),
+    logic_and_expr(variants = ['{}_no_fn', '{}_no_in']) '&&' bit_or_expr(variants = ['{}_no_in']),
+;
+
+logic_or_expr ::=
+    logic_and_expr(variants = ['{}_no_fn', '{}_no_in']),
+    logic_or_expr(variants = ['{}_no_fn', '{}_no_in']) '||' logic_and_expr(variants = ['{}_no_in']),
+;
+
+cond_expr ::=
+    logic_or_expr(variants = ['{}_no_fn', '{}_no_in']),
+    logic_or_expr(variants = ['{}_no_fn', '{}_no_in']) '?' assign_expr ':' assign_expr(variants = ['{}_no_in']),
 ;
 
 assign_expr ::=
-    primary_expr,
+    cond_expr(variants = ['{}_no_fn', '{}_no_in']),
+    left_hand_expr(variants = ['{}_no_fn']) assign_op assign_expr(variants = ['{}_no_in']),
+;
+
+assign_op ::=
+    '=',
+    '*=',
+    '/=',
+    '%=',
+    '+=',
+    '-=',
+    '<<=',
+    '>>=',
+    '>>>=',
+    '&=',
+    '^=',
+    '|=',
+;
+
+expr ::=
+    assign_expr(variants = ['{}_no_fn', '{}_no_in']),
+    expr(variants = ['{}_no_fn', '{}_no_in']) ',' assign_expr(variants = ['{}_no_in']),
 ;
 
 /// Literal
 literal ::=
     'null',
+    'undefined',
     'true',
     'false',
     NUMBER,
@@ -198,4 +560,43 @@ array_element_list ::=
     array_elision assign_expr,
     array_element_list ',' assign_expr,
     array_element_list ',' array_elision assign_expr,
+;
+
+/// Object literal
+object ::=
+    '{' '}',
+    '{' object_properties '}',
+    '{' object_properties ',' '}',
+;
+
+object_properties ::=
+    object_property,
+    object_properties ',' object_property,
+;
+
+object_property ::=
+    object_property_name ':' assign_expr,
+    'get' object_property_name '(' ')' '{' function_body '}',
+    'get' object_property_name '(' object_property_set_params ')' '{' function_body '}',
+;
+
+object_property_name ::=
+    ident_name,
+    STRING,
+    NUMBER,
+;
+
+object_property_set_params ::=
+    IDENT,
+;
+
+/// Arguments
+arguments ::=
+    '(' ')',
+    '(' arguments_list ')',
+;
+
+arguments_list ::=
+    assign_expr,
+    arguments_list ',' assign_expr,
 ;

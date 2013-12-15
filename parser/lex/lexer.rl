@@ -75,8 +75,9 @@ Token *Lexer::consume()
         escape_char                 =   ('"'|'\''|'\\'|ascii - ([0-9]|'x'|'u'));
         escape_int                  =   integer;
         escape_hex                  =   'x' hex_base;
+        escape_unicode              =   'u' integer;
 
-        escape                      =   '\\' (escape_char | escape_int | escape_hex);
+        escape                      =   '\\' (escape_char | escape_int | escape_hex | escape_unicode);
 
         double_str_char             =   (any - ('"'|'\\') | escape);
         single_str_char             =   (any - ('\''|'\\') | escape);

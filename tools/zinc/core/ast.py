@@ -33,13 +33,23 @@ class Item(object):
         if ty.list:
             self.node.add_include('<vector>')
             name = 'std::vector<{:s}>'.format(name)
-            force_pointer = True
+            # force_pointer = True
 
         if ty.pointer or (force_pointer and not nowrap):
             self.node.add_include('<memory>')
             name = 'std::unique_ptr<{:s}>'.format(name)
 
         return name
+
+    @property
+    def itype(self):
+        itype = self.rawtype
+        if not isinstance(self.rawtype, (str)):
+            itype = self.rawtype.params[0]
+            if not isinstance(itype, (str)):
+                itype = self.resolve_type(itype)
+
+        return itype
 
     @property
     def varname(self):
@@ -64,12 +74,16 @@ class Node(object):
         if isinstance(inc, (list)):
             for i in inc:
                 self.add_include(i)
-        else:
+        elif inc is not None:
             if inc not in self.includes:
                 self.includes.append(inc)
 
     def prepare(self):
+        self.prepare_includes()
         self.prepare_items()
+
+    def prepare_includes(self):
+        self.add_include(self.attrs.includes)
 
     def prepare_items(self):
         self.items = OrderedDict()

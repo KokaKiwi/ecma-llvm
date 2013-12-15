@@ -7,10 +7,11 @@ namespace ecma
 {
     namespace ast
     {
-        class Statement: public ast::Node
+        class Statement: public Node
         {
             public:
                 inline Statement()
+                    : Node()
                 {}
 
                 inline void accept(tools::Visitor &visitor)

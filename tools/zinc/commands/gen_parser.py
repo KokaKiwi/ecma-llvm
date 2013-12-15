@@ -59,6 +59,8 @@ class GenParserCommand(BaseCommand):
 
             if d.start:
                 s += '%start_symbol {:s}\n'.format(rule.name)
+            if d.type:
+                s += '%type {name:s} {{ {ty:s} }}\n'.format(name = rule.name, ty = d.type)
 
             for value in rule.values:
                 s += '\n'
@@ -69,7 +71,7 @@ class GenParserCommand(BaseCommand):
                 if m is not None:
                     s += '({:s})'.format(m)
 
-                s += ' ::= {:s}.\n'.format(' '.join(map(lambda item: str(item.item.value), value.items)))
+                s += ' ::= {:s}.\n'.format(' '.join(map(lambda item: str(item), value.items)))
                 s += '{{{:s}}}\n'.format(value.mapping)
 
         return s

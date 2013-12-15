@@ -13,6 +13,17 @@ class Mapping(object):
         self.maps = OrderedDict()
 
         self.prepare_value()
+        self.prepare_delete()
+
+    def create_mapping(self, idx):
+        if idx not in self.maps.keys():
+            self.maps[idx] = chr(self.letter)
+
+            if self.mapping is not None:
+                key = '${:d}'.format(idx)
+                self.mapping = self.mapping.replace(key, chr(self.letter))
+
+            self.letter += 1
 
     def prepare_value(self):
         self.letter = ord('A')
@@ -22,14 +33,19 @@ class Mapping(object):
 
             if key in self.mapping:
                 idx = int(key[1:])
-                self.maps[idx] = chr(self.letter)
-                self.mapping = self.mapping.replace(key, chr(self.letter))
-
-                self.letter += 1
+                self.create_mapping(idx)
 
         if self.mapping is not None:
             for i in range(1 + len(self.value.items)):
                 check_key(i)
+
+    def prepare_delete(self):
+        self.delete = []
+        for (i, item) in enumerate(self.value.items):
+            idx = i + 1
+            if not item.item.nt:
+                self.create_mapping(idx)
+                self.delete.append(idx)
 
     def get(self, index):
         if index in self.maps.keys():
@@ -67,6 +83,14 @@ class Mapping(object):
 
         if self.mapping is not None:
             s += self.format()
+        else:
+            s += '\n'
+
+        if len(self.delete) > 0 and self.mapping is not None:
+            s += '\n'
+
+        for i in self.delete:
+            s += ' '*4 + 'delete {:s};\n'.format(self.get(i))
 
         return s
 
@@ -83,7 +107,7 @@ class Item(object):
         return self.item.__getattr__(name)
 
     def __str__(self):
-        s = '{:s}'.format(self.item)
+        s = '{:s}'.format(self.item.value)
 
         m = self.value.mapping.get(self.index + 1)
         if m is not None:
@@ -106,8 +130,12 @@ class Parser(object):
             for value in rule.values:
                 items = []
                 for (i, item) in enumerate(value.items):
+                    item.nt = True
                     if not isinstance(item.value, (Ident)):
                         item.value = Ident(self.lexer.name(item.value))
+                        item.nt = False
+                    if self.ast.raw and str(item.value) in self.ast.raw:
+                        item.nt = False
                     items.append(Item(value, i, item))
 
                 value.items = items

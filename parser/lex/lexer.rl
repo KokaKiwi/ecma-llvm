@@ -1,3 +1,4 @@
+#include <iostream>
 #include <string>
 #include <utility>
 #include "ecma/lex/lexer.h"
@@ -209,13 +210,14 @@ Token *Lexer::consume()
 
             # literal
             "undefined"             =>  { type = ECMA_TOKEN(LIT_UNDEFINED); fbreak; };
-            number                  =>  { type = ECMA_TOKEN(NUMBER); fbreak; };
-            string                  =>  { type = ECMA_TOKEN(STRING); fbreak; };
-            regexp                  =>  { type = ECMA_TOKEN(REGEXP); fbreak; };
             "false"                 =>  { type = ECMA_TOKEN(LIT_FALSE); fbreak; };
-            ident                   =>  { type = ECMA_TOKEN(IDENT); fbreak; };
             "null"                  =>  { type = ECMA_TOKEN(LIT_NULL); fbreak; };
             "true"                  =>  { type = ECMA_TOKEN(LIT_TRUE); fbreak; };
+
+            regexp                  =>  { type = ECMA_TOKEN(REGEXP); fbreak; };
+            string                  =>  { type = ECMA_TOKEN(STRING); fbreak; };
+            number                  =>  { type = ECMA_TOKEN(NUMBER); fbreak; };
+            ident                   =>  { type = ECMA_TOKEN(IDENT); fbreak; };
 
             spaces                  =>  { type = ECMA_TOKEN(SPACES); fbreak; };
             newline                 =>  { type = ECMA_TOKEN(NEWLINE); fbreak; };
@@ -241,11 +243,11 @@ Token *Lexer::consume()
     uint size = m_te - m_ts;
     Token::Position pos = m_pos;
 
-    std::string token(m_ts, size);
+    std::string str(m_ts, size);
 
     if (type == ECMA_TOKEN(UNKNOWN))
     {
-        throw UnknownTokenException(token, pos);
+        throw UnknownTokenException(str, pos);
     }
 
     for (uint i = 0; i < size; i++)
@@ -262,5 +264,6 @@ Token *Lexer::consume()
         }
     }
 
-    return new Token(type, token, pos);
+    Token *token = new Token(type, str, pos);
+    return token;
 }

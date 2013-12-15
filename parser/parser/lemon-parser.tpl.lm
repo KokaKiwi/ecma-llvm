@@ -17,6 +17,7 @@
     #include "ecma/ast/ast.h"
 
     using namespace ecma;
+    using namespace ecma::ast;
 }
 
 %syntax_error {
@@ -31,8 +32,9 @@
             expected.push_back(yyTokenName[i]);
         }
     }
-    throw parser::UnexpectedToken(*TOKEN, expected);
+    throw parser::UnexpectedToken(TOKEN, expected);
 }
 
+%left REGEXP STRING NUMBER IDENT.
 {{ tokens }}
 {{ rules }}

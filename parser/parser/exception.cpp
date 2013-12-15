@@ -9,7 +9,7 @@ void UnexpectedToken::printMessage()
 {
     std::ostringstream ss;
 
-    ss << "Unexpected token: " << m_token.toString();
+    ss << "Unexpected token: " << m_token->toString();
 
     if (!m_expected.empty())
     {
@@ -37,6 +37,6 @@ void UnexpectedToken::printMessage()
         ss << ")";
     }
 
-    uint length = m_token.text().length();
-    utils::Messages::ReportError(ss.str(), m_token.pos(), length > 0 ? length - 1 : 0);
+    uint length = m_token->text().length();
+    utils::Messages::ReportError(ss.str(), m_token->pos(), length > 0 ? length - 1 : 0);
 }

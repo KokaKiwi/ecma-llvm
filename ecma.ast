@@ -124,18 +124,6 @@
 
     // undefined
     LIT_UNDEFINED           =   "undefined",
-
-    // number
-    NUMBER                  =   number,
-
-    // string
-    STRING                  =   string,
-
-    // regexp
-    REGEXP                  =   regexp,
-
-    // ident
-    IDENT                   =   ident,
 )];
 
 #[prec(
@@ -143,19 +131,25 @@
     ELSE                    =   right,
 )];
 
+#[raw = ['REGEXP', 'STRING', 'NUMBER', 'IDENT']];
+
 // AST
 #[ast(
     name = 'Node',
+    parent = 'utils::Element',
+    includes = [
+        '"ecma/utils/element.h"',
+    ],
 )];
 
 #[ast(
     name = 'Expression',
-    parent = 'ast::Node',
+    parent = 'Node',
 )];
 
 #[ast(
     name = 'Statement',
-    parent = 'ast::Node',
+    parent = 'Node',
 )];
 
 // Rules
@@ -163,10 +157,6 @@
 module ::=
     ,
     source_elements,
-;
-
-ident_name ::=
-    IDENT,
 ;
 
 /// Function
@@ -215,7 +205,7 @@ stmt ::=
     return_stmt,
     with_stmt,
     switch_stmt,
-    label_stmt,
+    // label_stmt,
     throw_stmt,
     try_stmt,
     debug_stmt,
@@ -357,6 +347,7 @@ case_key ::=
     'default',
 ;
 
+#[unused]
 label_stmt ::=
     IDENT ':' stmt,
 ;
@@ -397,7 +388,7 @@ member_expr ::=
     primary_expr,
     [variant = '{}_no_fn'] function_expr,
     member_expr(variants = ['{}_no_fn']) '[' expr ']',
-    member_expr(variants = ['{}_no_fn']) '.' ident_name,
+    member_expr(variants = ['{}_no_fn']) '.' IDENT,
     'new' member_expr arguments,
 ;
 
@@ -410,7 +401,7 @@ call_expr ::=
     member_expr(variants = ['{}_no_fn']) arguments,
     call_expr(variants = ['{}_no_fn']) arguments,
     call_expr(variants = ['{}_no_fn']) '[' expr ']',
-    call_expr(variants = ['{}_no_fn']) '.' ident_name,
+    call_expr(variants = ['{}_no_fn']) '.' IDENT,
 ;
 
 left_hand_expr ::=
@@ -531,17 +522,113 @@ expr ::=
 ;
 
 /// Literal
+#[ast(
+    name = 'Null',
+    namespace = 'expr::literal',
+    parent = 'Expression',
+)];
+#[ast(
+    name = 'Undefined',
+    namespace = 'expr::literal',
+    parent = 'Expression',
+)];
+#[ast(
+    name = 'Boolean',
+    namespace = 'expr::literal',
+    parent = 'Expression',
+    constructor = ['value'],
+    items = [
+        item('value', type = 'bool'),
+    ],
+)];
+#[ast(
+    name = 'Number',
+    namespace = 'expr::literal',
+    parent = 'Expression',
+    constructor = ['value'],
+    items = [
+        item('value', type = 'std::string'),
+    ],
+    includes = [
+        '<string>',
+    ],
+)];
+#[ast(
+    name = 'String',
+    namespace = 'expr::literal',
+    parent = 'Expression',
+    constructor = ['value'],
+    items = [
+        item('value', type = 'std::string'),
+    ],
+    includes = [
+        '<string>',
+    ],
+)];
+#[ast(
+    name = 'Regexp',
+    namespace = 'expr::literal',
+    parent = 'Expression',
+    constructor = ['value'],
+    items = [
+        item('value', type = 'std::string'),
+    ],
+    includes = [
+        '<string>',
+    ],
+)];
+
+#[type = 'Expression *']
 literal ::=
-    'null',
-    'undefined',
-    'true',
-    'false',
-    NUMBER,
-    STRING,
-    REGEXP,
+    'null' => {
+        $0 = new expr::literal::Null();
+        $0->element($1);
+    }
+    'undefined' => {
+        $0 = new expr::literal::Undefined();
+        $0->element($1);
+    }
+    'true' => {
+        $0 = new expr::literal::Boolean(true);
+        $0->element($1);
+    }
+    'false' => {
+        $0 = new expr::literal::Boolean(false);
+        $0->element($1);
+    }
+    NUMBER => {
+        $0 = new expr::literal::Number($1->text());
+        $0->element($1);
+    }
+    STRING => {
+        $0 = new expr::literal::String($1->text());
+        $0->element($1);
+    }
+    REGEXP => {
+        $0 = new expr::literal::Regexp($1->text());
+        $0->element($1);
+    }
 ;
 
 /// Array literal
+#[ast(
+    name = 'Array',
+    namespace = 'expr',
+    parent = 'Expression',
+    items = [
+        item('elements',
+            type = type(
+                type(
+                    'Expression',
+                    pointer = true,
+                ),
+                list = true,
+            ),
+        ),
+    ],
+)];
+
+#[type = 'expr::Array *']
 array ::=
     '[' ']',
     '[' array_elision ']',
@@ -550,11 +637,13 @@ array ::=
     '[' array_element_list ',' array_elision ']',
 ;
 
+#[type = 'std::vector<std::unique_ptr<Expression>> *']
 array_elision ::=
     ',',
     array_elision ',',
 ;
 
+#[type = 'std::vector<std::unique_ptr<Expression>> *']
 array_element_list ::=
     assign_expr,
     array_elision assign_expr,
@@ -581,7 +670,7 @@ object_property ::=
 ;
 
 object_property_name ::=
-    ident_name,
+    IDENT,
     STRING,
     NUMBER,
 ;

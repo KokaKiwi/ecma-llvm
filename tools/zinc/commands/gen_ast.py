@@ -95,9 +95,38 @@ class NodeGenerator(Writeable):
         self.write_class_accept(w)
 
     def write_class_constructor(self, w):
-        s = 'inline {:s}()'.format(self.node.name)
+        constructor_args = []
 
-        w += s
+        if self.node.constructor:
+            constructor = self.node.constructor
+            for arg in constructor:
+                for (name, item) in self.node.items.items():
+                    if name == arg:
+                        constructor_args.append(item)
+
+        args = []
+        for item in constructor_args:
+            arg = '{ty:s} {name:s}'.format(ty = item.itype, name = item.name)
+            args.append(arg)
+
+        init = []
+
+        for parent in self.node.parents:
+            s = '{name:s}()'.format(name = parent)
+            init.append(s)
+
+        for item in constructor_args:
+            s = '{varname:s}({name:s})'.format(varname = item.varname, name = item.name)
+            init.append(s)
+
+        w += 'inline {:s}({:s})'.format(self.node.name, ', '.join(args))
+
+        for (i, initializer) in enumerate(init):
+            s = ' '*4
+            s += ': ' if i == 0 else ', '
+            s += initializer
+            w += s
+
         w += '{}'
 
     def write_class_methods(self, w):
@@ -150,32 +179,41 @@ class NodeGenerator(Writeable):
         itype = item.resolve_type(item.rawtype, nowrap = True)
 
         # Getter
-        w += 'inline const {type:s} *{name:s}() const'.format(type = itype, name = item.name)
+        w += 'inline const {type:s} &{name:s}() const'.format(type = itype, name = item.name)
         w += '{'
 
         with w.sub_indent() as ww:
-            ww += 'return {name:s}.get();'.format(name = item.varname)
+            ww += 'return {name:s};'.format(name = item.varname)
+
+        w += '}'
+
+        # Getter
+        w += 'inline {type:s} &{name:s}()'.format(type = itype, name = item.name)
+        w += '{'
+
+        with w.sub_indent() as ww:
+            ww += 'return {name:s};'.format(name = item.varname)
 
         w += '}'
 
         # Setter
-        w += 'inline {ntype:s} &{name:s}({type:s} *{name:s})'.format(type = itype, name = item.name, ntype = self.node.name)
-        w += '{'
+        # w += 'inline {ntype:s} &{name:s}({type:s} *{name:s})'.format(type = itype, name = item.name, ntype = self.node.name)
+        # w += '{'
 
-        with w.sub_indent() as ww:
-            ww += '{varname:s}.reset({name:s});'.format(varname = item.varname, name = item.name)
-            ww += 'return *this;'
+        # with w.sub_indent() as ww:
+        #     ww += '{varname:s}.reset({name:s});'.format(varname = item.varname, name = item.name)
+        #     ww += 'return *this;'
 
-        w += '}'
+        # w += '}'
 
         # Taker
-        w += 'inline {type:s} *{name:s}()'.format(type = itype, name = item.name)
-        w += '{'
+        # w += 'inline {type:s} *{name:s}()'.format(type = itype, name = item.name)
+        # w += '{'
 
-        with w.sub_indent() as ww:
-            ww += 'return {name:s}.release();'.format(name = item.varname)
+        # with w.sub_indent() as ww:
+        #     ww += 'return {name:s}.release();'.format(name = item.varname)
 
-        w += '}'
+        # w += '}'
 
     def write_class_method_base(self, w, item):
         # Getter

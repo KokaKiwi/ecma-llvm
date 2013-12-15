@@ -14,12 +14,16 @@ namespace ecma
         class UnexpectedToken: public std::exception
         {
         public:
-            inline UnexpectedToken(lex::Token &token, const std::vector<std::string> &expected)
+            inline UnexpectedToken(lex::Token *token, const std::vector<std::string> &expected)
                 : m_token(token)
                 , m_expected(expected)
             {}
+            inline ~UnexpectedToken() throw()
+            {
+                delete m_token;
+            }
 
-            inline const lex::Token &token() const
+            inline lex::Token *token()
             {
                 return m_token;
             }
@@ -32,7 +36,7 @@ namespace ecma
             void printMessage();
 
         private:
-            lex::Token m_token;
+            lex::Token *m_token;
             std::vector<std::string> m_expected;
         };
     }

@@ -17,6 +17,7 @@
     #include "ecma/ast/ast.h"
 
     using namespace ecma;
+    using namespace ecma::ast;
 }
 
 %syntax_error {
@@ -31,1110 +32,1722 @@
             expected.push_back(yyTokenName[i]);
         }
     }
-    throw parser::UnexpectedToken(*TOKEN, expected);
+    throw parser::UnexpectedToken(TOKEN, expected);
 }
 
+%left REGEXP STRING NUMBER IDENT.
 %left INSTANCEOF CONTINUE DEBUGGER FUNCTION DEFAULT FINALLY DELETE RETURN SWITCH TYPEOF BREAK CATCH THROW WHILE CASE THIS VOID WITH FOR GET NEW SET TRY VAR DO IN.
 %right ELSE IF.
 %left EXTENDS EXPORT IMPORT CLASS CONST SUPER ENUM.
 %left IMPLEMENTS INTERFACE PROTECTED PACKAGE PRIVATE PUBLIC STATIC YIELD LET.
 %left ZERO_RIGHT_SHIFT_ASSIGN STRICT_EQUAL STRICT_NOT_EQUAL ZERO_RIGHT_SHIFT LEFT_SHIFT_ASSIGN RIGHT_SHIFT_ASSIGN LESSER_EQ GREATER_EQ EQUAL NOT_EQUAL INCREMENT DECREMENT LEFT_SHIFT RIGHT_SHIFT LOGIC_AND LOGIC_OR PLUS_ASSIGN MINUS_ASSIGN MUL_ASSIGN MOD_ASSIGN DIV_ASSIGN BITWISE_AND_ASSIGN BITWISE_OR_ASSIGN BITWISE_XOR_ASSIGN LBRACE RBRACE LPAREN RPAREN LBRACKET RBRACKET DOT SEMICOLON COMMA QUESTION COLON LESSER GREATER PLUS MINUS MUL MOD DIV BITWISE_AND BITWISE_OR BITWISE_XOR ASSIGN NOT INV.
-%left LIT_UNDEFINED NUMBER STRING REGEXP LIT_FALSE IDENT LIT_NULL LIT_TRUE.
+%left LIT_UNDEFINED LIT_FALSE LIT_NULL LIT_TRUE.
 
 /* Rule 'module' */
 %start_symbol module
 
 module ::= .
-{}
+{
+}
 
 module ::= source_elements.
-{}
-
-/* Rule 'ident_name' */
-
-ident_name ::= IDENT.
-{}
+{
+}
 
 /* Rule 'function_decl' */
 
-function_decl ::= FUNCTION IDENT LPAREN RPAREN LBRACE function_body RBRACE.
-{}
+function_decl ::= FUNCTION(A) IDENT(B) LPAREN(C) RPAREN(D) LBRACE(E) function_body RBRACE(F).
+{
+    delete A;
+    delete B;
+    delete C;
+    delete D;
+    delete E;
+    delete F;
+}
 
-function_decl ::= FUNCTION IDENT LPAREN formal_params RPAREN LBRACE function_body RBRACE.
-{}
+function_decl ::= FUNCTION(A) IDENT(B) LPAREN(C) formal_params RPAREN(D) LBRACE(E) function_body RBRACE(F).
+{
+    delete A;
+    delete B;
+    delete C;
+    delete D;
+    delete E;
+    delete F;
+}
 
 /* Rule 'function_expr' */
 
-function_expr ::= FUNCTION IDENT LPAREN RPAREN LBRACE function_body RBRACE.
-{}
+function_expr ::= FUNCTION(A) IDENT(B) LPAREN(C) RPAREN(D) LBRACE(E) function_body RBRACE(F).
+{
+    delete A;
+    delete B;
+    delete C;
+    delete D;
+    delete E;
+    delete F;
+}
 
-function_expr ::= FUNCTION IDENT LPAREN formal_params RPAREN LBRACE function_body RBRACE.
-{}
+function_expr ::= FUNCTION(A) IDENT(B) LPAREN(C) formal_params RPAREN(D) LBRACE(E) function_body RBRACE(F).
+{
+    delete A;
+    delete B;
+    delete C;
+    delete D;
+    delete E;
+    delete F;
+}
 
-function_expr ::= FUNCTION LPAREN RPAREN LBRACE function_body RBRACE.
-{}
+function_expr ::= FUNCTION(A) LPAREN(B) RPAREN(C) LBRACE(D) function_body RBRACE(E).
+{
+    delete A;
+    delete B;
+    delete C;
+    delete D;
+    delete E;
+}
 
-function_expr ::= FUNCTION LPAREN formal_params RPAREN LBRACE function_body RBRACE.
-{}
+function_expr ::= FUNCTION(A) LPAREN(B) formal_params RPAREN(C) LBRACE(D) function_body RBRACE(E).
+{
+    delete A;
+    delete B;
+    delete C;
+    delete D;
+    delete E;
+}
 
 /* Rule 'formal_params' */
 
-formal_params ::= IDENT.
-{}
+formal_params ::= IDENT(A).
+{
+    delete A;
+}
 
-formal_params ::= formal_params COMMA IDENT.
-{}
+formal_params ::= formal_params COMMA(A) IDENT(B).
+{
+    delete A;
+    delete B;
+}
 
 /* Rule 'function_body' */
 
 function_body ::= .
-{}
+{
+}
 
 function_body ::= source_elements.
-{}
+{
+}
 
 /* Rule 'source_elements' */
 
 source_elements ::= source_element.
-{}
+{
+}
 
 source_elements ::= source_elements source_element.
-{}
+{
+}
 
 /* Rule 'source_element' */
 
 source_element ::= stmt.
-{}
+{
+}
 
 source_element ::= function_decl.
-{}
+{
+}
 
 /* Rule 'stmt' */
 
 stmt ::= block.
-{}
+{
+}
 
 stmt ::= var_stmt.
-{}
+{
+}
 
 stmt ::= empty_stmt.
-{}
+{
+}
 
 stmt ::= expr_stmt.
-{}
+{
+}
 
 stmt ::= if_stmt.
-{}
+{
+}
 
 stmt ::= iter_stmt.
-{}
+{
+}
 
 stmt ::= cont_stmt.
-{}
+{
+}
 
 stmt ::= break_stmt.
-{}
+{
+}
 
 stmt ::= return_stmt.
-{}
+{
+}
 
 stmt ::= with_stmt.
-{}
+{
+}
 
 stmt ::= switch_stmt.
-{}
-
-stmt ::= label_stmt.
-{}
+{
+}
 
 stmt ::= throw_stmt.
-{}
+{
+}
 
 stmt ::= try_stmt.
-{}
+{
+}
 
 stmt ::= debug_stmt.
-{}
+{
+}
 
 /* Rule 'block' */
 
-block ::= LBRACE stmt_list RBRACE.
-{}
+block ::= LBRACE(A) stmt_list RBRACE(B).
+{
+    delete A;
+    delete B;
+}
 
 /* Rule 'block_empty' */
 
-block_empty ::= LBRACE RBRACE.
-{}
+block_empty ::= LBRACE(A) RBRACE(B).
+{
+    delete A;
+    delete B;
+}
 
 /* Rule 'block_stmt' */
 
 block_stmt ::= block.
-{}
+{
+}
 
 block_stmt ::= block_empty.
-{}
+{
+}
 
 /* Rule 'stmt_list' */
 
 stmt_list ::= stmt.
-{}
+{
+}
 
 stmt_list ::= stmt_list stmt.
-{}
+{
+}
 
 /* Rule 'var_stmt' */
 
-var_stmt ::= VAR var_decls SEMICOLON.
-{}
+var_stmt ::= VAR(A) var_decls SEMICOLON(B).
+{
+    delete A;
+    delete B;
+}
 
 /* Rule 'var_decls' */
 
 var_decls ::= var_decl.
-{}
+{
+}
 
-var_decls ::= var_decls COMMA var_decl.
-{}
+var_decls ::= var_decls COMMA(A) var_decl.
+{
+    delete A;
+}
 
 /* Rule 'var_decls_no_in' */
 
 var_decls_no_in ::= var_decl_no_in.
-{}
+{
+}
 
-var_decls_no_in ::= var_decls_no_in COMMA var_decl_no_in.
-{}
+var_decls_no_in ::= var_decls_no_in COMMA(A) var_decl_no_in.
+{
+    delete A;
+}
 
 /* Rule 'var_decl' */
 
-var_decl ::= IDENT.
-{}
+var_decl ::= IDENT(A).
+{
+    delete A;
+}
 
-var_decl ::= IDENT init.
-{}
+var_decl ::= IDENT(A) init.
+{
+    delete A;
+}
 
 /* Rule 'var_decl_no_in' */
 
-var_decl_no_in ::= IDENT.
-{}
+var_decl_no_in ::= IDENT(A).
+{
+    delete A;
+}
 
-var_decl_no_in ::= IDENT init_no_in.
-{}
+var_decl_no_in ::= IDENT(A) init_no_in.
+{
+    delete A;
+}
 
 /* Rule 'init' */
 
-init ::= ASSIGN assign_expr.
-{}
+init ::= ASSIGN(A) assign_expr.
+{
+    delete A;
+}
 
 /* Rule 'init_no_in' */
 
-init_no_in ::= ASSIGN assign_expr_no_in.
-{}
+init_no_in ::= ASSIGN(A) assign_expr_no_in.
+{
+    delete A;
+}
 
 /* Rule 'empty_stmt' */
 
-empty_stmt ::= SEMICOLON.
-{}
+empty_stmt ::= SEMICOLON(A).
+{
+    delete A;
+}
 
 /* Rule 'expr_stmt' */
 
-expr_stmt ::= expr_no_fn SEMICOLON.
-{}
+expr_stmt ::= expr_no_fn SEMICOLON(A).
+{
+    delete A;
+}
 
 /* Rule 'if_stmt' */
 
-if_stmt ::= IF LPAREN expr RPAREN stmt.
-{}
+if_stmt ::= IF(A) LPAREN(B) expr RPAREN(C) stmt.
+{
+    delete A;
+    delete B;
+    delete C;
+}
 
-if_stmt ::= IF LPAREN expr RPAREN stmt ELSE stmt.
-{}
+if_stmt ::= IF(A) LPAREN(B) expr RPAREN(C) stmt ELSE(D) stmt.
+{
+    delete A;
+    delete B;
+    delete C;
+    delete D;
+}
 
 /* Rule 'iter_stmt' */
 
-iter_stmt ::= DO stmt WHILE LPAREN expr RPAREN.
-{}
+iter_stmt ::= DO(A) stmt WHILE(B) LPAREN(C) expr RPAREN(D).
+{
+    delete A;
+    delete B;
+    delete C;
+    delete D;
+}
 
-iter_stmt ::= WHILE LPAREN expr RPAREN stmt.
-{}
+iter_stmt ::= WHILE(A) LPAREN(B) expr RPAREN(C) stmt.
+{
+    delete A;
+    delete B;
+    delete C;
+}
 
-iter_stmt ::= FOR LPAREN for_init SEMICOLON for_cond SEMICOLON for_loop RPAREN stmt.
-{}
+iter_stmt ::= FOR(A) LPAREN(B) for_init SEMICOLON(C) for_cond SEMICOLON(D) for_loop RPAREN(E) stmt.
+{
+    delete A;
+    delete B;
+    delete C;
+    delete D;
+    delete E;
+}
 
-iter_stmt ::= FOR LPAREN VAR var_decls_no_in SEMICOLON for_cond SEMICOLON for_loop RPAREN stmt.
-{}
+iter_stmt ::= FOR(A) LPAREN(B) VAR(C) var_decls_no_in SEMICOLON(D) for_cond SEMICOLON(E) for_loop RPAREN(F) stmt.
+{
+    delete A;
+    delete B;
+    delete C;
+    delete D;
+    delete E;
+    delete F;
+}
 
-iter_stmt ::= FOR LPAREN left_hand_expr IN expr RPAREN stmt.
-{}
+iter_stmt ::= FOR(A) LPAREN(B) left_hand_expr IN(C) expr RPAREN(D) stmt.
+{
+    delete A;
+    delete B;
+    delete C;
+    delete D;
+}
 
-iter_stmt ::= FOR LPAREN VAR var_decl_no_in IN expr RPAREN stmt.
-{}
+iter_stmt ::= FOR(A) LPAREN(B) VAR(C) var_decl_no_in IN(D) expr RPAREN(E) stmt.
+{
+    delete A;
+    delete B;
+    delete C;
+    delete D;
+    delete E;
+}
 
 /* Rule 'for_init' */
 
 for_init ::= .
-{}
+{
+}
 
 for_init ::= expr_no_in.
-{}
+{
+}
 
 /* Rule 'for_cond' */
 
 for_cond ::= .
-{}
+{
+}
 
 for_cond ::= expr.
-{}
+{
+}
 
 /* Rule 'for_loop' */
 
 for_loop ::= .
-{}
+{
+}
 
 for_loop ::= expr.
-{}
+{
+}
 
 /* Rule 'cont_stmt' */
 
-cont_stmt ::= CONTINUE SEMICOLON.
-{}
+cont_stmt ::= CONTINUE(A) SEMICOLON(B).
+{
+    delete A;
+    delete B;
+}
 
-cont_stmt ::= CONTINUE IDENT SEMICOLON.
-{}
+cont_stmt ::= CONTINUE(A) IDENT(B) SEMICOLON(C).
+{
+    delete A;
+    delete B;
+    delete C;
+}
 
 /* Rule 'break_stmt' */
 
-break_stmt ::= BREAK SEMICOLON.
-{}
+break_stmt ::= BREAK(A) SEMICOLON(B).
+{
+    delete A;
+    delete B;
+}
 
-break_stmt ::= BREAK IDENT SEMICOLON.
-{}
+break_stmt ::= BREAK(A) IDENT(B) SEMICOLON(C).
+{
+    delete A;
+    delete B;
+    delete C;
+}
 
 /* Rule 'return_stmt' */
 
-return_stmt ::= RETURN SEMICOLON.
-{}
+return_stmt ::= RETURN(A) SEMICOLON(B).
+{
+    delete A;
+    delete B;
+}
 
-return_stmt ::= RETURN expr SEMICOLON.
-{}
+return_stmt ::= RETURN(A) expr SEMICOLON(B).
+{
+    delete A;
+    delete B;
+}
 
 /* Rule 'with_stmt' */
 
-with_stmt ::= WITH LPAREN expr RPAREN stmt.
-{}
+with_stmt ::= WITH(A) LPAREN(B) expr RPAREN(C) stmt.
+{
+    delete A;
+    delete B;
+    delete C;
+}
 
 /* Rule 'switch_stmt' */
 
-switch_stmt ::= SWITCH LPAREN expr RPAREN case_block.
-{}
+switch_stmt ::= SWITCH(A) LPAREN(B) expr RPAREN(C) case_block.
+{
+    delete A;
+    delete B;
+    delete C;
+}
 
 /* Rule 'case_block' */
 
-case_block ::= LBRACE RBRACE.
-{}
+case_block ::= LBRACE(A) RBRACE(B).
+{
+    delete A;
+    delete B;
+}
 
-case_block ::= LBRACE case_clauses RBRACE.
-{}
+case_block ::= LBRACE(A) case_clauses RBRACE(B).
+{
+    delete A;
+    delete B;
+}
 
 /* Rule 'case_clauses' */
 
 case_clauses ::= case_clause.
-{}
+{
+}
 
 case_clauses ::= case_clauses case_clause.
-{}
+{
+}
 
 /* Rule 'case_clause' */
 
-case_clause ::= case_key COLON.
-{}
+case_clause ::= case_key COLON(A).
+{
+    delete A;
+}
 
-case_clause ::= case_key COLON stmt_list.
-{}
+case_clause ::= case_key COLON(A) stmt_list.
+{
+    delete A;
+}
 
 /* Rule 'case_key' */
 
-case_key ::= CASE expr.
-{}
+case_key ::= CASE(A) expr.
+{
+    delete A;
+}
 
-case_key ::= DEFAULT.
-{}
-
-/* Rule 'label_stmt' */
-
-label_stmt ::= IDENT COLON stmt.
-{}
+case_key ::= DEFAULT(A).
+{
+    delete A;
+}
 
 /* Rule 'throw_stmt' */
 
-throw_stmt ::= THROW expr SEMICOLON.
-{}
+throw_stmt ::= THROW(A) expr SEMICOLON(B).
+{
+    delete A;
+    delete B;
+}
 
 /* Rule 'try_stmt' */
 
-try_stmt ::= TRY block_stmt catch.
-{}
+try_stmt ::= TRY(A) block_stmt catch.
+{
+    delete A;
+}
 
-try_stmt ::= TRY block_stmt finally.
-{}
+try_stmt ::= TRY(A) block_stmt finally.
+{
+    delete A;
+}
 
-try_stmt ::= TRY block_stmt catch finally.
-{}
+try_stmt ::= TRY(A) block_stmt catch finally.
+{
+    delete A;
+}
 
 /* Rule 'catch' */
 
-catch ::= CATCH LPAREN IDENT RPAREN block_stmt.
-{}
+catch ::= CATCH(A) LPAREN(B) IDENT(C) RPAREN(D) block_stmt.
+{
+    delete A;
+    delete B;
+    delete C;
+    delete D;
+}
 
 /* Rule 'finally' */
 
-finally ::= FINALLY block_stmt.
-{}
+finally ::= FINALLY(A) block_stmt.
+{
+    delete A;
+}
 
 /* Rule 'debug_stmt' */
 
-debug_stmt ::= DEBUGGER SEMICOLON.
-{}
+debug_stmt ::= DEBUGGER(A) SEMICOLON(B).
+{
+    delete A;
+    delete B;
+}
 
 /* Rule 'primary_expr' */
 
-primary_expr ::= THIS.
-{}
+primary_expr ::= THIS(A).
+{
+    delete A;
+}
 
-primary_expr ::= IDENT.
-{}
+primary_expr ::= IDENT(A).
+{
+    delete A;
+}
 
 primary_expr ::= literal.
-{}
+{
+}
 
 primary_expr ::= array.
-{}
+{
+}
 
 primary_expr ::= object.
-{}
+{
+}
 
-primary_expr ::= LPAREN expr RPAREN.
-{}
+primary_expr ::= LPAREN(A) expr RPAREN(B).
+{
+    delete A;
+    delete B;
+}
 
 /* Rule 'member_expr' */
 
 member_expr ::= primary_expr.
-{}
+{
+}
 
 member_expr ::= function_expr.
-{}
+{
+}
 
-member_expr ::= member_expr LBRACKET expr RBRACKET.
-{}
+member_expr ::= member_expr LBRACKET(A) expr RBRACKET(B).
+{
+    delete A;
+    delete B;
+}
 
-member_expr ::= member_expr DOT ident_name.
-{}
+member_expr ::= member_expr DOT(A) IDENT(B).
+{
+    delete A;
+    delete B;
+}
 
-member_expr ::= NEW member_expr arguments.
-{}
+member_expr ::= NEW(A) member_expr arguments.
+{
+    delete A;
+}
 
 /* Rule 'member_expr_no_fn' */
 
 member_expr_no_fn ::= primary_expr.
-{}
+{
+}
 
-member_expr_no_fn ::= member_expr_no_fn LBRACKET expr RBRACKET.
-{}
+member_expr_no_fn ::= member_expr_no_fn LBRACKET(A) expr RBRACKET(B).
+{
+    delete A;
+    delete B;
+}
 
-member_expr_no_fn ::= member_expr_no_fn DOT ident_name.
-{}
+member_expr_no_fn ::= member_expr_no_fn DOT(A) IDENT(B).
+{
+    delete A;
+    delete B;
+}
 
-member_expr_no_fn ::= NEW member_expr arguments.
-{}
+member_expr_no_fn ::= NEW(A) member_expr arguments.
+{
+    delete A;
+}
 
 /* Rule 'new_expr' */
 
 new_expr ::= member_expr.
-{}
+{
+}
 
-new_expr ::= NEW new_expr.
-{}
+new_expr ::= NEW(A) new_expr.
+{
+    delete A;
+}
 
 /* Rule 'new_expr_no_fn' */
 
 new_expr_no_fn ::= member_expr_no_fn.
-{}
+{
+}
 
-new_expr_no_fn ::= NEW new_expr.
-{}
+new_expr_no_fn ::= NEW(A) new_expr.
+{
+    delete A;
+}
 
 /* Rule 'call_expr' */
 
 call_expr ::= member_expr arguments.
-{}
+{
+}
 
 call_expr ::= call_expr arguments.
-{}
+{
+}
 
-call_expr ::= call_expr LBRACKET expr RBRACKET.
-{}
+call_expr ::= call_expr LBRACKET(A) expr RBRACKET(B).
+{
+    delete A;
+    delete B;
+}
 
-call_expr ::= call_expr DOT ident_name.
-{}
+call_expr ::= call_expr DOT(A) IDENT(B).
+{
+    delete A;
+    delete B;
+}
 
 /* Rule 'call_expr_no_fn' */
 
 call_expr_no_fn ::= member_expr_no_fn arguments.
-{}
+{
+}
 
 call_expr_no_fn ::= call_expr_no_fn arguments.
-{}
+{
+}
 
-call_expr_no_fn ::= call_expr_no_fn LBRACKET expr RBRACKET.
-{}
+call_expr_no_fn ::= call_expr_no_fn LBRACKET(A) expr RBRACKET(B).
+{
+    delete A;
+    delete B;
+}
 
-call_expr_no_fn ::= call_expr_no_fn DOT ident_name.
-{}
+call_expr_no_fn ::= call_expr_no_fn DOT(A) IDENT(B).
+{
+    delete A;
+    delete B;
+}
 
 /* Rule 'left_hand_expr' */
 
 left_hand_expr ::= new_expr.
-{}
+{
+}
 
 left_hand_expr ::= call_expr.
-{}
+{
+}
 
 /* Rule 'left_hand_expr_no_fn' */
 
 left_hand_expr_no_fn ::= new_expr_no_fn.
-{}
+{
+}
 
 left_hand_expr_no_fn ::= call_expr_no_fn.
-{}
+{
+}
 
 /* Rule 'postfix_expr' */
 
 postfix_expr ::= left_hand_expr.
-{}
+{
+}
 
-postfix_expr ::= left_hand_expr INCREMENT.
-{}
+postfix_expr ::= left_hand_expr INCREMENT(A).
+{
+    delete A;
+}
 
-postfix_expr ::= left_hand_expr DECREMENT.
-{}
+postfix_expr ::= left_hand_expr DECREMENT(A).
+{
+    delete A;
+}
 
 /* Rule 'postfix_expr_no_fn' */
 
 postfix_expr_no_fn ::= left_hand_expr_no_fn.
-{}
+{
+}
 
-postfix_expr_no_fn ::= left_hand_expr_no_fn INCREMENT.
-{}
+postfix_expr_no_fn ::= left_hand_expr_no_fn INCREMENT(A).
+{
+    delete A;
+}
 
-postfix_expr_no_fn ::= left_hand_expr_no_fn DECREMENT.
-{}
+postfix_expr_no_fn ::= left_hand_expr_no_fn DECREMENT(A).
+{
+    delete A;
+}
 
 /* Rule 'unary_expr' */
 
 unary_expr ::= postfix_expr.
-{}
+{
+}
 
-unary_expr ::= DELETE unary_expr.
-{}
+unary_expr ::= DELETE(A) unary_expr.
+{
+    delete A;
+}
 
-unary_expr ::= VOID unary_expr.
-{}
+unary_expr ::= VOID(A) unary_expr.
+{
+    delete A;
+}
 
-unary_expr ::= TYPEOF unary_expr.
-{}
+unary_expr ::= TYPEOF(A) unary_expr.
+{
+    delete A;
+}
 
-unary_expr ::= INCREMENT unary_expr.
-{}
+unary_expr ::= INCREMENT(A) unary_expr.
+{
+    delete A;
+}
 
-unary_expr ::= DECREMENT unary_expr.
-{}
+unary_expr ::= DECREMENT(A) unary_expr.
+{
+    delete A;
+}
 
-unary_expr ::= PLUS unary_expr.
-{}
+unary_expr ::= PLUS(A) unary_expr.
+{
+    delete A;
+}
 
-unary_expr ::= MINUS unary_expr.
-{}
+unary_expr ::= MINUS(A) unary_expr.
+{
+    delete A;
+}
 
-unary_expr ::= INV unary_expr.
-{}
+unary_expr ::= INV(A) unary_expr.
+{
+    delete A;
+}
 
-unary_expr ::= NOT unary_expr.
-{}
+unary_expr ::= NOT(A) unary_expr.
+{
+    delete A;
+}
 
 /* Rule 'unary_expr_no_fn' */
 
 unary_expr_no_fn ::= postfix_expr_no_fn.
-{}
+{
+}
 
-unary_expr_no_fn ::= DELETE unary_expr.
-{}
+unary_expr_no_fn ::= DELETE(A) unary_expr.
+{
+    delete A;
+}
 
-unary_expr_no_fn ::= VOID unary_expr.
-{}
+unary_expr_no_fn ::= VOID(A) unary_expr.
+{
+    delete A;
+}
 
-unary_expr_no_fn ::= TYPEOF unary_expr.
-{}
+unary_expr_no_fn ::= TYPEOF(A) unary_expr.
+{
+    delete A;
+}
 
-unary_expr_no_fn ::= INCREMENT unary_expr.
-{}
+unary_expr_no_fn ::= INCREMENT(A) unary_expr.
+{
+    delete A;
+}
 
-unary_expr_no_fn ::= DECREMENT unary_expr.
-{}
+unary_expr_no_fn ::= DECREMENT(A) unary_expr.
+{
+    delete A;
+}
 
-unary_expr_no_fn ::= PLUS unary_expr.
-{}
+unary_expr_no_fn ::= PLUS(A) unary_expr.
+{
+    delete A;
+}
 
-unary_expr_no_fn ::= MINUS unary_expr.
-{}
+unary_expr_no_fn ::= MINUS(A) unary_expr.
+{
+    delete A;
+}
 
-unary_expr_no_fn ::= INV unary_expr.
-{}
+unary_expr_no_fn ::= INV(A) unary_expr.
+{
+    delete A;
+}
 
-unary_expr_no_fn ::= NOT unary_expr.
-{}
+unary_expr_no_fn ::= NOT(A) unary_expr.
+{
+    delete A;
+}
 
 /* Rule 'mul_expr' */
 
 mul_expr ::= unary_expr.
-{}
+{
+}
 
-mul_expr ::= mul_expr MUL unary_expr.
-{}
+mul_expr ::= mul_expr MUL(A) unary_expr.
+{
+    delete A;
+}
 
-mul_expr ::= mul_expr DIV unary_expr.
-{}
+mul_expr ::= mul_expr DIV(A) unary_expr.
+{
+    delete A;
+}
 
-mul_expr ::= mul_expr MOD unary_expr.
-{}
+mul_expr ::= mul_expr MOD(A) unary_expr.
+{
+    delete A;
+}
 
 /* Rule 'mul_expr_no_fn' */
 
 mul_expr_no_fn ::= unary_expr_no_fn.
-{}
+{
+}
 
-mul_expr_no_fn ::= mul_expr_no_fn MUL unary_expr.
-{}
+mul_expr_no_fn ::= mul_expr_no_fn MUL(A) unary_expr.
+{
+    delete A;
+}
 
-mul_expr_no_fn ::= mul_expr_no_fn DIV unary_expr.
-{}
+mul_expr_no_fn ::= mul_expr_no_fn DIV(A) unary_expr.
+{
+    delete A;
+}
 
-mul_expr_no_fn ::= mul_expr_no_fn MOD unary_expr.
-{}
+mul_expr_no_fn ::= mul_expr_no_fn MOD(A) unary_expr.
+{
+    delete A;
+}
 
 /* Rule 'add_expr' */
 
 add_expr ::= mul_expr.
-{}
+{
+}
 
-add_expr ::= add_expr PLUS mul_expr.
-{}
+add_expr ::= add_expr PLUS(A) mul_expr.
+{
+    delete A;
+}
 
-add_expr ::= add_expr MINUS mul_expr.
-{}
+add_expr ::= add_expr MINUS(A) mul_expr.
+{
+    delete A;
+}
 
 /* Rule 'add_expr_no_fn' */
 
 add_expr_no_fn ::= mul_expr_no_fn.
-{}
+{
+}
 
-add_expr_no_fn ::= add_expr_no_fn PLUS mul_expr.
-{}
+add_expr_no_fn ::= add_expr_no_fn PLUS(A) mul_expr.
+{
+    delete A;
+}
 
-add_expr_no_fn ::= add_expr_no_fn MINUS mul_expr.
-{}
+add_expr_no_fn ::= add_expr_no_fn MINUS(A) mul_expr.
+{
+    delete A;
+}
 
 /* Rule 'shift_expr' */
 
 shift_expr ::= add_expr.
-{}
+{
+}
 
-shift_expr ::= shift_expr LEFT_SHIFT add_expr.
-{}
+shift_expr ::= shift_expr LEFT_SHIFT(A) add_expr.
+{
+    delete A;
+}
 
-shift_expr ::= shift_expr RIGHT_SHIFT add_expr.
-{}
+shift_expr ::= shift_expr RIGHT_SHIFT(A) add_expr.
+{
+    delete A;
+}
 
-shift_expr ::= shift_expr ZERO_RIGHT_SHIFT add_expr.
-{}
+shift_expr ::= shift_expr ZERO_RIGHT_SHIFT(A) add_expr.
+{
+    delete A;
+}
 
 /* Rule 'shift_expr_no_fn' */
 
 shift_expr_no_fn ::= add_expr_no_fn.
-{}
+{
+}
 
-shift_expr_no_fn ::= shift_expr_no_fn LEFT_SHIFT add_expr.
-{}
+shift_expr_no_fn ::= shift_expr_no_fn LEFT_SHIFT(A) add_expr.
+{
+    delete A;
+}
 
-shift_expr_no_fn ::= shift_expr_no_fn RIGHT_SHIFT add_expr.
-{}
+shift_expr_no_fn ::= shift_expr_no_fn RIGHT_SHIFT(A) add_expr.
+{
+    delete A;
+}
 
-shift_expr_no_fn ::= shift_expr_no_fn ZERO_RIGHT_SHIFT add_expr.
-{}
+shift_expr_no_fn ::= shift_expr_no_fn ZERO_RIGHT_SHIFT(A) add_expr.
+{
+    delete A;
+}
 
 /* Rule 'rel_expr' */
 
 rel_expr ::= shift_expr.
-{}
+{
+}
 
-rel_expr ::= rel_expr LESSER shift_expr.
-{}
+rel_expr ::= rel_expr LESSER(A) shift_expr.
+{
+    delete A;
+}
 
-rel_expr ::= rel_expr GREATER shift_expr.
-{}
+rel_expr ::= rel_expr GREATER(A) shift_expr.
+{
+    delete A;
+}
 
-rel_expr ::= rel_expr LESSER_EQ shift_expr.
-{}
+rel_expr ::= rel_expr LESSER_EQ(A) shift_expr.
+{
+    delete A;
+}
 
-rel_expr ::= rel_expr GREATER_EQ shift_expr.
-{}
+rel_expr ::= rel_expr GREATER_EQ(A) shift_expr.
+{
+    delete A;
+}
 
-rel_expr ::= rel_expr INSTANCEOF shift_expr.
-{}
+rel_expr ::= rel_expr INSTANCEOF(A) shift_expr.
+{
+    delete A;
+}
 
-rel_expr ::= rel_expr IN shift_expr.
-{}
+rel_expr ::= rel_expr IN(A) shift_expr.
+{
+    delete A;
+}
 
 /* Rule 'rel_expr_no_fn' */
 
 rel_expr_no_fn ::= shift_expr_no_fn.
-{}
+{
+}
 
-rel_expr_no_fn ::= rel_expr_no_fn LESSER shift_expr.
-{}
+rel_expr_no_fn ::= rel_expr_no_fn LESSER(A) shift_expr.
+{
+    delete A;
+}
 
-rel_expr_no_fn ::= rel_expr_no_fn GREATER shift_expr.
-{}
+rel_expr_no_fn ::= rel_expr_no_fn GREATER(A) shift_expr.
+{
+    delete A;
+}
 
-rel_expr_no_fn ::= rel_expr_no_fn LESSER_EQ shift_expr.
-{}
+rel_expr_no_fn ::= rel_expr_no_fn LESSER_EQ(A) shift_expr.
+{
+    delete A;
+}
 
-rel_expr_no_fn ::= rel_expr_no_fn GREATER_EQ shift_expr.
-{}
+rel_expr_no_fn ::= rel_expr_no_fn GREATER_EQ(A) shift_expr.
+{
+    delete A;
+}
 
-rel_expr_no_fn ::= rel_expr_no_fn INSTANCEOF shift_expr.
-{}
+rel_expr_no_fn ::= rel_expr_no_fn INSTANCEOF(A) shift_expr.
+{
+    delete A;
+}
 
-rel_expr_no_fn ::= rel_expr_no_fn IN shift_expr.
-{}
+rel_expr_no_fn ::= rel_expr_no_fn IN(A) shift_expr.
+{
+    delete A;
+}
 
 /* Rule 'rel_expr_no_in' */
 
 rel_expr_no_in ::= shift_expr.
-{}
+{
+}
 
-rel_expr_no_in ::= rel_expr_no_in LESSER shift_expr.
-{}
+rel_expr_no_in ::= rel_expr_no_in LESSER(A) shift_expr.
+{
+    delete A;
+}
 
-rel_expr_no_in ::= rel_expr_no_in GREATER shift_expr.
-{}
+rel_expr_no_in ::= rel_expr_no_in GREATER(A) shift_expr.
+{
+    delete A;
+}
 
-rel_expr_no_in ::= rel_expr_no_in LESSER_EQ shift_expr.
-{}
+rel_expr_no_in ::= rel_expr_no_in LESSER_EQ(A) shift_expr.
+{
+    delete A;
+}
 
-rel_expr_no_in ::= rel_expr_no_in GREATER_EQ shift_expr.
-{}
+rel_expr_no_in ::= rel_expr_no_in GREATER_EQ(A) shift_expr.
+{
+    delete A;
+}
 
-rel_expr_no_in ::= rel_expr_no_in INSTANCEOF shift_expr.
-{}
+rel_expr_no_in ::= rel_expr_no_in INSTANCEOF(A) shift_expr.
+{
+    delete A;
+}
 
 /* Rule 'eq_expr' */
 
 eq_expr ::= rel_expr.
-{}
+{
+}
 
-eq_expr ::= eq_expr EQUAL rel_expr.
-{}
+eq_expr ::= eq_expr EQUAL(A) rel_expr.
+{
+    delete A;
+}
 
-eq_expr ::= eq_expr NOT_EQUAL rel_expr.
-{}
+eq_expr ::= eq_expr NOT_EQUAL(A) rel_expr.
+{
+    delete A;
+}
 
-eq_expr ::= eq_expr STRICT_EQUAL rel_expr.
-{}
+eq_expr ::= eq_expr STRICT_EQUAL(A) rel_expr.
+{
+    delete A;
+}
 
-eq_expr ::= eq_expr STRICT_NOT_EQUAL rel_expr.
-{}
+eq_expr ::= eq_expr STRICT_NOT_EQUAL(A) rel_expr.
+{
+    delete A;
+}
 
 /* Rule 'eq_expr_no_fn' */
 
 eq_expr_no_fn ::= rel_expr_no_fn.
-{}
+{
+}
 
-eq_expr_no_fn ::= eq_expr_no_fn EQUAL rel_expr.
-{}
+eq_expr_no_fn ::= eq_expr_no_fn EQUAL(A) rel_expr.
+{
+    delete A;
+}
 
-eq_expr_no_fn ::= eq_expr_no_fn NOT_EQUAL rel_expr.
-{}
+eq_expr_no_fn ::= eq_expr_no_fn NOT_EQUAL(A) rel_expr.
+{
+    delete A;
+}
 
-eq_expr_no_fn ::= eq_expr_no_fn STRICT_EQUAL rel_expr.
-{}
+eq_expr_no_fn ::= eq_expr_no_fn STRICT_EQUAL(A) rel_expr.
+{
+    delete A;
+}
 
-eq_expr_no_fn ::= eq_expr_no_fn STRICT_NOT_EQUAL rel_expr.
-{}
+eq_expr_no_fn ::= eq_expr_no_fn STRICT_NOT_EQUAL(A) rel_expr.
+{
+    delete A;
+}
 
 /* Rule 'eq_expr_no_in' */
 
 eq_expr_no_in ::= rel_expr_no_in.
-{}
+{
+}
 
-eq_expr_no_in ::= eq_expr_no_in EQUAL rel_expr_no_in.
-{}
+eq_expr_no_in ::= eq_expr_no_in EQUAL(A) rel_expr_no_in.
+{
+    delete A;
+}
 
-eq_expr_no_in ::= eq_expr_no_in NOT_EQUAL rel_expr_no_in.
-{}
+eq_expr_no_in ::= eq_expr_no_in NOT_EQUAL(A) rel_expr_no_in.
+{
+    delete A;
+}
 
-eq_expr_no_in ::= eq_expr_no_in STRICT_EQUAL rel_expr_no_in.
-{}
+eq_expr_no_in ::= eq_expr_no_in STRICT_EQUAL(A) rel_expr_no_in.
+{
+    delete A;
+}
 
-eq_expr_no_in ::= eq_expr_no_in STRICT_NOT_EQUAL rel_expr_no_in.
-{}
+eq_expr_no_in ::= eq_expr_no_in STRICT_NOT_EQUAL(A) rel_expr_no_in.
+{
+    delete A;
+}
 
 /* Rule 'bit_and_expr' */
 
 bit_and_expr ::= eq_expr.
-{}
+{
+}
 
-bit_and_expr ::= bit_and_expr BITWISE_AND eq_expr.
-{}
+bit_and_expr ::= bit_and_expr BITWISE_AND(A) eq_expr.
+{
+    delete A;
+}
 
 /* Rule 'bit_and_expr_no_fn' */
 
 bit_and_expr_no_fn ::= eq_expr_no_fn.
-{}
+{
+}
 
-bit_and_expr_no_fn ::= bit_and_expr_no_fn BITWISE_AND eq_expr.
-{}
+bit_and_expr_no_fn ::= bit_and_expr_no_fn BITWISE_AND(A) eq_expr.
+{
+    delete A;
+}
 
 /* Rule 'bit_and_expr_no_in' */
 
 bit_and_expr_no_in ::= eq_expr_no_in.
-{}
+{
+}
 
-bit_and_expr_no_in ::= bit_and_expr_no_in BITWISE_AND eq_expr_no_in.
-{}
+bit_and_expr_no_in ::= bit_and_expr_no_in BITWISE_AND(A) eq_expr_no_in.
+{
+    delete A;
+}
 
 /* Rule 'bit_xor_expr' */
 
 bit_xor_expr ::= bit_and_expr.
-{}
+{
+}
 
-bit_xor_expr ::= bit_xor_expr BITWISE_XOR bit_and_expr.
-{}
+bit_xor_expr ::= bit_xor_expr BITWISE_XOR(A) bit_and_expr.
+{
+    delete A;
+}
 
 /* Rule 'bit_xor_expr_no_fn' */
 
 bit_xor_expr_no_fn ::= bit_and_expr_no_fn.
-{}
+{
+}
 
-bit_xor_expr_no_fn ::= bit_xor_expr_no_fn BITWISE_XOR bit_and_expr.
-{}
+bit_xor_expr_no_fn ::= bit_xor_expr_no_fn BITWISE_XOR(A) bit_and_expr.
+{
+    delete A;
+}
 
 /* Rule 'bit_xor_expr_no_in' */
 
 bit_xor_expr_no_in ::= bit_and_expr_no_in.
-{}
+{
+}
 
-bit_xor_expr_no_in ::= bit_xor_expr_no_in BITWISE_XOR bit_and_expr_no_in.
-{}
+bit_xor_expr_no_in ::= bit_xor_expr_no_in BITWISE_XOR(A) bit_and_expr_no_in.
+{
+    delete A;
+}
 
 /* Rule 'bit_or_expr' */
 
 bit_or_expr ::= bit_xor_expr.
-{}
+{
+}
 
-bit_or_expr ::= bit_or_expr BITWISE_OR bit_xor_expr.
-{}
+bit_or_expr ::= bit_or_expr BITWISE_OR(A) bit_xor_expr.
+{
+    delete A;
+}
 
 /* Rule 'bit_or_expr_no_fn' */
 
 bit_or_expr_no_fn ::= bit_xor_expr_no_fn.
-{}
+{
+}
 
-bit_or_expr_no_fn ::= bit_or_expr_no_fn BITWISE_OR bit_xor_expr.
-{}
+bit_or_expr_no_fn ::= bit_or_expr_no_fn BITWISE_OR(A) bit_xor_expr.
+{
+    delete A;
+}
 
 /* Rule 'bit_or_expr_no_in' */
 
 bit_or_expr_no_in ::= bit_xor_expr_no_in.
-{}
+{
+}
 
-bit_or_expr_no_in ::= bit_or_expr_no_in BITWISE_OR bit_xor_expr_no_in.
-{}
+bit_or_expr_no_in ::= bit_or_expr_no_in BITWISE_OR(A) bit_xor_expr_no_in.
+{
+    delete A;
+}
 
 /* Rule 'logic_and_expr' */
 
 logic_and_expr ::= bit_or_expr.
-{}
+{
+}
 
-logic_and_expr ::= logic_and_expr LOGIC_AND bit_or_expr.
-{}
+logic_and_expr ::= logic_and_expr LOGIC_AND(A) bit_or_expr.
+{
+    delete A;
+}
 
 /* Rule 'logic_and_expr_no_fn' */
 
 logic_and_expr_no_fn ::= bit_or_expr_no_fn.
-{}
+{
+}
 
-logic_and_expr_no_fn ::= logic_and_expr_no_fn LOGIC_AND bit_or_expr.
-{}
+logic_and_expr_no_fn ::= logic_and_expr_no_fn LOGIC_AND(A) bit_or_expr.
+{
+    delete A;
+}
 
 /* Rule 'logic_and_expr_no_in' */
 
 logic_and_expr_no_in ::= bit_or_expr_no_in.
-{}
+{
+}
 
-logic_and_expr_no_in ::= logic_and_expr_no_in LOGIC_AND bit_or_expr_no_in.
-{}
+logic_and_expr_no_in ::= logic_and_expr_no_in LOGIC_AND(A) bit_or_expr_no_in.
+{
+    delete A;
+}
 
 /* Rule 'logic_or_expr' */
 
 logic_or_expr ::= logic_and_expr.
-{}
+{
+}
 
-logic_or_expr ::= logic_or_expr LOGIC_OR logic_and_expr.
-{}
+logic_or_expr ::= logic_or_expr LOGIC_OR(A) logic_and_expr.
+{
+    delete A;
+}
 
 /* Rule 'logic_or_expr_no_fn' */
 
 logic_or_expr_no_fn ::= logic_and_expr_no_fn.
-{}
+{
+}
 
-logic_or_expr_no_fn ::= logic_or_expr_no_fn LOGIC_OR logic_and_expr.
-{}
+logic_or_expr_no_fn ::= logic_or_expr_no_fn LOGIC_OR(A) logic_and_expr.
+{
+    delete A;
+}
 
 /* Rule 'logic_or_expr_no_in' */
 
 logic_or_expr_no_in ::= logic_and_expr_no_in.
-{}
+{
+}
 
-logic_or_expr_no_in ::= logic_or_expr_no_in LOGIC_OR logic_and_expr_no_in.
-{}
+logic_or_expr_no_in ::= logic_or_expr_no_in LOGIC_OR(A) logic_and_expr_no_in.
+{
+    delete A;
+}
 
 /* Rule 'cond_expr' */
 
 cond_expr ::= logic_or_expr.
-{}
+{
+}
 
-cond_expr ::= logic_or_expr QUESTION assign_expr COLON assign_expr.
-{}
+cond_expr ::= logic_or_expr QUESTION(A) assign_expr COLON(B) assign_expr.
+{
+    delete A;
+    delete B;
+}
 
 /* Rule 'cond_expr_no_fn' */
 
 cond_expr_no_fn ::= logic_or_expr_no_fn.
-{}
+{
+}
 
-cond_expr_no_fn ::= logic_or_expr_no_fn QUESTION assign_expr COLON assign_expr.
-{}
+cond_expr_no_fn ::= logic_or_expr_no_fn QUESTION(A) assign_expr COLON(B) assign_expr.
+{
+    delete A;
+    delete B;
+}
 
 /* Rule 'cond_expr_no_in' */
 
 cond_expr_no_in ::= logic_or_expr_no_in.
-{}
+{
+}
 
-cond_expr_no_in ::= logic_or_expr_no_in QUESTION assign_expr COLON assign_expr_no_in.
-{}
+cond_expr_no_in ::= logic_or_expr_no_in QUESTION(A) assign_expr COLON(B) assign_expr_no_in.
+{
+    delete A;
+    delete B;
+}
 
 /* Rule 'assign_expr' */
 
 assign_expr ::= cond_expr.
-{}
+{
+}
 
 assign_expr ::= left_hand_expr assign_op assign_expr.
-{}
+{
+}
 
 /* Rule 'assign_expr_no_fn' */
 
 assign_expr_no_fn ::= cond_expr_no_fn.
-{}
+{
+}
 
 assign_expr_no_fn ::= left_hand_expr_no_fn assign_op assign_expr.
-{}
+{
+}
 
 /* Rule 'assign_expr_no_in' */
 
 assign_expr_no_in ::= cond_expr_no_in.
-{}
+{
+}
 
 assign_expr_no_in ::= left_hand_expr assign_op assign_expr_no_in.
-{}
+{
+}
 
 /* Rule 'assign_op' */
 
-assign_op ::= ASSIGN.
-{}
+assign_op ::= ASSIGN(A).
+{
+    delete A;
+}
 
-assign_op ::= MUL_ASSIGN.
-{}
+assign_op ::= MUL_ASSIGN(A).
+{
+    delete A;
+}
 
-assign_op ::= DIV_ASSIGN.
-{}
+assign_op ::= DIV_ASSIGN(A).
+{
+    delete A;
+}
 
-assign_op ::= MOD_ASSIGN.
-{}
+assign_op ::= MOD_ASSIGN(A).
+{
+    delete A;
+}
 
-assign_op ::= PLUS_ASSIGN.
-{}
+assign_op ::= PLUS_ASSIGN(A).
+{
+    delete A;
+}
 
-assign_op ::= MINUS_ASSIGN.
-{}
+assign_op ::= MINUS_ASSIGN(A).
+{
+    delete A;
+}
 
-assign_op ::= LEFT_SHIFT_ASSIGN.
-{}
+assign_op ::= LEFT_SHIFT_ASSIGN(A).
+{
+    delete A;
+}
 
-assign_op ::= RIGHT_SHIFT_ASSIGN.
-{}
+assign_op ::= RIGHT_SHIFT_ASSIGN(A).
+{
+    delete A;
+}
 
-assign_op ::= ZERO_RIGHT_SHIFT_ASSIGN.
-{}
+assign_op ::= ZERO_RIGHT_SHIFT_ASSIGN(A).
+{
+    delete A;
+}
 
-assign_op ::= BITWISE_AND_ASSIGN.
-{}
+assign_op ::= BITWISE_AND_ASSIGN(A).
+{
+    delete A;
+}
 
-assign_op ::= BITWISE_XOR_ASSIGN.
-{}
+assign_op ::= BITWISE_XOR_ASSIGN(A).
+{
+    delete A;
+}
 
-assign_op ::= BITWISE_OR_ASSIGN.
-{}
+assign_op ::= BITWISE_OR_ASSIGN(A).
+{
+    delete A;
+}
 
 /* Rule 'expr' */
 
 expr ::= assign_expr.
-{}
+{
+}
 
-expr ::= expr COMMA assign_expr.
-{}
+expr ::= expr COMMA(A) assign_expr.
+{
+    delete A;
+}
 
 /* Rule 'expr_no_fn' */
 
 expr_no_fn ::= assign_expr_no_fn.
-{}
+{
+}
 
-expr_no_fn ::= expr_no_fn COMMA assign_expr.
-{}
+expr_no_fn ::= expr_no_fn COMMA(A) assign_expr.
+{
+    delete A;
+}
 
 /* Rule 'expr_no_in' */
 
 expr_no_in ::= assign_expr_no_in.
-{}
+{
+}
 
-expr_no_in ::= expr_no_in COMMA assign_expr_no_in.
-{}
+expr_no_in ::= expr_no_in COMMA(A) assign_expr_no_in.
+{
+    delete A;
+}
 
 /* Rule 'literal' */
+%type literal { Expression * }
 
-literal ::= LIT_NULL.
-{}
+literal(A) ::= LIT_NULL(B).
+{
+    A = new expr::literal::Null();
+    A->element(B);
 
-literal ::= LIT_UNDEFINED.
-{}
+    delete B;
+}
 
-literal ::= LIT_TRUE.
-{}
+literal(A) ::= LIT_UNDEFINED(B).
+{
+    A = new expr::literal::Undefined();
+    A->element(B);
 
-literal ::= LIT_FALSE.
-{}
+    delete B;
+}
 
-literal ::= NUMBER.
-{}
+literal(A) ::= LIT_TRUE(B).
+{
+    A = new expr::literal::Boolean(true);
+    A->element(B);
 
-literal ::= STRING.
-{}
+    delete B;
+}
 
-literal ::= REGEXP.
-{}
+literal(A) ::= LIT_FALSE(B).
+{
+    A = new expr::literal::Boolean(false);
+    A->element(B);
+
+    delete B;
+}
+
+literal(A) ::= NUMBER(B).
+{
+    A = new expr::literal::Number(B->text());
+    A->element(B);
+
+    delete B;
+}
+
+literal(A) ::= STRING(B).
+{
+    A = new expr::literal::String(B->text());
+    A->element(B);
+
+    delete B;
+}
+
+literal(A) ::= REGEXP(B).
+{
+    A = new expr::literal::Regexp(B->text());
+    A->element(B);
+
+    delete B;
+}
 
 /* Rule 'array' */
+%type array { expr::Array * }
 
-array ::= LBRACKET RBRACKET.
-{}
+array ::= LBRACKET(A) RBRACKET(B).
+{
+    delete A;
+    delete B;
+}
 
-array ::= LBRACKET array_elision RBRACKET.
-{}
+array ::= LBRACKET(A) array_elision RBRACKET(B).
+{
+    delete A;
+    delete B;
+}
 
-array ::= LBRACKET array_element_list RBRACKET.
-{}
+array ::= LBRACKET(A) array_element_list RBRACKET(B).
+{
+    delete A;
+    delete B;
+}
 
-array ::= LBRACKET array_element_list COMMA RBRACKET.
-{}
+array ::= LBRACKET(A) array_element_list COMMA(B) RBRACKET(C).
+{
+    delete A;
+    delete B;
+    delete C;
+}
 
-array ::= LBRACKET array_element_list COMMA array_elision RBRACKET.
-{}
+array ::= LBRACKET(A) array_element_list COMMA(B) array_elision RBRACKET(C).
+{
+    delete A;
+    delete B;
+    delete C;
+}
 
 /* Rule 'array_elision' */
+%type array_elision { std::vector<std::unique_ptr<Expression>> * }
 
-array_elision ::= COMMA.
-{}
+array_elision ::= COMMA(A).
+{
+    delete A;
+}
 
-array_elision ::= array_elision COMMA.
-{}
+array_elision ::= array_elision COMMA(A).
+{
+    delete A;
+}
 
 /* Rule 'array_element_list' */
+%type array_element_list { std::vector<std::unique_ptr<Expression>> * }
 
 array_element_list ::= assign_expr.
-{}
+{
+}
 
 array_element_list ::= array_elision assign_expr.
-{}
+{
+}
 
-array_element_list ::= array_element_list COMMA assign_expr.
-{}
+array_element_list ::= array_element_list COMMA(A) assign_expr.
+{
+    delete A;
+}
 
-array_element_list ::= array_element_list COMMA array_elision assign_expr.
-{}
+array_element_list ::= array_element_list COMMA(A) array_elision assign_expr.
+{
+    delete A;
+}
 
 /* Rule 'object' */
 
-object ::= LBRACE RBRACE.
-{}
+object ::= LBRACE(A) RBRACE(B).
+{
+    delete A;
+    delete B;
+}
 
-object ::= LBRACE object_properties RBRACE.
-{}
+object ::= LBRACE(A) object_properties RBRACE(B).
+{
+    delete A;
+    delete B;
+}
 
-object ::= LBRACE object_properties COMMA RBRACE.
-{}
+object ::= LBRACE(A) object_properties COMMA(B) RBRACE(C).
+{
+    delete A;
+    delete B;
+    delete C;
+}
 
 /* Rule 'object_properties' */
 
 object_properties ::= object_property.
-{}
+{
+}
 
-object_properties ::= object_properties COMMA object_property.
-{}
+object_properties ::= object_properties COMMA(A) object_property.
+{
+    delete A;
+}
 
 /* Rule 'object_property' */
 
-object_property ::= object_property_name COLON assign_expr.
-{}
+object_property ::= object_property_name COLON(A) assign_expr.
+{
+    delete A;
+}
 
-object_property ::= GET object_property_name LPAREN RPAREN LBRACE function_body RBRACE.
-{}
+object_property ::= GET(A) object_property_name LPAREN(B) RPAREN(C) LBRACE(D) function_body RBRACE(E).
+{
+    delete A;
+    delete B;
+    delete C;
+    delete D;
+    delete E;
+}
 
-object_property ::= GET object_property_name LPAREN object_property_set_params RPAREN LBRACE function_body RBRACE.
-{}
+object_property ::= GET(A) object_property_name LPAREN(B) object_property_set_params RPAREN(C) LBRACE(D) function_body RBRACE(E).
+{
+    delete A;
+    delete B;
+    delete C;
+    delete D;
+    delete E;
+}
 
 /* Rule 'object_property_name' */
 
-object_property_name ::= ident_name.
-{}
+object_property_name ::= IDENT(A).
+{
+    delete A;
+}
 
-object_property_name ::= STRING.
-{}
+object_property_name ::= STRING(A).
+{
+    delete A;
+}
 
-object_property_name ::= NUMBER.
-{}
+object_property_name ::= NUMBER(A).
+{
+    delete A;
+}
 
 /* Rule 'object_property_set_params' */
 
-object_property_set_params ::= IDENT.
-{}
+object_property_set_params ::= IDENT(A).
+{
+    delete A;
+}
 
 /* Rule 'arguments' */
 
-arguments ::= LPAREN RPAREN.
-{}
+arguments ::= LPAREN(A) RPAREN(B).
+{
+    delete A;
+    delete B;
+}
 
-arguments ::= LPAREN arguments_list RPAREN.
-{}
+arguments ::= LPAREN(A) arguments_list RPAREN(B).
+{
+    delete A;
+    delete B;
+}
 
 /* Rule 'arguments_list' */
 
 arguments_list ::= assign_expr.
-{}
+{
+}
 
-arguments_list ::= arguments_list COMMA assign_expr.
-{}
+arguments_list ::= arguments_list COMMA(A) assign_expr.
+{
+    delete A;
+}

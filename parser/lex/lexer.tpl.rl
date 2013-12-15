@@ -1,3 +1,4 @@
+#include <iostream>
 #include <string>
 #include <utility>
 #include "ecma/lex/lexer.h"
@@ -108,6 +109,11 @@ Token *Lexer::consume()
 
         main := |*
             {{ smart_indent(lexer, 12) }}
+            regexp                  =>  { type = ECMA_TOKEN(REGEXP); fbreak; };
+            string                  =>  { type = ECMA_TOKEN(STRING); fbreak; };
+            number                  =>  { type = ECMA_TOKEN(NUMBER); fbreak; };
+            ident                   =>  { type = ECMA_TOKEN(IDENT); fbreak; };
+
             spaces                  =>  { type = ECMA_TOKEN(SPACES); fbreak; };
             newline                 =>  { type = ECMA_TOKEN(NEWLINE); fbreak; };
 
@@ -132,11 +138,11 @@ Token *Lexer::consume()
     uint size = m_te - m_ts;
     Token::Position pos = m_pos;
 
-    std::string token(m_ts, size);
+    std::string str(m_ts, size);
 
     if (type == ECMA_TOKEN(UNKNOWN))
     {
-        throw UnknownTokenException(token, pos);
+        throw UnknownTokenException(str, pos);
     }
 
     for (uint i = 0; i < size; i++)
@@ -153,5 +159,6 @@ Token *Lexer::consume()
         }
     }
 
-    return new Token(type, token, pos);
+    Token *token = new Token(type, str, pos);
+    return token;
 }

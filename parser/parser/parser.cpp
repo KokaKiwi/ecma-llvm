@@ -25,7 +25,6 @@ Parser::~Parser()
 
 void Parser::parse(lex::Lexer &lexer)
 {
-    std::unique_ptr<lex::Token> token;
     std::vector<lex::Token::Type> ignore {
         ECMA_TOKEN(SPACES),
         ECMA_TOKEN(NEWLINE),
@@ -39,16 +38,21 @@ void Parser::parse(lex::Lexer &lexer)
 
     while (true)
     {
-        token.reset(lexer.consume());
+        lex::Token *token = lexer.consume();
 
         if (std::find(ignore.begin(), ignore.end(), token->type()) == ignore.end())
         {
-            ecma_parse(m_yyp, static_cast<int>(token->type()), token.get(), this);
+            ecma_parse(m_yyp, static_cast<int>(token->type()), token, this);
 
             if (token->type() == ECMA_TOKEN(END))
             {
+                delete token;
                 break;
             }
+        }
+        else
+        {
+            delete token;
         }
     }
 }

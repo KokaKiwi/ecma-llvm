@@ -1,1 +1,13 @@
 
+try
+{
+
+}
+catch(e)
+{
+
+}
+finally
+{
+
+}

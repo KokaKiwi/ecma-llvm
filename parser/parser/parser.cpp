@@ -14,6 +14,7 @@ using namespace ecma::parser;
 
 Parser::Parser()
     : m_debug(false)
+    , m_module(nullptr)
 {
     m_yyp = ecma_parseAlloc(malloc);
 }

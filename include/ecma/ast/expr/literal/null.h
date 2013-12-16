@@ -16,7 +16,11 @@ namespace ecma
                     public:
                         inline Null()
                             : Expression()
-                        {}
+                        {
+                        }
+                        inline ~Null()
+                        {
+                        }
 
                         inline void accept(tools::Visitor &visitor)
                         {

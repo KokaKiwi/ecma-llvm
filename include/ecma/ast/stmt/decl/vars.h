@@ -18,7 +18,11 @@ namespace ecma
                     public:
                         inline Vars()
                             : Statement()
-                        {}
+                        {
+                        }
+                        inline ~Vars()
+                        {
+                        }
 
                         inline const std::vector<std::unique_ptr<stmt::decl::Var>> &decls() const
                         {

@@ -17,7 +17,11 @@ namespace ecma
                         : Statement()
                         , m_expr(expr)
                         , m_action(action)
-                    {}
+                    {
+                    }
+                    inline ~With()
+                    {
+                    }
 
                     inline const Expression *expr() const
                     {

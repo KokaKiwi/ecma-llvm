@@ -16,7 +16,11 @@ namespace ecma
                 public:
                     inline Object()
                         : Expression()
-                    {}
+                    {
+                    }
+                    inline ~Object()
+                    {
+                    }
 
                     inline const std::vector<std::unique_ptr<expr::object::Property>> &properties() const
                     {

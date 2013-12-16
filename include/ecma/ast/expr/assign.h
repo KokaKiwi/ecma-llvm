@@ -34,7 +34,11 @@ namespace ecma
                         , m_left(left)
                         , m_right(right)
                         , m_op(op)
-                    {}
+                    {
+                    }
+                    inline ~Assign()
+                    {
+                    }
 
                     inline const Expression *left() const
                     {

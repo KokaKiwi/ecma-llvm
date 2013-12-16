@@ -19,7 +19,11 @@ namespace ecma
                         inline Var(std::string name)
                             : utils::Element()
                             , m_name(name)
-                        {}
+                        {
+                        }
+                        inline ~Var()
+                        {
+                        }
 
                         inline const std::string name() const
                         {

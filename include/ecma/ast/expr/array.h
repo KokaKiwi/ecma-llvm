@@ -16,7 +16,11 @@ namespace ecma
                 public:
                     inline Array()
                         : Expression()
-                    {}
+                    {
+                    }
+                    inline ~Array()
+                    {
+                    }
 
                     inline const std::vector<std::unique_ptr<Expression>> &elements() const
                     {

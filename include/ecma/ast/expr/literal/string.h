@@ -18,7 +18,11 @@ namespace ecma
                         inline String(std::string value)
                             : Expression()
                             , m_value(value)
-                        {}
+                        {
+                        }
+                        inline ~String()
+                        {
+                        }
 
                         inline const std::string value() const
                         {

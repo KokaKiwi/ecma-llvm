@@ -16,7 +16,11 @@ namespace ecma
                 public:
                     inline Member()
                         : Expression()
-                    {}
+                    {
+                    }
+                    inline ~Member()
+                    {
+                    }
 
                     inline const Expression *expr() const
                     {

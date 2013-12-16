@@ -92,6 +92,7 @@ class NodeGenerator(Writeable):
     def write_class_public(self, w):
         self.write_class_enums(w)
         self.write_class_constructor(w)
+        self.write_class_destructor(w)
         self.write_class_methods(w)
         self.write_class_accept(w)
 
@@ -136,12 +137,26 @@ class NodeGenerator(Writeable):
         w += 'inline {:s}({:s})'.format(self.node.name, ', '.join(args))
 
         for (i, initializer) in enumerate(init):
-            s = ' '*4
-            s += ': ' if i == 0 else ', '
-            s += initializer
-            w += s
+            with w.sub_indent() as ww:
+                s = ': ' if i == 0 else ', '
+                s += initializer
+                ww += s
 
-        w += '{}'
+        w += '{'
+
+        # with w.sub_indent() as ww:
+        #     ww += 'std::cerr << "Creating {name:s}" << std::endl;'.format(name = self.node.name)
+
+        w += '}'
+
+    def write_class_destructor(self, w):
+        w += 'inline ~{name:s}()'.format(name = self.node.name)
+        w += '{'
+
+        # with w.sub_indent() as ww:
+        #     ww += 'std::cerr << "Deleting {name:s}" << std::endl;'.format(name = self.node.name)
+
+        w += '}'
 
     def write_class_methods(self, w):
         for item in self.node.items.values():

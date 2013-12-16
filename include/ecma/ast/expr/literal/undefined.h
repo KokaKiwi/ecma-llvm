@@ -16,7 +16,11 @@ namespace ecma
                     public:
                         inline Undefined()
                             : Expression()
-                        {}
+                        {
+                        }
+                        inline ~Undefined()
+                        {
+                        }
 
                         inline void accept(tools::Visitor &visitor)
                         {

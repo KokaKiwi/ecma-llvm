@@ -15,7 +15,11 @@ namespace ecma
                 public:
                     inline Index()
                         : Expression()
-                    {}
+                    {
+                    }
+                    inline ~Index()
+                    {
+                    }
 
                     inline const Expression *expr() const
                     {

@@ -12,7 +12,11 @@ namespace ecma
             public:
                 inline Expression()
                     : Node()
-                {}
+                {
+                }
+                inline ~Expression()
+                {
+                }
 
                 inline void accept(tools::Visitor &visitor)
                 {

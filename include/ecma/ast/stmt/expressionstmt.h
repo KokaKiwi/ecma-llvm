@@ -16,7 +16,11 @@ namespace ecma
                     inline ExpressionStmt(Expression *expr)
                         : Statement()
                         , m_expr(expr)
-                    {}
+                    {
+                    }
+                    inline ~ExpressionStmt()
+                    {
+                    }
 
                     inline const Expression *expr() const
                     {

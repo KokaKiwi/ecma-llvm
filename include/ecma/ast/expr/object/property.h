@@ -18,7 +18,11 @@ namespace ecma
                     public:
                         inline Property()
                             : utils::Element()
-                        {}
+                        {
+                        }
+                        inline ~Property()
+                        {
+                        }
 
                         inline const Expression *key() const
                         {

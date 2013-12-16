@@ -1,7 +1,7 @@
-#ifndef ECMA_AST_STMT_LABEL_H_
-#define ECMA_AST_STMT_LABEL_H_
+#ifndef ECMA_AST_STMT_CATCH_H_
+#define ECMA_AST_STMT_CATCH_H_
 
-#include <string>
+#include "ecma/utils/element.h"
 #include <memory>
 #include "ecma/ast/tools/visitor.h"
 
@@ -11,16 +11,16 @@ namespace ecma
     {
         namespace stmt
         {
-            class Label: public Statement
+            class Catch: public utils::Element
             {
                 public:
-                    inline Label(std::string name, Statement *action)
-                        : Statement()
+                    inline Catch(std::string name, stmt::Block *action)
+                        : utils::Element()
                         , m_name(name)
                         , m_action(action)
                     {
                     }
-                    inline ~Label()
+                    inline ~Catch()
                     {
                     }
 
@@ -28,22 +28,22 @@ namespace ecma
                     {
                         return m_name;
                     }
-                    inline Label &name(std::string name)
+                    inline Catch &name(std::string name)
                     {
                         m_name = name;
                         return *this;
                     }
 
-                    inline const Statement *action() const
+                    inline const stmt::Block *action() const
                     {
                         return m_action.get();
                     }
-                    inline Label &action(Statement *action)
+                    inline Catch &action(stmt::Block *action)
                     {
                         m_action.reset(action);
                         return *this;
                     }
-                    inline Statement *action()
+                    inline stmt::Block *action()
                     {
                         return m_action.release();
                     }
@@ -55,10 +55,10 @@ namespace ecma
 
                 private:
                     std::string m_name;
-                    std::unique_ptr<Statement> m_action;
+                    std::unique_ptr<stmt::Block> m_action;
             };
         }
     }
 }
 
-#endif /* ECMA_AST_STMT_LABEL_H_ */
+#endif /* ECMA_AST_STMT_CATCH_H_ */

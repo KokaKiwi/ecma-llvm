@@ -18,7 +18,11 @@ namespace ecma
                         inline Regexp(std::string value)
                             : Expression()
                             , m_value(value)
-                        {}
+                        {
+                        }
+                        inline ~Regexp()
+                        {
+                        }
 
                         inline const std::string value() const
                         {

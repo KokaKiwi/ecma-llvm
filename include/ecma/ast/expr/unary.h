@@ -30,7 +30,11 @@ namespace ecma
                         : Expression()
                         , m_expr(expr)
                         , m_op(op)
-                    {}
+                    {
+                    }
+                    inline ~Unary()
+                    {
+                    }
 
                     inline const Expression *expr() const
                     {

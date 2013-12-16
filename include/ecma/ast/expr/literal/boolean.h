@@ -17,7 +17,11 @@ namespace ecma
                         inline Boolean(bool value)
                             : Expression()
                             , m_value(value)
-                        {}
+                        {
+                        }
+                        inline ~Boolean()
+                        {
+                        }
 
                         inline const bool value() const
                         {

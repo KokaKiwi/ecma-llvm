@@ -16,7 +16,11 @@ namespace ecma
                     inline Ident(std::string name)
                         : Expression()
                         , m_name(name)
-                    {}
+                    {
+                    }
+                    inline ~Ident()
+                    {
+                    }
 
                     inline const std::string name() const
                     {

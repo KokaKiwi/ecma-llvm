@@ -1,5 +1,5 @@
-#ifndef ECMA_AST_ARGS_ARGUMENTS_H_
-#define ECMA_AST_ARGS_ARGUMENTS_H_
+#ifndef ECMA_AST_STMT_CASEBLOCK_H_
+#define ECMA_AST_STMT_CASEBLOCK_H_
 
 #include "ecma/utils/element.h"
 #include <memory>
@@ -10,26 +10,26 @@ namespace ecma
 {
     namespace ast
     {
-        namespace args
+        namespace stmt
         {
-            class Arguments: public utils::Element
+            class CaseBlock: public utils::Element
             {
                 public:
-                    inline Arguments()
+                    inline CaseBlock()
                         : utils::Element()
                     {
                     }
-                    inline ~Arguments()
+                    inline ~CaseBlock()
                     {
                     }
 
-                    inline const std::vector<std::unique_ptr<Expression>> &elements() const
+                    inline const std::vector<std::unique_ptr<stmt::Case>> &cases() const
                     {
-                        return m_elements;
+                        return m_cases;
                     }
-                    inline std::vector<std::unique_ptr<Expression>> &elements()
+                    inline std::vector<std::unique_ptr<stmt::Case>> &cases()
                     {
-                        return m_elements;
+                        return m_cases;
                     }
 
                     inline void accept(tools::Visitor &visitor)
@@ -38,10 +38,10 @@ namespace ecma
                     }
 
                 private:
-                    std::vector<std::unique_ptr<Expression>> m_elements;
+                    std::vector<std::unique_ptr<stmt::Case>> m_cases;
             };
         }
     }
 }
 
-#endif /* ECMA_AST_ARGS_ARGUMENTS_H_ */
+#endif /* ECMA_AST_STMT_CASEBLOCK_H_ */

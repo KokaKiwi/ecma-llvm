@@ -16,7 +16,11 @@ namespace ecma
                     inline Throw(Expression *expr)
                         : Statement()
                         , m_expr(expr)
-                    {}
+                    {
+                    }
+                    inline ~Throw()
+                    {
+                    }
 
                     inline const Expression *expr() const
                     {

@@ -153,10 +153,32 @@
 )];
 
 // Rules
+#[ast(
+    name = 'Module',
+    items = [
+        item('statements',
+            type = type(
+                type(
+                    'Statement',
+                    pointer = true,
+                ),
+                list = true,
+            ),
+        ),
+    ],
+)];
+
 #[start]
 module ::=
     ,
-    source_elements,
+    source_elements => {
+        for (auto it = $1->begin(); it != $1->end(); ++it)
+        {
+            parser->module()->statements().push_back(std::move(*it));
+        }
+
+        delete $1;
+    }
 ;
 
 /// Function
@@ -172,19 +194,38 @@ function_expr ::=
     'function' '(' formal_params ')' '{' function_body '}',
 ;
 
+#[type = 'std::vector<std::string> *']
 formal_params ::=
-    IDENT,
-    formal_params ',' IDENT,
+    IDENT => {
+        $0 = new std::vector<std::string>();
+        $0->push_back($1->text());
+    }
+    formal_params ',' IDENT => {
+        $0 = $1;
+        $0->push_back($3->text());
+    }
 ;
 
+#[type = 'std::vector<std::unique_ptr<Statement>> *']
 function_body ::=
-    ,
-    source_elements,
+    . => {
+        $0 = new std::vector<std::unique_ptr<Statement>>();
+    }
+    source_elements => {
+        $0 = $1;
+    }
 ;
 
+#[type = 'std::vector<std::unique_ptr<Statement>> *']
 source_elements ::=
-    source_element,
-    source_elements source_element,
+    source_element => {
+        $0 = new std::vector<std::unique_ptr<Statement>>();
+        $0->push_back(std::unique_ptr<Statement>($1));
+    }
+    source_elements source_element => {
+        $0 = $1;
+        $0->push_back(std::unique_ptr<Statement>($2));
+    }
 ;
 
 #[type = 'Statement *']
@@ -233,7 +274,9 @@ stmt ::=
     switch_stmt => {
         $0 = $1;
     }
-    // label_stmt,
+    // label_stmt => {
+    //     $0 = $1;
+    // }
     throw_stmt => {
         $0 = $1;
     }
@@ -280,6 +323,8 @@ block ::=
         }
 
         $0->element($1, $3);
+
+        delete $2;
     }
 ;
 
@@ -341,6 +386,8 @@ var_stmt ::=
         }
 
         $0->element($1, $3);
+
+        delete $2;
     }
 ;
 
@@ -765,6 +812,15 @@ with_stmt ::=
                 pointer = true,
             ),
         ),
+        item('cases',
+            type = type(
+                type(
+                    'stmt::Case',
+                    pointer = true,
+                ),
+                list = true,
+            ),
+        ),
     ],
 )];
 
@@ -773,28 +829,148 @@ switch_stmt ::=
     'switch' '(' expr ')' case_block => {
         $0 = new stmt::Switch($3);
 
+        for (auto it = $5->cases().begin(); it != $5->cases().end(); ++it)
+        {
+            $0->cases().push_back(std::move(*it));
+        }
+
         $0->element($1, $5);
+
+        delete $5;
     }
 ;
 
+#[ast(
+    name = 'CaseBlock',
+    namespace = 'stmt',
+    parent = 'utils::Element',
+    constructor = ['key'],
+    items = [
+        item('cases',
+            type = type(
+                type(
+                    'stmt::Case',
+                    pointer = true,
+                ),
+                list = true,
+            ),
+        ),
+    ],
+    includes = [
+        '"ecma/utils/element.h"',
+    ],
+)];
+#[ast(
+    name = 'Case',
+    namespace = 'stmt',
+    parent = 'utils::Element',
+    constructor = ['key'],
+    items = [
+        item('key',
+            type = type(
+                'CaseKey',
+                pointer = true,
+            ),
+        ),
+        item('actions',
+            type = type(
+                type(
+                    'Statement',
+                    pointer = true,
+                ),
+                list = true,
+            ),
+        ),
+    ],
+    includes = [
+        '"ecma/utils/element.h"',
+    ],
+)];
+#[ast(
+    name = 'CaseKey',
+    namespace = 'stmt',
+    parent = 'utils::Element',
+    items = [
+        item('expr',
+            type = type(
+                'Expression',
+                pointer = true,
+            ),
+        ),
+    ],
+    includes = [
+        '"ecma/utils/element.h"',
+    ],
+)];
+
+#[type = 'stmt::CaseBlock *']
 case_block ::=
-    '{' '}',
-    '{' case_clauses '}',
+    '{' '}' => {
+        $0 = new stmt::CaseBlock();
+    }
+    '{' case_clauses '}' => {
+        $0 = new stmt::CaseBlock();
+
+        for (auto it = $2->begin(); it != $2->end(); ++it)
+        {
+            $0->cases().push_back(std::move(*it));
+        }
+
+        $0->element($1, $3);
+
+        delete $2;
+    }
 ;
 
+#[type = 'std::vector<std::unique_ptr<stmt::Case>> *']
 case_clauses ::=
-    case_clause,
-    case_clauses case_clause,
+    case_clause => {
+        $0 = new std::vector<std::unique_ptr<stmt::Case>>();
+        $0->push_back(std::unique_ptr<stmt::Case>($1));
+    }
+    case_clauses case_clause => {
+        $0 = $1;
+        $0->push_back(std::unique_ptr<stmt::Case>($2));
+    }
 ;
 
+#[type = 'stmt::Case *']
 case_clause ::=
-    case_key ':',
-    case_key ':' stmt_list,
+    case_key ':' => {
+        $0 = new stmt::Case($1);
+        $0->element($1, $2);
+    }
+    case_key ':' stmt_list => {
+        $0 = new stmt::Case($1);
+
+        for (auto it = $3->begin(); it != $3->end(); ++it)
+        {
+            $0->actions().push_back(std::move(*it));
+        }
+
+        auto last = $3->back().get();
+        if (last)
+        {
+            $0->element($1, last);
+        }
+        else
+        {
+            $0->element($1, $2);
+        }
+    }
 ;
 
+#[type = 'stmt::CaseKey *']
 case_key ::=
-    'case' expr,
-    'default',
+    'case' expr => {
+        $0 = new stmt::CaseKey();
+        $0->expr($2);
+        $0->element($1, $2);
+    }
+    'default' => {
+        $0 = new stmt::CaseKey();
+        $0->element($1);
+    }
 ;
 
 #[ast(
@@ -850,19 +1026,106 @@ throw_stmt ::=
     }
 ;
 
-#[type = 'Statement *']
+#[ast(
+    name = 'Try',
+    namespace = 'stmt',
+    parent = 'Statement',
+    constructor = ['block'],
+    items = [
+        item('block',
+            type = type(
+                'stmt::Block',
+                pointer = true,
+            ),
+        ),
+        item('catch_action',
+            type = type(
+                'stmt::Catch',
+                pointer = true,
+            ),
+        ),
+        item('finally_action',
+            type = type(
+                'stmt::Finally',
+                pointer = true,
+            ),
+        ),
+    ],
+)];
+
+#[type = 'stmt::Try *']
 try_stmt ::=
-    'try' block_stmt catch,
-    'try' block_stmt finally,
-    'try' block_stmt catch finally,
+    'try' block_stmt catch => {
+        $0 = new stmt::Try($2);
+        $0->catch_action($3);
+        $0->element($1, $3);
+    }
+    'try' block_stmt finally => {
+        $0 = new stmt::Try($2);
+        $0->finally_action($3);
+        $0->element($1, $3);
+    }
+    'try' block_stmt catch finally => {
+        $0 = new stmt::Try($2);
+        $0->catch_action($3);
+        $0->finally_action($4);
+        $0->element($1, $4);
+    }
 ;
 
+#[ast(
+    name = 'Catch',
+    namespace = 'stmt',
+    parent = 'utils::Element',
+    constructor = ['name', 'action'],
+    items = [
+        item('name',
+            type = 'std::string',
+        ),
+        item('action',
+            type = type(
+                'stmt::Block',
+                pointer = true,
+            ),
+        ),
+    ],
+    includes = [
+        '"ecma/utils/element.h"',
+    ],
+)];
+
+#[type = 'stmt::Catch *']
 catch ::=
-    'catch' '(' IDENT ')' block_stmt,
+    'catch' '(' IDENT ')' block_stmt => {
+        $0 = new stmt::Catch($3->text(), $5);
+        $0->element($1, $5);
+    }
 ;
 
+#[ast(
+    name = 'Finally',
+    namespace = 'stmt',
+    parent = 'utils::Element',
+    constructor = ['action'],
+    items = [
+        item('action',
+            type = type(
+                'stmt::Block',
+                pointer = true,
+            ),
+        ),
+    ],
+    includes = [
+        '"ecma/utils/element.h"',
+    ],
+)];
+
+#[type = 'stmt::Finally *']
 finally ::=
-    'finally' block_stmt,
+    'finally' block_stmt => {
+        $0 = new stmt::Finally($2);
+        $0->element($1, $2);
+    }
 ;
 
 #[ast(
@@ -1016,6 +1279,8 @@ member_expr ::=
 
         $0 = new_expr;
         $0->element($1, $3);
+
+        delete $3;
     }
 ;
 
@@ -1071,6 +1336,8 @@ call_expr ::=
 
         $0 = call;
         $0->element($1, $2);
+
+        delete $2;
     }
     call_expr(variants = ['{}_no_fn']) arguments => {
         auto call = new expr::Call($1);
@@ -1082,6 +1349,8 @@ call_expr ::=
 
         $0 = call;
         $0->element($1, $2);
+
+        delete $2;
     }
     call_expr(variants = ['{}_no_fn']) '[' expr ']' => {
         auto index = new expr::Index();
@@ -1683,6 +1952,8 @@ array ::=
         {
             $0->elements().push_back(std::move(*it));
         }
+
+        delete $2;
     }
     '[' array_element_list ']' => {
         $0 = new expr::Array();
@@ -1691,6 +1962,8 @@ array ::=
         {
             $0->elements().push_back(std::move(*it));
         }
+
+        delete $2;
     }
     '[' array_element_list ',' ']' => {
         $0 = new expr::Array();
@@ -1699,6 +1972,8 @@ array ::=
         {
             $0->elements().push_back(std::move(*it));
         }
+
+        delete $2;
     }
     '[' array_element_list ',' array_elision ']' => {
         $0 = new expr::Array();
@@ -1712,6 +1987,9 @@ array ::=
         {
             $0->elements().push_back(std::move(*it));
         }
+
+        delete $2;
+        delete $4;
     }
 ;
 
@@ -1748,6 +2026,8 @@ array_element_list ::=
         {
             $0->push_back(std::move(*it));
         }
+
+        delete $3;
     }
 ;
 
@@ -1768,7 +2048,6 @@ array_element_list ::=
         ),
     ],
 )];
-
 #[ast(
     name = 'Property',
     namespace = 'expr::object',
@@ -1794,9 +2073,33 @@ array_element_list ::=
 
 #[type = 'expr::Object *']
 object ::=
-    '{' '}',
-    '{' object_properties '}',
-    '{' object_properties ',' '}',
+    '{' '}' => {
+        $0 = new expr::Object();
+    }
+    '{' object_properties '}' => {
+        $0 = new expr::Object();
+
+        for (auto it = $2->begin(); it != $2->end(); ++it)
+        {
+            $0->properties().push_back(std::move(*it));
+        }
+
+        $0->element($1, $3);
+
+        delete $2;
+    }
+    '{' object_properties ',' '}' => {
+        $0 = new expr::Object();
+
+        for (auto it = $2->begin(); it != $2->end(); ++it)
+        {
+            $0->properties().push_back(std::move(*it));
+        }
+
+        $0->element($1, $4);
+
+        delete $2;
+    }
 ;
 
 #[type = 'std::vector<std::unique_ptr<expr::object::Property>> *']
@@ -1884,6 +2187,8 @@ arguments ::=
         }
 
         $0->element($1, $3);
+
+        delete $2;
     }
 ;
 

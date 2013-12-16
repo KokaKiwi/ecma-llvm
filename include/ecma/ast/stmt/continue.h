@@ -16,7 +16,11 @@ namespace ecma
                 public:
                     inline Continue()
                         : Statement()
-                    {}
+                    {
+                    }
+                    inline ~Continue()
+                    {
+                    }
 
                     inline const std::string *name() const
                     {

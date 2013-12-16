@@ -17,7 +17,11 @@ namespace ecma
                         : Statement()
                         , m_cond_expr(cond_expr)
                         , m_then_stmt(then_stmt)
-                    {}
+                    {
+                    }
+                    inline ~If()
+                    {
+                    }
 
                     inline const Expression *cond_expr() const
                     {

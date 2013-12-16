@@ -16,7 +16,11 @@ namespace ecma
                 public:
                     inline Break()
                         : Statement()
-                    {}
+                    {
+                    }
+                    inline ~Break()
+                    {
+                    }
 
                     inline const std::string *name() const
                     {

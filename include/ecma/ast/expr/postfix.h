@@ -23,7 +23,11 @@ namespace ecma
                         : Expression()
                         , m_expr(expr)
                         , m_op(op)
-                    {}
+                    {
+                    }
+                    inline ~Postfix()
+                    {
+                    }
 
                     inline const Expression *expr() const
                     {

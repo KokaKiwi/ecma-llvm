@@ -2,6 +2,7 @@
 #define ECMA_PARSER_PARSER_H_
 
 #include "ecma/lex/lexer.h"
+#include "ecma/ast/ast.h"
 
 namespace ecma
 {
@@ -25,10 +26,21 @@ namespace ecma
                 return *this;
             }
 
+            inline ast::Module *module()
+            {
+                if (m_module == nullptr)
+                {
+                    m_module = new ast::Module();
+                }
+
+                return m_module;
+            }
+
         private:
             void *m_yyp;
 
             bool m_debug;
+            ast::Module *m_module;
         };
     }
 }

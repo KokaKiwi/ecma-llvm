@@ -16,7 +16,11 @@ namespace ecma
                 public:
                     inline Block()
                         : Statement()
-                    {}
+                    {
+                    }
+                    inline ~Block()
+                    {
+                    }
 
                     inline const std::vector<std::unique_ptr<Statement>> &statements() const
                     {

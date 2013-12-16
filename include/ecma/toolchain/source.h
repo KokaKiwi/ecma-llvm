@@ -3,6 +3,7 @@
 
 #include <string>
 #include <fstream>
+#include "ecma/ast/ast.h"
 
 namespace ecma
 {
@@ -13,7 +14,7 @@ namespace ecma
         public:
             Source(const std::string &name, const std::string &source);
 
-            void parse(bool debug = false) const;
+            ast::Module *parse(bool debug = false) const;
 
             inline const std::string &name() const
             {

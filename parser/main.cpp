@@ -6,6 +6,7 @@
 #include "ecma/parser/exception.h"
 #include "ecma/toolchain/source.h"
 #include "ecma/utils/messages.h"
+#include "ecma/ast/ast.h"
 
 using namespace ecma;
 
@@ -26,6 +27,7 @@ static bool is_debug()
 int main(int argc, char **argv)
 {
     std::unique_ptr<toolchain::Source> source;
+    ast::Module *module = nullptr;
 
     if (argc == 1)
     {
@@ -40,7 +42,7 @@ int main(int argc, char **argv)
     {
         try
         {
-            source->parse(is_debug());
+            module = source->parse(is_debug());
         }
         catch (parser::UnexpectedToken &e)
         {
@@ -54,5 +56,6 @@ int main(int argc, char **argv)
 
     utils::Messages::Summary();
 
+    delete module;
     return EXIT_SUCCESS;
 }

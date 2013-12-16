@@ -18,7 +18,11 @@ namespace ecma
                         , m_counter(counter)
                         , m_expr(expr)
                         , m_action(action)
-                    {}
+                    {
+                    }
+                    inline ~ForIn()
+                    {
+                    }
 
                     inline const Expression *counter() const
                     {

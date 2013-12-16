@@ -10,6 +10,7 @@ namespace ecma
         class Node;
         class Expression;
         class Statement;
+        class Module;
 
         namespace stmt
         {
@@ -30,8 +31,14 @@ namespace ecma
             class Return;
             class With;
             class Switch;
+            class CaseBlock;
+            class Case;
+            class CaseKey;
             class Label;
             class Throw;
+            class Try;
+            class Catch;
+            class Finally;
             class Debug;
         }
 
@@ -92,6 +99,11 @@ namespace ecma
                 virtual inline void visit(ecma::ast::Statement &node)
                 {
                     throw std::runtime_error("Unknown AST branch (ecma::ast::Statement).");
+                }
+
+                virtual inline void visit(ecma::ast::Module &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ecma::ast::Module).");
                 }
 
                 virtual inline void visit(ecma::ast::stmt::Block &node)
@@ -159,6 +171,21 @@ namespace ecma
                     throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::Switch).");
                 }
 
+                virtual inline void visit(ecma::ast::stmt::CaseBlock &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::CaseBlock).");
+                }
+
+                virtual inline void visit(ecma::ast::stmt::Case &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::Case).");
+                }
+
+                virtual inline void visit(ecma::ast::stmt::CaseKey &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::CaseKey).");
+                }
+
                 virtual inline void visit(ecma::ast::stmt::Label &node)
                 {
                     throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::Label).");
@@ -167,6 +194,21 @@ namespace ecma
                 virtual inline void visit(ecma::ast::stmt::Throw &node)
                 {
                     throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::Throw).");
+                }
+
+                virtual inline void visit(ecma::ast::stmt::Try &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::Try).");
+                }
+
+                virtual inline void visit(ecma::ast::stmt::Catch &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::Catch).");
+                }
+
+                virtual inline void visit(ecma::ast::stmt::Finally &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::Finally).");
                 }
 
                 virtual inline void visit(ecma::ast::stmt::Debug &node)

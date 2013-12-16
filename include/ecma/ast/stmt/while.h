@@ -18,7 +18,11 @@ namespace ecma
                         , m_action_first(action_first)
                         , m_cond_expr(cond_expr)
                         , m_action(action)
-                    {}
+                    {
+                    }
+                    inline ~While()
+                    {
+                    }
 
                     inline const Expression *cond_expr() const
                     {

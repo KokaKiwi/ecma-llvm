@@ -18,7 +18,11 @@ namespace ecma
                         , m_cond_expr(cond_expr)
                         , m_then_expr(then_expr)
                         , m_else_expr(else_expr)
-                    {}
+                    {
+                    }
+                    inline ~Condition()
+                    {
+                    }
 
                     inline const Expression *cond_expr() const
                     {

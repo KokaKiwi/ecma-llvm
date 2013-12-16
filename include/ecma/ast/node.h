@@ -13,7 +13,11 @@ namespace ecma
             public:
                 inline Node()
                     : utils::Element()
-                {}
+                {
+                }
+                inline ~Node()
+                {
+                }
 
                 inline void accept(tools::Visitor &visitor)
                 {

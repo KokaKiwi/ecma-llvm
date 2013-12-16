@@ -15,7 +15,11 @@ namespace ecma
                 public:
                     inline Return()
                         : Statement()
-                    {}
+                    {
+                    }
+                    inline ~Return()
+                    {
+                    }
 
                     inline const Expression *expr() const
                     {

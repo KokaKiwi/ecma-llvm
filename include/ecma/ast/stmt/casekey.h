@@ -1,25 +1,24 @@
-#ifndef ECMA_AST_EXPR_CALL_H_
-#define ECMA_AST_EXPR_CALL_H_
+#ifndef ECMA_AST_STMT_CASEKEY_H_
+#define ECMA_AST_STMT_CASEKEY_H_
 
+#include "ecma/utils/element.h"
 #include <memory>
-#include <vector>
 #include "ecma/ast/tools/visitor.h"
 
 namespace ecma
 {
     namespace ast
     {
-        namespace expr
+        namespace stmt
         {
-            class Call: public Expression
+            class CaseKey: public utils::Element
             {
                 public:
-                    inline Call(Expression *expr)
-                        : Expression()
-                        , m_expr(expr)
+                    inline CaseKey()
+                        : utils::Element()
                     {
                     }
-                    inline ~Call()
+                    inline ~CaseKey()
                     {
                     }
 
@@ -27,7 +26,7 @@ namespace ecma
                     {
                         return m_expr.get();
                     }
-                    inline Call &expr(Expression *expr)
+                    inline CaseKey &expr(Expression *expr)
                     {
                         m_expr.reset(expr);
                         return *this;
@@ -37,15 +36,6 @@ namespace ecma
                         return m_expr.release();
                     }
 
-                    inline const std::vector<std::unique_ptr<Expression>> &args() const
-                    {
-                        return m_args;
-                    }
-                    inline std::vector<std::unique_ptr<Expression>> &args()
-                    {
-                        return m_args;
-                    }
-
                     inline void accept(tools::Visitor &visitor)
                     {
                         visitor.visit(*this);
@@ -53,10 +43,9 @@ namespace ecma
 
                 private:
                     std::unique_ptr<Expression> m_expr;
-                    std::vector<std::unique_ptr<Expression>> m_args;
             };
         }
     }
 }
 
-#endif /* ECMA_AST_EXPR_CALL_H_ */
+#endif /* ECMA_AST_STMT_CASEKEY_H_ */

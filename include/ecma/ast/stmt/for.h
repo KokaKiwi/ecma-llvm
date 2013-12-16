@@ -19,7 +19,11 @@ namespace ecma
                         , m_cond(cond)
                         , m_loop(loop)
                         , m_action(action)
-                    {}
+                    {
+                    }
+                    inline ~For()
+                    {
+                    }
 
                     inline const Statement *init() const
                     {

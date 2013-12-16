@@ -14,7 +14,11 @@ namespace ecma
                 public:
                     inline Debug()
                         : Statement()
-                    {}
+                    {
+                    }
+                    inline ~Debug()
+                    {
+                    }
 
                     inline void accept(tools::Visitor &visitor)
                     {

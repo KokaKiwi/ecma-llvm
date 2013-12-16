@@ -14,7 +14,11 @@ namespace ecma
                 public:
                     inline This()
                         : Expression()
-                    {}
+                    {
+                    }
+                    inline ~This()
+                    {
+                    }
 
                     inline void accept(tools::Visitor &visitor)
                     {

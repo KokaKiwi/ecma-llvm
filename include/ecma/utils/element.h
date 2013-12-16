@@ -39,6 +39,35 @@ namespace ecma
                 return element(tok->pos(), tok->text().length());
             }
 
+            inline Element &element(const Element *e)
+            {
+                return element(e->pos(), e->length());
+            }
+
+            inline Element &element(const Element *begin, const Element *end)
+            {
+                Position first = begin->pos();
+                Position last = end->pos();
+                uint length = last.first - first.first + end->length();
+                return element(first, length);
+            }
+
+            inline Element &element(const lex::Token *begin, const Element *end)
+            {
+                Position first = begin->pos();
+                Position last = end->pos();
+                uint length = last.first - first.first + end->length();
+                return element(first, length);
+            }
+
+            inline Element &element(const Element *begin, const lex::Token *end)
+            {
+                Position first = begin->pos();
+                Position last = end->pos();
+                uint length = last.first - first.first + end->text().length();
+                return element(first, length);
+            }
+
             inline Element &element(const lex::Token *begin, const lex::Token *end)
             {
                 Position first = begin->pos();

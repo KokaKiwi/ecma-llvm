@@ -187,144 +187,594 @@ source_elements ::=
     source_elements source_element,
 ;
 
+#[type = 'Statement *']
 source_element ::=
-    stmt,
-    function_decl,
+    stmt => {
+        $0 = $1;
+    }
+    function_decl => {
+        // $0 = $1;
+    }
 ;
 
 /// Statement
+#[type = 'Statement *']
 stmt ::=
-    block,
-    var_stmt,
-    empty_stmt,
-    expr_stmt,
-    if_stmt,
-    iter_stmt,
-    cont_stmt,
-    break_stmt,
-    return_stmt,
-    with_stmt,
-    switch_stmt,
+    block => {
+        $0 = $1;
+    }
+    var_stmt => {
+        $0 = $1;
+    }
+    empty_stmt => {
+        $0 = nullptr;
+    }
+    expr_stmt => {
+        $0 = $1;
+    }
+    if_stmt => {
+        $0 = $1;
+    }
+    iter_stmt => {
+        $0 = $1;
+    }
+    cont_stmt => {
+        $0 = $1;
+    }
+    break_stmt => {
+        $0 = $1;
+    }
+    return_stmt => {
+        $0 = $1;
+    }
+    with_stmt => {
+        $0 = $1;
+    }
+    switch_stmt => {
+        $0 = $1;
+    }
     // label_stmt,
-    throw_stmt,
-    try_stmt,
-    debug_stmt,
+    throw_stmt => {
+        $0 = $1;
+    }
+    try_stmt => {
+        $0 = $1;
+    }
+    debug_stmt => {
+        $0 = $1;
+    }
 ;
 
 #[unused]
+#[type = 'Statement *']
 open_stmt ::=
     stmt,
     block_empty,
 ;
 
+#[ast(
+    name = 'Block',
+    namespace = 'stmt',
+    parent = 'Statement',
+    items = [
+        item('statements',
+            type = type(
+                type(
+                    'Statement',
+                    pointer = true,
+                ),
+                list = true,
+            ),
+        ),
+    ],
+)];
+
+#[type = 'stmt::Block *']
 block ::=
-    '{' stmt_list '}',
+    '{' stmt_list '}' => {
+        $0 = new stmt::Block();
+
+        for (auto it = $2->begin(); it != $2->end(); ++it)
+        {
+            $0->statements().push_back(std::move(*it));
+        }
+
+        $0->element($1, $3);
+    }
 ;
 
+#[type = 'stmt::Block *']
 block_empty ::=
-    '{' '}',
+    '{' '}' => {
+        $0 = new stmt::Block();
+        $0->element($1, $2);
+    }
 ;
 
+#[type = 'stmt::Block *']
 block_stmt ::=
-    block,
-    block_empty,
+    block => {
+        $0 = $1;
+    }
+    block_empty => {
+        $0 = $1;
+    }
 ;
 
+#[type = 'std::vector<std::unique_ptr<Statement>> *']
 stmt_list ::=
-    stmt,
-    stmt_list stmt,
+    stmt => {
+        $0 = new std::vector<std::unique_ptr<Statement>>();
+        $0->push_back(std::unique_ptr<Statement>($1));
+    }
+    stmt_list stmt => {
+        $0 = $1;
+        $0->push_back(std::unique_ptr<Statement>($2));
+    }
 ;
 
+#[ast(
+    name = 'Vars',
+    namespace = 'stmt::decl',
+    parent = 'Statement',
+    items = [
+        item('decls',
+            type = type(
+                type(
+                    'stmt::decl::Var',
+                    pointer = true,
+                ),
+                list = true,
+            ),
+        )
+    ],
+)];
+
+#[type = 'stmt::decl::Vars *']
 var_stmt ::=
-    'var' var_decls ';',
+    'var' var_decls ';' => {
+        $0 = new stmt::decl::Vars();
+
+        for (auto it = $2->begin(); it != $2->end(); ++it)
+        {
+            $0->decls().push_back(std::move(*it));
+        }
+
+        $0->element($1, $3);
+    }
 ;
 
+#[ast(
+    name = 'Var',
+    namespace = 'stmt::decl',
+    parent = 'utils::Element',
+    includes = [
+        '"ecma/utils/element.h"',
+    ],
+    constructor = ['name'],
+    items = [
+        item('name',
+            type = 'std::string',
+        ),
+        item('init',
+            type = type(
+                'Expression',
+                pointer = true,
+            ),
+        ),
+    ],
+)];
+
+#[type = 'std::vector<std::unique_ptr<stmt::decl::Var>> *']
 var_decls ::=
-    var_decl,
-    var_decls ',' var_decl,
+    var_decl(variants = ['{}_no_in']) => {
+        $0 = new std::vector<std::unique_ptr<stmt::decl::Var>>();
+        $0->push_back(std::unique_ptr<stmt::decl::Var>($1));
+    }
+    var_decls(variants = ['{}_no_in']) ',' var_decl(variants = ['{}_no_in']) => {
+        $0 = $1;
+        $0->push_back(std::unique_ptr<stmt::decl::Var>($3));
+    }
 ;
 
-var_decls_no_in ::=
-    var_decl_no_in,
-    var_decls_no_in ',' var_decl_no_in,
-;
-
+#[type = 'stmt::decl::Var *']
 var_decl ::=
-    IDENT,
-    IDENT init,
+    IDENT => {
+        $0 = new stmt::decl::Var($1->text());
+        $0->element($1);
+    }
+    IDENT init(variants = ['{}_no_in']) => {
+        $0 = new stmt::decl::Var($1->text());
+        $0->element($1, $2);
+    }
 ;
 
-var_decl_no_in ::=
-    IDENT,
-    IDENT init_no_in,
-;
-
+#[type = 'Expression *']
 init ::=
-    '=' assign_expr,
-;
-
-init_no_in ::=
-    '=' assign_expr_no_in,
+    '=' assign_expr(variants = ['{}_no_in']) => {
+        $0 = $2;
+    }
 ;
 
 empty_stmt ::=
     ';',
 ;
 
+#[ast(
+    name = 'ExpressionStmt',
+    namespace = 'stmt',
+    parent = 'Statement',
+    constructor = ['expr'],
+    items = [
+        item('expr',
+            type = type(
+                'Expression',
+                pointer = true,
+            ),
+        ),
+    ],
+)];
+
+#[type = 'stmt::ExpressionStmt *']
 expr_stmt ::=
-    expr_no_fn ';',
+    expr_no_fn ';' => {
+        $0 = new stmt::ExpressionStmt($1);
+        $0->element($1, $2);
+    }
 ;
 
+#[ast(
+    name = 'If',
+    namespace = 'stmt',
+    parent = 'Statement',
+    constructor = ['cond_expr', 'then_stmt'],
+    items = [
+        item('cond_expr',
+            type = type(
+                'Expression',
+                pointer = true,
+            ),
+        ),
+        item('then_stmt',
+            type = type(
+                'Statement',
+                pointer = true,
+            ),
+        ),
+        item('else_stmt',
+            type = type(
+                'Statement',
+                pointer = true,
+            ),
+        ),
+    ],
+)];
+
+#[type = 'stmt::If *']
 if_stmt ::=
-    'if' '(' expr ')' stmt,
-    'if' '(' expr ')' stmt 'else' stmt,
+    'if' '(' expr ')' stmt => {
+        $0 = new stmt::If($3, $5);
+        $0->element($1, $5);
+    }
+    'if' '(' expr ')' stmt 'else' stmt => {
+        $0 = new stmt::If($3, $5);
+        $0->else_stmt($7);
+        $0->element($1, $7);
+    }
 ;
 
+#[type = 'Statement *']
 iter_stmt ::=
-    'do' stmt 'while' '(' expr ')',
-    'while' '(' expr ')' stmt,
-    'for' '(' for_init ';' for_cond ';' for_loop ')' stmt,
+    while_stmt => {
+        $0 = $1;
+    }
+    for_stmt => {
+        $0 = $1;
+    }
+    for_in_stmt => {
+        $0 = $1;
+    }
+;
+
+#[ast(
+    name = 'While',
+    namespace = 'stmt',
+    parent = 'Statement',
+    constructor = ['action_first', 'cond_expr', 'action'],
+    items = [
+        item('cond_expr',
+            type = type(
+                'Expression',
+                pointer = true,
+            ),
+        ),
+        item('action',
+            type = type(
+                'Statement',
+                pointer = true,
+            ),
+        ),
+        item('action_first',
+            type = 'bool',
+        ),
+    ],
+)];
+
+#[type = 'stmt::While *']
+while_stmt ::=
+    'while' '(' expr ')' stmt => {
+        $0 = new stmt::While(false, $3, $5);
+        $0->element($1, $5);
+    }
+    'do' stmt 'while' '(' expr ')' => {
+        $0 = new stmt::While(true, $5, $2);
+        $0->element($1, $6);
+    }
+;
+
+#[ast(
+    name = 'For',
+    namespace = 'stmt',
+    parent = 'Statement',
+    constructor = ['init', 'cond', 'loop', 'action'],
+    items = [
+        item('init',
+            type = type(
+                'Statement',
+                pointer = true,
+            ),
+        ),
+        item('cond',
+            type = type(
+                'Statement',
+                pointer = true,
+            ),
+        ),
+        item('loop',
+            type = type(
+                'Statement',
+                pointer = true,
+            ),
+        ),
+        item('action',
+            type = type(
+                'Statement',
+                pointer = true,
+            ),
+        ),
+    ],
+)];
+
+#[type = 'stmt::For *']
+for_stmt ::=
+    'for' '(' for_init ';' for_cond ';' for_loop ')' stmt => {
+        $0 = new stmt::For($3, $5, $7, $9);
+        $0->element($1, $9);
+    }
     'for' '(' 'var' var_decls_no_in ';' for_cond ';' for_loop ')' stmt,
-    'for' '(' left_hand_expr 'in' expr ')' stmt,
-    'for' '(' 'var' var_decl_no_in 'in' expr ')' stmt,
 ;
 
+#[type = 'Statement *']
 for_init ::=
-    ,
-    expr_no_in,
+    . => {
+        $0 = nullptr;
+    }
+    expr_no_in => {
+        $0 = new stmt::ExpressionStmt($1);
+        $0->element($1);
+    }
 ;
 
+#[type = 'Statement *']
 for_cond ::=
-    ,
-    expr,
+    . => {
+        $0 = nullptr;
+    }
+    expr => {
+        $0 = new stmt::ExpressionStmt($1);
+        $0->element($1);
+    }
 ;
 
+#[type = 'Statement *']
 for_loop ::=
-    ,
-    expr,
+    . => {
+        $0 = nullptr;
+    }
+    expr => {
+        $0 = new stmt::ExpressionStmt($1);
+        $0->element($1);
+    }
 ;
 
+#[ast(
+    name = 'ForIn',
+    namespace = 'stmt',
+    parent = 'Statement',
+    constructor = ['counter', 'expr', 'action'],
+    items = [
+        item('counter',
+            type = type(
+                'Expression',
+                pointer = true,
+            ),
+        ),
+        item('init',
+            type = type(
+                'Expression',
+                pointer = true,
+            ),
+        ),
+        item('expr',
+            type = type(
+                'Expression',
+                pointer = true,
+            ),
+        ),
+        item('action',
+            type = type(
+                'Statement',
+                pointer = true,
+            ),
+        ),
+    ],
+)];
+
+#[type = 'stmt::ForIn *']
+for_in_stmt ::=
+    'for' '(' left_hand_expr 'in' expr ')' stmt => {
+        $0 = new stmt::ForIn($3, $5, $7);
+        $0->element($1, $7);
+    }
+    'for' '(' 'var' var_decl_no_in 'in' expr ')' stmt => {
+        auto counter = new expr::Ident($4->name());
+
+        $0 = new stmt::ForIn(counter, $6, $8);
+        $0->init($4->init());
+        $0->element($1, $8);
+
+        delete $4;
+    }
+;
+
+#[ast(
+    name = 'Continue',
+    namespace = 'stmt',
+    parent = 'Statement',
+    items = [
+        item('name',
+            type = type(
+                'std::string',
+                pointer = true,
+            ),
+        ),
+    ],
+    includes = [
+        '<string>'
+    ],
+)];
+
+#[type = 'stmt::Continue *']
 cont_stmt ::=
-    'continue' ';',
-    'continue' IDENT ';',
+    'continue' ';' => {
+        $0 = new stmt::Continue();
+        $0->element($1, $2);
+    }
+    'continue' IDENT ';' => {
+        $0 = new stmt::Continue();
+        $0->name(new std::string($2->text()));
+        $0->element($1, $3);
+    }
 ;
 
+#[ast(
+    name = 'Break',
+    namespace = 'stmt',
+    parent = 'Statement',
+    items = [
+        item('name',
+            type = type(
+                'std::string',
+                pointer = true,
+            ),
+        ),
+    ],
+    includes = [
+        '<string>'
+    ],
+)];
+
+#[type = 'stmt::Break *']
 break_stmt ::=
-    'break' ';',
-    'break' IDENT ';',
+    'break' ';' => {
+        $0 = new stmt::Break();
+        $0->element($1, $2);
+    }
+    'break' IDENT ';' => {
+        $0 = new stmt::Break();
+        $0->name(new std::string($2->text()));
+        $0->element($1, $3);
+    }
 ;
 
+#[ast(
+    name = 'Return',
+    namespace = 'stmt',
+    parent = 'Statement',
+    items = [
+        item('expr',
+            type = type(
+                'Expression',
+                pointer = true,
+            ),
+        ),
+    ],
+)];
+
+#[type = 'stmt::Return *']
 return_stmt ::=
-    'return' ';',
-    'return' expr ';',
+    'return' ';' => {
+        $0 = new stmt::Return();
+        $0->element($1, $2);
+    }
+    'return' expr ';' => {
+        $0 = new stmt::Return();
+        $0->expr($2);
+        $0->element($1, $3);
+    }
 ;
 
+#[ast(
+    name = 'With',
+    namespace = 'stmt',
+    parent = 'Statement',
+    constructor = ['expr', 'action'],
+    items = [
+        item('expr',
+            type = type(
+                'Expression',
+                pointer = true,
+            ),
+        ),
+        item('action',
+            type = type(
+                'Statement',
+                pointer = true,
+            ),
+        ),
+    ],
+)];
+
+#[type = 'stmt::With *']
 with_stmt ::=
-    'with' '(' expr ')' stmt,
+    'with' '(' expr ')' stmt => {
+        $0 = new stmt::With($3, $5);
+        $0->element($1, $5);
+    }
 ;
 
+#[ast(
+    name = 'Switch',
+    namespace = 'stmt',
+    parent = 'Statement',
+    constructor = ['expr'],
+    items = [
+        item('expr',
+            type = type(
+                'Expression',
+                pointer = true,
+            ),
+        ),
+    ],
+)];
+
+#[type = 'stmt::Switch *']
 switch_stmt ::=
-    'switch' '(' expr ')' case_block,
+    'switch' '(' expr ')' case_block => {
+        $0 = new stmt::Switch($3);
+
+        $0->element($1, $5);
+    }
 ;
 
 case_block ::=
@@ -347,15 +797,60 @@ case_key ::=
     'default',
 ;
 
+#[ast(
+    name = 'Label',
+    namespace = 'stmt',
+    parent = 'Statement',
+    constructor = ['name', 'action'],
+    items = [
+        item('name',
+            type = 'std::string',
+        ),
+        item('action',
+            type = type(
+                'Statement',
+                pointer = true,
+            ),
+        ),
+    ],
+    includes = [
+        '<string>',
+    ],
+)];
+
 #[unused]
+#[type = 'stmt::Label *']
 label_stmt ::=
-    IDENT ':' stmt,
+    IDENT ':' stmt => {
+        $0 = new stmt::Label($1->text(), $3);
+        $0->element($1, $3);
+    }
 ;
 
+#[ast(
+    name = 'Throw',
+    namespace = 'stmt',
+    parent = 'Statement',
+    constructor = ['expr'],
+    items = [
+        item('expr',
+            type = type(
+                'Expression',
+                pointer = true,
+            ),
+        ),
+    ],
+)];
+
+#[type = 'stmt::Throw *']
 throw_stmt ::=
-    'throw' expr ';',
+    'throw' expr ';' => {
+        $0 = new stmt::Throw($2);
+        $0->element($1, $3);
+    }
 ;
 
+#[type = 'Statement *']
 try_stmt ::=
     'try' block_stmt catch,
     'try' block_stmt finally,
@@ -370,154 +865,702 @@ finally ::=
     'finally' block_stmt,
 ;
 
+#[ast(
+    name = 'Debug',
+    namespace = 'stmt',
+    parent = 'Statement',
+)];
+
+#[type = 'stmt::Debug *']
 debug_stmt ::=
-    'debugger' ';',
+    'debugger' ';' => {
+        $0 = new stmt::Debug();
+        $0->element($1, $2);
+    }
 ;
 
 /// Expression
+#[ast(
+    name = 'This',
+    namespace = 'expr',
+    parent = 'Expression',
+)];
+#[ast(
+    name = 'Ident',
+    namespace = 'expr',
+    parent = 'Expression',
+    constructor = ['name'],
+    items = [
+        item('name', type = 'std::string'),
+    ],
+    includes = [
+        '<string>',
+    ],
+)];
+
+#[type = 'Expression *']
 primary_expr ::=
-    'this',
-    IDENT,
-    literal,
-    array,
-    object,
-    '(' expr ')',
+    'this' => {
+        $0 = new expr::This();
+        $0->element($1);
+    }
+    IDENT => {
+        $0 = new expr::Ident($1->text());
+        $0->element($1);
+    }
+    literal => {
+        $0 = $1;
+    }
+    array => {
+        $0 = $1;
+    }
+    object => {
+        $0 = $1;
+    }
+    '(' expr ')' => {
+        $0 = $2;
+    }
 ;
 
+#[ast(
+    name = 'Index',
+    namespace = 'expr',
+    parent = 'Expression',
+    items = [
+        item('expr',
+            type = type(
+                'Expression',
+                pointer = true,
+            ),
+        ),
+        item('index',
+            type = type(
+                'Expression',
+                pointer = true,
+            ),
+        ),
+    ],
+)];
+#[ast(
+    name = 'Member',
+    namespace = 'expr',
+    parent = 'Expression',
+    items = [
+        item('expr',
+            type = type(
+                'Expression',
+                pointer = true,
+            ),
+        ),
+        item('name',
+            type = 'std::string',
+        ),
+    ],
+    includes = [
+        '<string>',
+    ],
+)];
+#[ast(
+    name = 'New',
+    namespace = 'expr',
+    parent = 'Expression',
+    items = [
+        item('expr',
+            type = type(
+                'Expression',
+                pointer = true,
+            ),
+        ),
+        item('args',
+            type = type(
+                type(
+                    'Expression',
+                    pointer = true,
+                ),
+                list = true,
+            ),
+        ),
+    ],
+)];
+
+#[type = 'Expression *']
 member_expr ::=
-    primary_expr,
+    primary_expr => {
+        $0 = $1;
+    }
     [variant = '{}_no_fn'] function_expr,
-    member_expr(variants = ['{}_no_fn']) '[' expr ']',
-    member_expr(variants = ['{}_no_fn']) '.' IDENT,
-    'new' member_expr arguments,
+    member_expr(variants = ['{}_no_fn']) '[' expr ']' => {
+        auto index = new expr::Index();
+        index->expr($1);
+        index->index($3);
+
+        $0 = index;
+        $0->element($1, $4);
+    }
+    member_expr(variants = ['{}_no_fn']) '.' IDENT => {
+        auto member = new expr::Member();
+        member->expr($1);
+        member->name($3->text());
+
+        $0 = member;
+        $0->element($1, $3);
+    }
+    'new' member_expr arguments => {
+        auto new_expr = new expr::New();
+        new_expr->expr($2);
+
+        for(auto it = $3->elements().begin(); it != $3->elements().end(); ++it)
+        {
+            new_expr->args().push_back(std::move(*it));
+        }
+
+        $0 = new_expr;
+        $0->element($1, $3);
+    }
 ;
 
+#[type = 'Expression *']
 new_expr ::=
-    member_expr(variants = ['{}_no_fn']),
-    'new' new_expr,
+    member_expr(variants = ['{}_no_fn']) => {
+        $0 = $1;
+    }
+    'new' new_expr => {
+        auto new_expr = new expr::New();
+        new_expr->expr($2);
+
+        $0 = new_expr;
+        $0->element($1, $2);
+    }
 ;
 
+#[ast(
+    name = 'Call',
+    namespace = 'expr',
+    parent = 'Expression',
+    constructor = ['expr'],
+    items = [
+        item(
+            'expr',
+            type = type(
+                'Expression',
+                pointer = true,
+            ),
+        ),
+        item(
+            'args',
+            type = type(
+                type(
+                    'Expression',
+                    pointer = true,
+                ),
+                list = true,
+            ),
+        ),
+    ],
+)];
+
+#[type = 'Expression *']
 call_expr ::=
-    member_expr(variants = ['{}_no_fn']) arguments,
-    call_expr(variants = ['{}_no_fn']) arguments,
-    call_expr(variants = ['{}_no_fn']) '[' expr ']',
-    call_expr(variants = ['{}_no_fn']) '.' IDENT,
+    member_expr(variants = ['{}_no_fn']) arguments => {
+        auto call = new expr::Call($1);
+
+        for(auto it = $2->elements().begin(); it != $2->elements().end(); ++it)
+        {
+            call->args().push_back(std::move(*it));
+        }
+
+        $0 = call;
+        $0->element($1, $2);
+    }
+    call_expr(variants = ['{}_no_fn']) arguments => {
+        auto call = new expr::Call($1);
+
+        for(auto it = $2->elements().begin(); it != $2->elements().end(); ++it)
+        {
+            call->args().push_back(std::move(*it));
+        }
+
+        $0 = call;
+        $0->element($1, $2);
+    }
+    call_expr(variants = ['{}_no_fn']) '[' expr ']' => {
+        auto index = new expr::Index();
+        index->expr($1);
+        index->index($3);
+
+        $0 = index;
+        $0->element($1, $4);
+    }
+    call_expr(variants = ['{}_no_fn']) '.' IDENT => {
+        auto member = new expr::Member();
+        member->expr($1);
+        member->name($3->text());
+
+        $0 = member;
+        $0->element($1, $3);
+    }
 ;
 
+#[type = 'Expression *']
 left_hand_expr ::=
-    new_expr(variants = ['{}_no_fn']),
-    call_expr(variants = ['{}_no_fn']),
+    new_expr(variants = ['{}_no_fn']) => {
+        $0 = $1;
+    }
+    call_expr(variants = ['{}_no_fn']) => {
+        $0 = $1;
+    }
 ;
 
+#[ast(
+    name = 'Postfix',
+    namespace = 'expr',
+    parent = 'Expression',
+    constructor = ['expr', 'op'],
+    items = [
+        item('expr',
+            type = type(
+                'Expression',
+                pointer = true,
+            ),
+        ),
+        item('op',
+            type = enum('OpType', ['INCREMENT', 'DECREMENT']),
+        ),
+    ],
+)];
+
+#[type = 'Expression *']
 postfix_expr ::=
-    left_hand_expr(variants = ['{}_no_fn']),
-    left_hand_expr(variants = ['{}_no_fn']) '++',
-    left_hand_expr(variants = ['{}_no_fn']) '--',
+    left_hand_expr(variants = ['{}_no_fn']) => {
+        $0 = $1;
+    }
+    left_hand_expr(variants = ['{}_no_fn']) '++' => {
+        $0 = new expr::Postfix($1, expr::Postfix::OpType::INCREMENT);
+        $0->element($1, $2);
+    }
+    left_hand_expr(variants = ['{}_no_fn']) '--' => {
+        $0 = new expr::Postfix($1, expr::Postfix::OpType::DECREMENT);
+        $0->element($1, $2);
+    }
 ;
 
+#[ast(
+    name = 'Unary',
+    namespace = 'expr',
+    parent = 'Expression',
+    constructor = ['expr', 'op'],
+    items = [
+        item('expr',
+            type = type(
+                'Expression',
+                pointer = true,
+            ),
+        ),
+        item('op',
+            type = enum('OpType', [
+                'DELETE',
+                'VOID',
+                'TYPEOF',
+                'INCREMENT',
+                'DECREMENT',
+                'PLUS',
+                'MINUS',
+                'INV',
+                'NOT',
+            ]),
+        ),
+    ],
+)];
+
+#[type = 'Expression *']
 unary_expr ::=
-    postfix_expr(variants = ['{}_no_fn']),
-    'delete' unary_expr,
-    'void' unary_expr,
-    'typeof' unary_expr,
-    '++' unary_expr,
-    '--' unary_expr,
-    '+' unary_expr,
-    '-' unary_expr,
-    '~' unary_expr,
-    '!' unary_expr,
+    postfix_expr(variants = ['{}_no_fn']) => {
+        $0 = $1;
+    }
+    'delete' unary_expr => {
+        $0 = new expr::Unary($2, expr::Unary::OpType::DELETE);
+        $0->element($1, $2);
+    }
+    'void' unary_expr => {
+        $0 = new expr::Unary($2, expr::Unary::OpType::VOID);
+        $0->element($1, $2);
+    }
+    'typeof' unary_expr => {
+        $0 = new expr::Unary($2, expr::Unary::OpType::TYPEOF);
+        $0->element($1, $2);
+    }
+    '++' unary_expr => {
+        $0 = new expr::Unary($2, expr::Unary::OpType::INCREMENT);
+        $0->element($1, $2);
+    }
+    '--' unary_expr => {
+        $0 = new expr::Unary($2, expr::Unary::OpType::DECREMENT);
+        $0->element($1, $2);
+    }
+    '+' unary_expr => {
+        $0 = new expr::Unary($2, expr::Unary::OpType::PLUS);
+        $0->element($1, $2);
+    }
+    '-' unary_expr => {
+        $0 = new expr::Unary($2, expr::Unary::OpType::MINUS);
+        $0->element($1, $2);
+    }
+    '~' unary_expr => {
+        $0 = new expr::Unary($2, expr::Unary::OpType::INV);
+        $0->element($1, $2);
+    }
+    '!' unary_expr => {
+        $0 = new expr::Unary($2, expr::Unary::OpType::NOT);
+        $0->element($1, $2);
+    }
 ;
 
+#[ast(
+    name = 'Binary',
+    namespace = 'expr',
+    parent = 'Expression',
+    constructor = ['left', 'right', 'op'],
+    items = [
+        item('left',
+            type = type(
+                'Expression',
+                pointer = true,
+            ),
+        ),
+        item('right',
+            type = type(
+                'Expression',
+                pointer = true,
+            ),
+        ),
+        item('op',
+            type = enum('OpType', [
+                'PLUS',
+                'MINUS',
+                'MUL',
+                'DIV',
+                'MOD',
+
+                'LEFT_SHIFT',
+                'RIGHT_SHIFT',
+                'ZERO_RIGHT_SHIFT',
+
+                'LESSER_THAN',
+                'GREATER_THAN',
+                'LESSER_EQ_THAN',
+                'GREATER_EQ_THAN',
+                'INSTANCEOF',
+                'IN',
+
+                'EQUAL',
+                'NOT_EQUAL',
+                'STRICT_EQUAL',
+                'STRICT_NOT_EQUAL',
+
+                'BIT_AND',
+                'BIT_XOR',
+                'BIT_OR',
+
+                'LOGIC_AND',
+                'LOGIC_OR',
+            ]),
+        ),
+    ],
+)];
+
+#[type = 'Expression *']
 mul_expr ::=
-    unary_expr(variants = ['{}_no_fn']),
-    mul_expr(variants = ['{}_no_fn']) '*' unary_expr,
-    mul_expr(variants = ['{}_no_fn']) '/' unary_expr,
-    mul_expr(variants = ['{}_no_fn']) '%' unary_expr,
+    unary_expr(variants = ['{}_no_fn']) => {
+        $0 = $1;
+    }
+    mul_expr(variants = ['{}_no_fn']) '*' unary_expr => {
+        $0 = new expr::Binary($1, $3, expr::Binary::OpType::MUL);
+        $0->element($1, $3);
+    }
+    mul_expr(variants = ['{}_no_fn']) '/' unary_expr => {
+        $0 = new expr::Binary($1, $3, expr::Binary::OpType::DIV);
+        $0->element($1, $3);
+    }
+    mul_expr(variants = ['{}_no_fn']) '%' unary_expr => {
+        $0 = new expr::Binary($1, $3, expr::Binary::OpType::MOD);
+        $0->element($1, $3);
+    }
 ;
 
+#[type = 'Expression *']
 add_expr ::=
-    mul_expr(variants = ['{}_no_fn']),
-    add_expr(variants = ['{}_no_fn']) '+' mul_expr,
-    add_expr(variants = ['{}_no_fn']) '-' mul_expr,
+    mul_expr(variants = ['{}_no_fn']) => {
+        $0 = $1;
+    }
+    add_expr(variants = ['{}_no_fn']) '+' mul_expr => {
+        $0 = new expr::Binary($1, $3, expr::Binary::OpType::PLUS);
+        $0->element($1, $3);
+    }
+    add_expr(variants = ['{}_no_fn']) '-' mul_expr => {
+        $0 = new expr::Binary($1, $3, expr::Binary::OpType::MINUS);
+        $0->element($1, $3);
+    }
 ;
 
+#[type = 'Expression *']
 shift_expr ::=
-    add_expr(variants = ['{}_no_fn']),
-    shift_expr(variants = ['{}_no_fn']) '<<' add_expr,
-    shift_expr(variants = ['{}_no_fn']) '>>' add_expr,
-    shift_expr(variants = ['{}_no_fn']) '>>>' add_expr,
+    add_expr(variants = ['{}_no_fn']) => {
+        $0 = $1;
+    }
+    shift_expr(variants = ['{}_no_fn']) '<<' add_expr => {
+        $0 = new expr::Binary($1, $3, expr::Binary::OpType::LEFT_SHIFT);
+        $0->element($1, $3);
+    }
+    shift_expr(variants = ['{}_no_fn']) '>>' add_expr => {
+        $0 = new expr::Binary($1, $3, expr::Binary::OpType::RIGHT_SHIFT);
+        $0->element($1, $3);
+    }
+    shift_expr(variants = ['{}_no_fn']) '>>>' add_expr => {
+        $0 = new expr::Binary($1, $3, expr::Binary::OpType::ZERO_RIGHT_SHIFT);
+        $0->element($1, $3);
+    }
 ;
 
+#[type = 'Expression *']
 rel_expr ::=
-    shift_expr(variants = ['{}_no_fn']),
-    rel_expr(variants = ['{}_no_fn', '{}_no_in']) '<' shift_expr,
-    rel_expr(variants = ['{}_no_fn', '{}_no_in']) '>' shift_expr,
-    rel_expr(variants = ['{}_no_fn', '{}_no_in']) '<=' shift_expr,
-    rel_expr(variants = ['{}_no_fn', '{}_no_in']) '>=' shift_expr,
-    rel_expr(variants = ['{}_no_fn', '{}_no_in']) 'instanceof' shift_expr,
-    [variant = '{}_no_in'] rel_expr(variants = ['{}_no_fn']) 'in' shift_expr,
+    shift_expr(variants = ['{}_no_fn']) => {
+        $0 = $1;
+    }
+    rel_expr(variants = ['{}_no_fn', '{}_no_in']) '<' shift_expr => {
+        $0 = new expr::Binary($1, $3, expr::Binary::OpType::LESSER_THAN);
+        $0->element($1, $3);
+    }
+    rel_expr(variants = ['{}_no_fn', '{}_no_in']) '>' shift_expr => {
+        $0 = new expr::Binary($1, $3, expr::Binary::OpType::GREATER_THAN);
+        $0->element($1, $3);
+    }
+    rel_expr(variants = ['{}_no_fn', '{}_no_in']) '<=' shift_expr => {
+        $0 = new expr::Binary($1, $3, expr::Binary::OpType::LESSER_EQ_THAN);
+        $0->element($1, $3);
+    }
+    rel_expr(variants = ['{}_no_fn', '{}_no_in']) '>=' shift_expr => {
+        $0 = new expr::Binary($1, $3, expr::Binary::OpType::GREATER_EQ_THAN);
+        $0->element($1, $3);
+    }
+    rel_expr(variants = ['{}_no_fn', '{}_no_in']) 'instanceof' shift_expr => {
+        $0 = new expr::Binary($1, $3, expr::Binary::OpType::INSTANCEOF);
+        $0->element($1, $3);
+    }
+    [variant = '{}_no_in'] rel_expr(variants = ['{}_no_fn']) 'in' shift_expr => {
+        $0 = new expr::Binary($1, $3, expr::Binary::OpType::IN);
+        $0->element($1, $3);
+    }
 ;
 
+#[type = 'Expression *']
 eq_expr ::=
-    rel_expr(variants = ['{}_no_fn', '{}_no_in']),
-    eq_expr(variants = ['{}_no_fn', '{}_no_in']) '==' rel_expr(variants = ['{}_no_in']),
-    eq_expr(variants = ['{}_no_fn', '{}_no_in']) '!=' rel_expr(variants = ['{}_no_in']),
-    eq_expr(variants = ['{}_no_fn', '{}_no_in']) '===' rel_expr(variants = ['{}_no_in']),
-    eq_expr(variants = ['{}_no_fn', '{}_no_in']) '!==' rel_expr(variants = ['{}_no_in']),
+    rel_expr(variants = ['{}_no_fn', '{}_no_in']) => {
+        $0 = $1;
+    }
+    eq_expr(variants = ['{}_no_fn', '{}_no_in']) '==' rel_expr(variants = ['{}_no_in']) => {
+        $0 = new expr::Binary($1, $3, expr::Binary::OpType::EQUAL);
+        $0->element($1, $3);
+    }
+    eq_expr(variants = ['{}_no_fn', '{}_no_in']) '!=' rel_expr(variants = ['{}_no_in']) => {
+        $0 = new expr::Binary($1, $3, expr::Binary::OpType::NOT_EQUAL);
+        $0->element($1, $3);
+    }
+    eq_expr(variants = ['{}_no_fn', '{}_no_in']) '===' rel_expr(variants = ['{}_no_in']) => {
+        $0 = new expr::Binary($1, $3, expr::Binary::OpType::STRICT_EQUAL);
+        $0->element($1, $3);
+    }
+    eq_expr(variants = ['{}_no_fn', '{}_no_in']) '!==' rel_expr(variants = ['{}_no_in']) => {
+        $0 = new expr::Binary($1, $3, expr::Binary::OpType::STRICT_NOT_EQUAL);
+        $0->element($1, $3);
+    }
 ;
 
+#[type = 'Expression *']
 bit_and_expr ::=
-    eq_expr(variants = ['{}_no_fn', '{}_no_in']),
-    bit_and_expr(variants = ['{}_no_fn', '{}_no_in']) '&' eq_expr(variants = ['{}_no_in']),
+    eq_expr(variants = ['{}_no_fn', '{}_no_in']) => {
+        $0 = $1;
+    }
+    bit_and_expr(variants = ['{}_no_fn', '{}_no_in']) '&' eq_expr(variants = ['{}_no_in']) => {
+        $0 = new expr::Binary($1, $3, expr::Binary::OpType::BIT_AND);
+        $0->element($1, $3);
+    }
 ;
 
+#[type = 'Expression *']
 bit_xor_expr ::=
-    bit_and_expr(variants = ['{}_no_fn', '{}_no_in']),
-    bit_xor_expr(variants = ['{}_no_fn', '{}_no_in']) '^' bit_and_expr(variants = ['{}_no_in']),
+    bit_and_expr(variants = ['{}_no_fn', '{}_no_in']) => {
+        $0 = $1;
+    }
+    bit_xor_expr(variants = ['{}_no_fn', '{}_no_in']) '^' bit_and_expr(variants = ['{}_no_in']) => {
+        $0 = new expr::Binary($1, $3, expr::Binary::OpType::BIT_XOR);
+        $0->element($1, $3);
+    }
 ;
 
+#[type = 'Expression *']
 bit_or_expr ::=
-    bit_xor_expr(variants = ['{}_no_fn', '{}_no_in']),
-    bit_or_expr(variants = ['{}_no_fn', '{}_no_in']) '|' bit_xor_expr(variants = ['{}_no_in']),
+    bit_xor_expr(variants = ['{}_no_fn', '{}_no_in']) => {
+        $0 = $1;
+    }
+    bit_or_expr(variants = ['{}_no_fn', '{}_no_in']) '|' bit_xor_expr(variants = ['{}_no_in']) => {
+        $0 = new expr::Binary($1, $3, expr::Binary::OpType::BIT_OR);
+        $0->element($1, $3);
+    }
 ;
 
+#[type = 'Expression *']
 logic_and_expr ::=
-    bit_or_expr(variants = ['{}_no_fn', '{}_no_in']),
-    logic_and_expr(variants = ['{}_no_fn', '{}_no_in']) '&&' bit_or_expr(variants = ['{}_no_in']),
+    bit_or_expr(variants = ['{}_no_fn', '{}_no_in']) => {
+        $0 = $1;
+    }
+    logic_and_expr(variants = ['{}_no_fn', '{}_no_in']) '&&' bit_or_expr(variants = ['{}_no_in']) => {
+        $0 = new expr::Binary($1, $3, expr::Binary::OpType::LOGIC_AND);
+        $0->element($1, $3);
+    }
 ;
 
+#[type = 'Expression *']
 logic_or_expr ::=
-    logic_and_expr(variants = ['{}_no_fn', '{}_no_in']),
-    logic_or_expr(variants = ['{}_no_fn', '{}_no_in']) '||' logic_and_expr(variants = ['{}_no_in']),
+    logic_and_expr(variants = ['{}_no_fn', '{}_no_in']) => {
+        $0 = $1;
+    }
+    logic_or_expr(variants = ['{}_no_fn', '{}_no_in']) '||' logic_and_expr(variants = ['{}_no_in']) => {
+        $0 = new expr::Binary($1, $3, expr::Binary::OpType::LOGIC_OR);
+        $0->element($1, $3);
+    }
 ;
 
+#[ast(
+    name = 'Condition',
+    namespace = 'expr',
+    parent = 'Expression',
+    constructor = ['cond_expr', 'then_expr', 'else_expr'],
+    items = [
+        item('cond_expr',
+            type = type(
+                'Expression',
+                pointer = true,
+            ),
+        ),
+        item('then_expr',
+            type = type(
+                'Expression',
+                pointer = true,
+            ),
+        ),
+        item('else_expr',
+            type = type(
+                'Expression',
+                pointer = true,
+            ),
+        ),
+    ],
+)];
+
+#[type = 'Expression *']
 cond_expr ::=
-    logic_or_expr(variants = ['{}_no_fn', '{}_no_in']),
-    logic_or_expr(variants = ['{}_no_fn', '{}_no_in']) '?' assign_expr ':' assign_expr(variants = ['{}_no_in']),
+    logic_or_expr(variants = ['{}_no_fn', '{}_no_in']) => {
+        $0 = $1;
+    }
+    logic_or_expr(variants = ['{}_no_fn', '{}_no_in']) '?' assign_expr ':' assign_expr(variants = ['{}_no_in']) => {
+        $0 = new expr::Condition($1, $3, $5);
+        $0->element($1, $5);
+    }
 ;
 
+#[ast(
+    name = 'Assign',
+    namespace = 'expr',
+    parent = 'Expression',
+    constructor = ['left', 'right', 'op'],
+    items = [
+        item('left',
+            type = type(
+                'Expression',
+                pointer = true
+            ),
+        ),
+        item('right',
+            type = type(
+                'Expression',
+                pointer = true
+            ),
+        ),
+        item('op',
+            type = enum('OpType', [
+                'SIMPLE',
+                'PLUS',
+                'MINUS',
+                'MUL',
+                'DIV',
+                'MOD',
+                'LEFT_SHIFT',
+                'RIGHT_SHIFT',
+                'ZERO_RIGHT_SHIFT',
+                'BIT_AND',
+                'BIT_XOR',
+                'BIT_OR',
+            ]),
+        ),
+    ],
+)];
+
+#[type = 'Expression *']
 assign_expr ::=
-    cond_expr(variants = ['{}_no_fn', '{}_no_in']),
-    left_hand_expr(variants = ['{}_no_fn']) assign_op assign_expr(variants = ['{}_no_in']),
+    cond_expr(variants = ['{}_no_fn', '{}_no_in']) => {
+        $0 = $1;
+    }
+    left_hand_expr(variants = ['{}_no_fn']) assign_op assign_expr(variants = ['{}_no_in']) => {
+        $0 = new expr::Assign($1, $3, $2);
+        $0->element($1, $3);
+    }
 ;
 
+#[type = 'expr::Assign::OpType']
 assign_op ::=
-    '=',
-    '*=',
-    '/=',
-    '%=',
-    '+=',
-    '-=',
-    '<<=',
-    '>>=',
-    '>>>=',
-    '&=',
-    '^=',
-    '|=',
+    '=' => {
+        $0 = expr::Assign::OpType::SIMPLE;
+    }
+    '*=' => {
+        $0 = expr::Assign::OpType::MUL;
+    }
+    '/=' => {
+        $0 = expr::Assign::OpType::DIV;
+    }
+    '%=' => {
+        $0 = expr::Assign::OpType::MOD;
+    }
+    '+=' => {
+        $0 = expr::Assign::OpType::PLUS;
+    }
+    '-=' => {
+        $0 = expr::Assign::OpType::MINUS;
+    }
+    '<<=' => {
+        $0 = expr::Assign::OpType::LEFT_SHIFT;
+    }
+    '>>=' => {
+        $0 = expr::Assign::OpType::RIGHT_SHIFT;
+    }
+    '>>>=' => {
+        $0 = expr::Assign::OpType::ZERO_RIGHT_SHIFT;
+    }
+    '&=' => {
+        $0 = expr::Assign::OpType::BIT_AND;
+    }
+    '^=' => {
+        $0 = expr::Assign::OpType::BIT_XOR;
+    }
+    '|=' => {
+        $0 = expr::Assign::OpType::BIT_OR;
+    }
 ;
 
+#[type = 'Expression *']
 expr ::=
-    assign_expr(variants = ['{}_no_fn', '{}_no_in']),
+    assign_expr(variants = ['{}_no_fn', '{}_no_in']) => {
+        $0 = $1;
+    }
     expr(variants = ['{}_no_fn', '{}_no_in']) ',' assign_expr(variants = ['{}_no_in']),
 ;
 
@@ -630,62 +1673,228 @@ literal ::=
 
 #[type = 'expr::Array *']
 array ::=
-    '[' ']',
-    '[' array_elision ']',
-    '[' array_element_list ']',
-    '[' array_element_list ',' ']',
-    '[' array_element_list ',' array_elision ']',
+    '[' ']' => {
+        $0 = new expr::Array();
+    }
+    '[' array_elision ']' => {
+        $0 = new expr::Array();
+
+        for (auto it = $2->begin(); it != $2->end(); ++it)
+        {
+            $0->elements().push_back(std::move(*it));
+        }
+    }
+    '[' array_element_list ']' => {
+        $0 = new expr::Array();
+
+        for (auto it = $2->begin(); it != $2->end(); ++it)
+        {
+            $0->elements().push_back(std::move(*it));
+        }
+    }
+    '[' array_element_list ',' ']' => {
+        $0 = new expr::Array();
+
+        for (auto it = $2->begin(); it != $2->end(); ++it)
+        {
+            $0->elements().push_back(std::move(*it));
+        }
+    }
+    '[' array_element_list ',' array_elision ']' => {
+        $0 = new expr::Array();
+
+        for (auto it = $2->begin(); it != $2->end(); ++it)
+        {
+            $0->elements().push_back(std::move(*it));
+        }
+
+        for (auto it = $4->begin(); it != $4->end(); ++it)
+        {
+            $0->elements().push_back(std::move(*it));
+        }
+    }
 ;
 
 #[type = 'std::vector<std::unique_ptr<Expression>> *']
 array_elision ::=
-    ',',
-    array_elision ',',
+    ',' => {
+        $0 = new std::vector<std::unique_ptr<Expression>>();
+        $0->push_back(nullptr);
+    }
+    array_elision ',' => {
+        $0 = $1;
+        $0->push_back(nullptr);
+    }
 ;
 
 #[type = 'std::vector<std::unique_ptr<Expression>> *']
 array_element_list ::=
-    assign_expr,
-    array_elision assign_expr,
-    array_element_list ',' assign_expr,
-    array_element_list ',' array_elision assign_expr,
+    assign_expr => {
+        $0 = new std::vector<std::unique_ptr<Expression>>();
+        $0->push_back(std::unique_ptr<Expression>($1));
+    }
+    array_elision assign_expr => {
+        $0 = $1;
+        $0->push_back(std::unique_ptr<Expression>($2));
+    }
+    array_element_list ',' assign_expr => {
+        $0 = $1;
+        $0->push_back(std::unique_ptr<Expression>($3));
+    }
+    array_element_list ',' array_elision assign_expr => {
+        $0 = $1;
+
+        for (auto it = $3->begin(); it != $3->end(); ++it)
+        {
+            $0->push_back(std::move(*it));
+        }
+    }
 ;
 
 /// Object literal
+#[ast(
+    name = 'Object',
+    namespace = 'expr',
+    parent = 'Expression',
+    items = [
+        item('properties',
+            type = type(
+                type(
+                    'expr::object::Property',
+                    pointer = true,
+                ),
+                list = true,
+            ),
+        ),
+    ],
+)];
+
+#[ast(
+    name = 'Property',
+    namespace = 'expr::object',
+    parent = 'utils::Element',
+    includes = [
+        '"ecma/utils/element.h"',
+    ],
+    items = [
+        item('key',
+            type = type(
+                'Expression',
+                pointer = true,
+            ),
+        ),
+        item('value',
+            type = type(
+                'Expression',
+                pointer = true,
+            ),
+        ),
+    ],
+)];
+
+#[type = 'expr::Object *']
 object ::=
     '{' '}',
     '{' object_properties '}',
     '{' object_properties ',' '}',
 ;
 
+#[type = 'std::vector<std::unique_ptr<expr::object::Property>> *']
 object_properties ::=
-    object_property,
-    object_properties ',' object_property,
+    object_property => {
+        $0 = new std::vector<std::unique_ptr<expr::object::Property>>();
+        $0->push_back(std::unique_ptr<expr::object::Property>($1));
+    }
+    object_properties ',' object_property => {
+        $0 = $1;
+        $0->push_back(std::unique_ptr<expr::object::Property>($3));
+    }
 ;
 
+#[type = 'expr::object::Property *']
 object_property ::=
-    object_property_name ':' assign_expr,
+    object_property_name ':' assign_expr => {
+        $0 = new expr::object::Property();
+        $0->key(nullptr);
+        $0->value(nullptr);
+        $0->element($1, $3);
+    }
     'get' object_property_name '(' ')' '{' function_body '}',
-    'get' object_property_name '(' object_property_set_params ')' '{' function_body '}',
+    'set' object_property_name '(' object_property_set_params ')' '{' function_body '}',
+    //TODO: Implement getter/setter support.
 ;
 
+#[type = 'Expression *']
 object_property_name ::=
-    IDENT,
-    STRING,
-    NUMBER,
+    IDENT => {
+        $0 = new expr::Ident($1->text());
+        $0->element($1);
+    }
+    STRING => {
+        $0 = new expr::literal::String($1->text());
+        $0->element($1);
+    }
+    NUMBER => {
+        $0 = new expr::literal::Number($1->text());
+        $0->element($1);
+    }
 ;
 
+#[type = 'std::vector<std::string> *']
 object_property_set_params ::=
-    IDENT,
+    IDENT => {
+        $0 = new std::vector<std::string>();
+        $0->push_back($1->text());
+    }
 ;
 
 /// Arguments
+#[ast(
+    name = 'Arguments',
+    namespace = 'args',
+    parent = 'utils::Element',
+    includes = [
+        '"ecma/utils/element.h"',
+    ],
+    items = [
+        item('elements',
+            type = type(
+                type(
+                    'Expression',
+                    pointer = true,
+                ),
+                list = true,
+            ),
+        ),
+    ],
+)];
+
+#[type = 'args::Arguments *']
 arguments ::=
-    '(' ')',
-    '(' arguments_list ')',
+    '(' ')' => {
+        $0 = new args::Arguments();
+        $0->element($1, $2);
+    }
+    '(' arguments_list ')' => {
+        $0 = new args::Arguments();
+
+        for (auto it = $2->begin(); it != $2->end(); ++it)
+        {
+            $0->elements().push_back(std::move(*it));
+        }
+
+        $0->element($1, $3);
+    }
 ;
 
+#[type = 'std::vector<std::unique_ptr<Expression>> *']
 arguments_list ::=
-    assign_expr,
-    arguments_list ',' assign_expr,
+    assign_expr => {
+        $0 = new std::vector<std::unique_ptr<Expression>>();
+        $0->push_back(std::unique_ptr<Expression>($1));
+    }
+    arguments_list ',' assign_expr => {
+        $0 = $1;
+        $0->push_back(std::unique_ptr<Expression>($3));
+    }
 ;

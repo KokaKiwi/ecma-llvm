@@ -150,175 +150,257 @@ source_elements ::= source_elements source_element.
 }
 
 /* Rule 'source_element' */
+%type source_element { Statement * }
 
-source_element ::= stmt.
+source_element(A) ::= stmt(B).
 {
+    A = B;
 }
 
-source_element ::= function_decl.
+source_element(A) ::= function_decl(B).
 {
+    // A = B;
 }
 
 /* Rule 'stmt' */
+%type stmt { Statement * }
 
-stmt ::= block.
+stmt(A) ::= block(B).
 {
+    A = B;
 }
 
-stmt ::= var_stmt.
+stmt(A) ::= var_stmt(B).
 {
+    A = B;
 }
 
-stmt ::= empty_stmt.
+stmt(A) ::= empty_stmt.
 {
+    A = nullptr;
 }
 
-stmt ::= expr_stmt.
+stmt(A) ::= expr_stmt(B).
 {
+    A = B;
 }
 
-stmt ::= if_stmt.
+stmt(A) ::= if_stmt(B).
 {
+    A = B;
 }
 
-stmt ::= iter_stmt.
+stmt(A) ::= iter_stmt(B).
 {
+    A = B;
 }
 
-stmt ::= cont_stmt.
+stmt(A) ::= cont_stmt(B).
 {
+    A = B;
 }
 
-stmt ::= break_stmt.
+stmt(A) ::= break_stmt(B).
 {
+    A = B;
 }
 
-stmt ::= return_stmt.
+stmt(A) ::= return_stmt(B).
 {
+    A = B;
 }
 
-stmt ::= with_stmt.
+stmt(A) ::= with_stmt(B).
 {
+    A = B;
 }
 
-stmt ::= switch_stmt.
+stmt(A) ::= switch_stmt(B).
 {
+    A = B;
 }
 
-stmt ::= throw_stmt.
+stmt(A) ::= throw_stmt(B).
 {
+    A = B;
 }
 
-stmt ::= try_stmt.
+stmt(A) ::= try_stmt(B).
 {
+    A = B;
 }
 
-stmt ::= debug_stmt.
+stmt(A) ::= debug_stmt(B).
 {
+    A = B;
 }
 
 /* Rule 'block' */
+%type block { stmt::Block * }
 
-block ::= LBRACE(A) stmt_list RBRACE(B).
+block(A) ::= LBRACE(B) stmt_list(C) RBRACE(D).
 {
-    delete A;
+    A = new stmt::Block();
+
+    for (auto it = C->begin(); it != C->end(); ++it)
+    {
+        A->statements().push_back(std::move(*it));
+    }
+
+    A->element(B, D);
+
     delete B;
+    delete D;
 }
 
 /* Rule 'block_empty' */
+%type block_empty { stmt::Block * }
 
-block_empty ::= LBRACE(A) RBRACE(B).
+block_empty(A) ::= LBRACE(B) RBRACE(C).
 {
-    delete A;
+    A = new stmt::Block();
+    A->element(B, C);
+
     delete B;
+    delete C;
 }
 
 /* Rule 'block_stmt' */
+%type block_stmt { stmt::Block * }
 
-block_stmt ::= block.
+block_stmt(A) ::= block(B).
 {
+    A = B;
 }
 
-block_stmt ::= block_empty.
+block_stmt(A) ::= block_empty(B).
 {
+    A = B;
 }
 
 /* Rule 'stmt_list' */
+%type stmt_list { std::vector<std::unique_ptr<Statement>> * }
 
-stmt_list ::= stmt.
+stmt_list(A) ::= stmt(B).
 {
+    A = new std::vector<std::unique_ptr<Statement>>();
+    A->push_back(std::unique_ptr<Statement>(B));
 }
 
-stmt_list ::= stmt_list stmt.
+stmt_list(A) ::= stmt_list(B) stmt(C).
 {
+    A = B;
+    A->push_back(std::unique_ptr<Statement>(C));
 }
 
 /* Rule 'var_stmt' */
+%type var_stmt { stmt::decl::Vars * }
 
-var_stmt ::= VAR(A) var_decls SEMICOLON(B).
+var_stmt(A) ::= VAR(B) var_decls(C) SEMICOLON(D).
 {
-    delete A;
+    A = new stmt::decl::Vars();
+
+    for (auto it = C->begin(); it != C->end(); ++it)
+    {
+        A->decls().push_back(std::move(*it));
+    }
+
+    A->element(B, D);
+
     delete B;
+    delete D;
 }
 
 /* Rule 'var_decls' */
+%type var_decls { std::vector<std::unique_ptr<stmt::decl::Var>> * }
 
-var_decls ::= var_decl.
+var_decls(A) ::= var_decl(B).
 {
+    A = new std::vector<std::unique_ptr<stmt::decl::Var>>();
+    A->push_back(std::unique_ptr<stmt::decl::Var>(B));
 }
 
-var_decls ::= var_decls COMMA(A) var_decl.
+var_decls(A) ::= var_decls(B) COMMA(D) var_decl(C).
 {
-    delete A;
+    A = B;
+    A->push_back(std::unique_ptr<stmt::decl::Var>(C));
+
+    delete D;
 }
 
 /* Rule 'var_decls_no_in' */
+%type var_decls_no_in { std::vector<std::unique_ptr<stmt::decl::Var>> * }
 
-var_decls_no_in ::= var_decl_no_in.
+var_decls_no_in(A) ::= var_decl_no_in(B).
 {
+    A = new std::vector<std::unique_ptr<stmt::decl::Var>>();
+    A->push_back(std::unique_ptr<stmt::decl::Var>(B));
 }
 
-var_decls_no_in ::= var_decls_no_in COMMA(A) var_decl_no_in.
+var_decls_no_in(A) ::= var_decls_no_in(B) COMMA(D) var_decl_no_in(C).
 {
-    delete A;
+    A = B;
+    A->push_back(std::unique_ptr<stmt::decl::Var>(C));
+
+    delete D;
 }
 
 /* Rule 'var_decl' */
+%type var_decl { stmt::decl::Var * }
 
-var_decl ::= IDENT(A).
+var_decl(A) ::= IDENT(B).
 {
-    delete A;
+    A = new stmt::decl::Var(B->text());
+    A->element(B);
+
+    delete B;
 }
 
-var_decl ::= IDENT(A) init.
+var_decl(A) ::= IDENT(B) init(C).
 {
-    delete A;
+    A = new stmt::decl::Var(B->text());
+    A->element(B, C);
+
+    delete B;
 }
 
 /* Rule 'var_decl_no_in' */
+%type var_decl_no_in { stmt::decl::Var * }
 
-var_decl_no_in ::= IDENT(A).
+var_decl_no_in(A) ::= IDENT(B).
 {
-    delete A;
+    A = new stmt::decl::Var(B->text());
+    A->element(B);
+
+    delete B;
 }
 
-var_decl_no_in ::= IDENT(A) init_no_in.
+var_decl_no_in(A) ::= IDENT(B) init_no_in(C).
 {
-    delete A;
+    A = new stmt::decl::Var(B->text());
+    A->element(B, C);
+
+    delete B;
 }
 
 /* Rule 'init' */
+%type init { Expression * }
 
-init ::= ASSIGN(A) assign_expr.
+init(A) ::= ASSIGN(C) assign_expr(B).
 {
-    delete A;
+    A = B;
+
+    delete C;
 }
 
 /* Rule 'init_no_in' */
+%type init_no_in { Expression * }
 
-init_no_in ::= ASSIGN(A) assign_expr_no_in.
+init_no_in(A) ::= ASSIGN(C) assign_expr_no_in(B).
 {
-    delete A;
+    A = B;
+
+    delete C;
 }
 
 /* Rule 'empty_stmt' */
@@ -329,56 +411,99 @@ empty_stmt ::= SEMICOLON(A).
 }
 
 /* Rule 'expr_stmt' */
+%type expr_stmt { stmt::ExpressionStmt * }
 
-expr_stmt ::= expr_no_fn SEMICOLON(A).
+expr_stmt(A) ::= expr_no_fn(B) SEMICOLON(C).
 {
-    delete A;
+    A = new stmt::ExpressionStmt(B);
+    A->element(B, C);
+
+    delete C;
 }
 
 /* Rule 'if_stmt' */
+%type if_stmt { stmt::If * }
 
-if_stmt ::= IF(A) LPAREN(B) expr RPAREN(C) stmt.
+if_stmt(A) ::= IF(B) LPAREN(E) expr(C) RPAREN(F) stmt(D).
 {
-    delete A;
+    A = new stmt::If(C, D);
+    A->element(B, D);
+
     delete B;
-    delete C;
+    delete E;
+    delete F;
 }
 
-if_stmt ::= IF(A) LPAREN(B) expr RPAREN(C) stmt ELSE(D) stmt.
+if_stmt(A) ::= IF(B) LPAREN(F) expr(C) RPAREN(G) stmt(D) ELSE(H) stmt(E).
 {
-    delete A;
+    A = new stmt::If(C, D);
+    A->else_stmt(E);
+    A->element(B, E);
+
     delete B;
-    delete C;
-    delete D;
+    delete F;
+    delete G;
+    delete H;
 }
 
 /* Rule 'iter_stmt' */
+%type iter_stmt { Statement * }
 
-iter_stmt ::= DO(A) stmt WHILE(B) LPAREN(C) expr RPAREN(D).
+iter_stmt(A) ::= while_stmt(B).
 {
-    delete A;
-    delete B;
-    delete C;
-    delete D;
+    A = B;
 }
 
-iter_stmt ::= WHILE(A) LPAREN(B) expr RPAREN(C) stmt.
+iter_stmt(A) ::= for_stmt(B).
 {
-    delete A;
-    delete B;
-    delete C;
+    A = B;
 }
 
-iter_stmt ::= FOR(A) LPAREN(B) for_init SEMICOLON(C) for_cond SEMICOLON(D) for_loop RPAREN(E) stmt.
+iter_stmt(A) ::= for_in_stmt(B).
 {
-    delete A;
+    A = B;
+}
+
+/* Rule 'while_stmt' */
+%type while_stmt { stmt::While * }
+
+while_stmt(A) ::= WHILE(B) LPAREN(E) expr(C) RPAREN(F) stmt(D).
+{
+    A = new stmt::While(false, C, D);
+    A->element(B, D);
+
     delete B;
-    delete C;
-    delete D;
+    delete E;
+    delete F;
+}
+
+while_stmt(A) ::= DO(B) stmt(C) WHILE(F) LPAREN(G) expr(D) RPAREN(E).
+{
+    A = new stmt::While(true, D, C);
+    A->element(B, E);
+
+    delete B;
+    delete F;
+    delete G;
     delete E;
 }
 
-iter_stmt ::= FOR(A) LPAREN(B) VAR(C) var_decls_no_in SEMICOLON(D) for_cond SEMICOLON(E) for_loop RPAREN(F) stmt.
+/* Rule 'for_stmt' */
+%type for_stmt { stmt::For * }
+
+for_stmt(A) ::= FOR(B) LPAREN(G) for_init(C) SEMICOLON(H) for_cond(D) SEMICOLON(I) for_loop(E) RPAREN(J) stmt(F).
+{
+    A = new stmt::For(C, D, E, F);
+    A->element(B, F);
+
+    delete B;
+    delete G;
+    delete H;
+    delete I;
+    delete J;
+}
+
+for_stmt ::= FOR(A) LPAREN(B) VAR(C) var_decls_no_in SEMICOLON(D) for_cond SEMICOLON(E) for_loop RPAREN(F) stmt.
 {
     delete A;
     delete B;
@@ -388,113 +513,172 @@ iter_stmt ::= FOR(A) LPAREN(B) VAR(C) var_decls_no_in SEMICOLON(D) for_cond SEMI
     delete F;
 }
 
-iter_stmt ::= FOR(A) LPAREN(B) left_hand_expr IN(C) expr RPAREN(D) stmt.
-{
-    delete A;
-    delete B;
-    delete C;
-    delete D;
-}
-
-iter_stmt ::= FOR(A) LPAREN(B) VAR(C) var_decl_no_in IN(D) expr RPAREN(E) stmt.
-{
-    delete A;
-    delete B;
-    delete C;
-    delete D;
-    delete E;
-}
-
 /* Rule 'for_init' */
+%type for_init { Statement * }
 
-for_init ::= .
+for_init(A) ::= .
 {
+    A = nullptr;
 }
 
-for_init ::= expr_no_in.
+for_init(A) ::= expr_no_in(B).
 {
+    A = new stmt::ExpressionStmt(B);
+    A->element(B);
 }
 
 /* Rule 'for_cond' */
+%type for_cond { Statement * }
 
-for_cond ::= .
+for_cond(A) ::= .
 {
+    A = nullptr;
 }
 
-for_cond ::= expr.
+for_cond(A) ::= expr(B).
 {
+    A = new stmt::ExpressionStmt(B);
+    A->element(B);
 }
 
 /* Rule 'for_loop' */
+%type for_loop { Statement * }
 
-for_loop ::= .
+for_loop(A) ::= .
 {
+    A = nullptr;
 }
 
-for_loop ::= expr.
+for_loop(A) ::= expr(B).
 {
+    A = new stmt::ExpressionStmt(B);
+    A->element(B);
+}
+
+/* Rule 'for_in_stmt' */
+%type for_in_stmt { stmt::ForIn * }
+
+for_in_stmt(A) ::= FOR(B) LPAREN(F) left_hand_expr(C) IN(G) expr(D) RPAREN(H) stmt(E).
+{
+    A = new stmt::ForIn(C, D, E);
+    A->element(B, E);
+
+    delete B;
+    delete F;
+    delete G;
+    delete H;
+}
+
+for_in_stmt(A) ::= FOR(B) LPAREN(F) VAR(G) var_decl_no_in(C) IN(H) expr(D) RPAREN(I) stmt(E).
+{
+    auto counter = new expr::Ident(C->name());
+
+    A = new stmt::ForIn(counter, D, E);
+    A->init(C->init());
+    A->element(B, E);
+
+    delete C;
+
+    delete B;
+    delete F;
+    delete G;
+    delete H;
+    delete I;
 }
 
 /* Rule 'cont_stmt' */
+%type cont_stmt { stmt::Continue * }
 
-cont_stmt ::= CONTINUE(A) SEMICOLON(B).
+cont_stmt(A) ::= CONTINUE(B) SEMICOLON(C).
 {
-    delete A;
-    delete B;
-}
+    A = new stmt::Continue();
+    A->element(B, C);
 
-cont_stmt ::= CONTINUE(A) IDENT(B) SEMICOLON(C).
-{
-    delete A;
     delete B;
     delete C;
+}
+
+cont_stmt(A) ::= CONTINUE(B) IDENT(C) SEMICOLON(D).
+{
+    A = new stmt::Continue();
+    A->name(new std::string(C->text()));
+    A->element(B, D);
+
+    delete B;
+    delete C;
+    delete D;
 }
 
 /* Rule 'break_stmt' */
+%type break_stmt { stmt::Break * }
 
-break_stmt ::= BREAK(A) SEMICOLON(B).
+break_stmt(A) ::= BREAK(B) SEMICOLON(C).
 {
-    delete A;
-    delete B;
-}
+    A = new stmt::Break();
+    A->element(B, C);
 
-break_stmt ::= BREAK(A) IDENT(B) SEMICOLON(C).
-{
-    delete A;
     delete B;
     delete C;
+}
+
+break_stmt(A) ::= BREAK(B) IDENT(C) SEMICOLON(D).
+{
+    A = new stmt::Break();
+    A->name(new std::string(C->text()));
+    A->element(B, D);
+
+    delete B;
+    delete C;
+    delete D;
 }
 
 /* Rule 'return_stmt' */
+%type return_stmt { stmt::Return * }
 
-return_stmt ::= RETURN(A) SEMICOLON(B).
+return_stmt(A) ::= RETURN(B) SEMICOLON(C).
 {
-    delete A;
+    A = new stmt::Return();
+    A->element(B, C);
+
     delete B;
+    delete C;
 }
 
-return_stmt ::= RETURN(A) expr SEMICOLON(B).
+return_stmt(A) ::= RETURN(B) expr(C) SEMICOLON(D).
 {
-    delete A;
+    A = new stmt::Return();
+    A->expr(C);
+    A->element(B, D);
+
     delete B;
+    delete D;
 }
 
 /* Rule 'with_stmt' */
+%type with_stmt { stmt::With * }
 
-with_stmt ::= WITH(A) LPAREN(B) expr RPAREN(C) stmt.
+with_stmt(A) ::= WITH(B) LPAREN(E) expr(C) RPAREN(F) stmt(D).
 {
-    delete A;
+    A = new stmt::With(C, D);
+    A->element(B, D);
+
     delete B;
-    delete C;
+    delete E;
+    delete F;
 }
 
 /* Rule 'switch_stmt' */
+%type switch_stmt { stmt::Switch * }
 
-switch_stmt ::= SWITCH(A) LPAREN(B) expr RPAREN(C) case_block.
+switch_stmt(A) ::= SWITCH(B) LPAREN(E) expr(C) RPAREN(F) case_block(D).
 {
-    delete A;
+    A = new stmt::Switch(C);
+
+    A->element(B, D);
+
     delete B;
-    delete C;
+    delete E;
+    delete F;
 }
 
 /* Rule 'case_block' */
@@ -546,14 +730,19 @@ case_key ::= DEFAULT(A).
 }
 
 /* Rule 'throw_stmt' */
+%type throw_stmt { stmt::Throw * }
 
-throw_stmt ::= THROW(A) expr SEMICOLON(B).
+throw_stmt(A) ::= THROW(B) expr(C) SEMICOLON(D).
 {
-    delete A;
+    A = new stmt::Throw(C);
+    A->element(B, D);
+
     delete B;
+    delete D;
 }
 
 /* Rule 'try_stmt' */
+%type try_stmt { Statement * }
 
 try_stmt ::= TRY(A) block_stmt catch.
 {
@@ -588,907 +777,1427 @@ finally ::= FINALLY(A) block_stmt.
 }
 
 /* Rule 'debug_stmt' */
+%type debug_stmt { stmt::Debug * }
 
-debug_stmt ::= DEBUGGER(A) SEMICOLON(B).
+debug_stmt(A) ::= DEBUGGER(B) SEMICOLON(C).
 {
-    delete A;
+    A = new stmt::Debug();
+    A->element(B, C);
+
     delete B;
+    delete C;
 }
 
 /* Rule 'primary_expr' */
+%type primary_expr { Expression * }
 
-primary_expr ::= THIS(A).
+primary_expr(A) ::= THIS(B).
 {
-    delete A;
-}
+    A = new expr::This();
+    A->element(B);
 
-primary_expr ::= IDENT(A).
-{
-    delete A;
-}
-
-primary_expr ::= literal.
-{
-}
-
-primary_expr ::= array.
-{
-}
-
-primary_expr ::= object.
-{
-}
-
-primary_expr ::= LPAREN(A) expr RPAREN(B).
-{
-    delete A;
     delete B;
 }
 
-/* Rule 'member_expr' */
-
-member_expr ::= primary_expr.
+primary_expr(A) ::= IDENT(B).
 {
+    A = new expr::Ident(B->text());
+    A->element(B);
+
+    delete B;
+}
+
+primary_expr(A) ::= literal(B).
+{
+    A = B;
+}
+
+primary_expr(A) ::= array(B).
+{
+    A = B;
+}
+
+primary_expr(A) ::= object(B).
+{
+    A = B;
+}
+
+primary_expr(A) ::= LPAREN(C) expr(B) RPAREN(D).
+{
+    A = B;
+
+    delete C;
+    delete D;
+}
+
+/* Rule 'member_expr' */
+%type member_expr { Expression * }
+
+member_expr(A) ::= primary_expr(B).
+{
+    A = B;
 }
 
 member_expr ::= function_expr.
 {
 }
 
-member_expr ::= member_expr LBRACKET(A) expr RBRACKET(B).
+member_expr(A) ::= member_expr(B) LBRACKET(E) expr(C) RBRACKET(D).
 {
-    delete A;
-    delete B;
+    auto index = new expr::Index();
+    index->expr(B);
+    index->index(C);
+
+    A = index;
+    A->element(B, D);
+
+    delete E;
+    delete D;
 }
 
-member_expr ::= member_expr DOT(A) IDENT(B).
+member_expr(A) ::= member_expr(B) DOT(D) IDENT(C).
 {
-    delete A;
-    delete B;
+    auto member = new expr::Member();
+    member->expr(B);
+    member->name(C->text());
+
+    A = member;
+    A->element(B, C);
+
+    delete D;
+    delete C;
 }
 
-member_expr ::= NEW(A) member_expr arguments.
+member_expr(A) ::= NEW(B) member_expr(C) arguments(D).
 {
-    delete A;
+    auto new_expr = new expr::New();
+    new_expr->expr(C);
+
+    for(auto it = D->elements().begin(); it != D->elements().end(); ++it)
+    {
+        new_expr->args().push_back(std::move(*it));
+    }
+
+    A = new_expr;
+    A->element(B, D);
+
+    delete B;
 }
 
 /* Rule 'member_expr_no_fn' */
+%type member_expr_no_fn { Expression * }
 
-member_expr_no_fn ::= primary_expr.
+member_expr_no_fn(A) ::= primary_expr(B).
 {
+    A = B;
 }
 
-member_expr_no_fn ::= member_expr_no_fn LBRACKET(A) expr RBRACKET(B).
+member_expr_no_fn(A) ::= member_expr_no_fn(B) LBRACKET(E) expr(C) RBRACKET(D).
 {
-    delete A;
+    auto index = new expr::Index();
+    index->expr(B);
+    index->index(C);
+
+    A = index;
+    A->element(B, D);
+
+    delete E;
+    delete D;
+}
+
+member_expr_no_fn(A) ::= member_expr_no_fn(B) DOT(D) IDENT(C).
+{
+    auto member = new expr::Member();
+    member->expr(B);
+    member->name(C->text());
+
+    A = member;
+    A->element(B, C);
+
+    delete D;
+    delete C;
+}
+
+member_expr_no_fn(A) ::= NEW(B) member_expr(C) arguments(D).
+{
+    auto new_expr = new expr::New();
+    new_expr->expr(C);
+
+    for(auto it = D->elements().begin(); it != D->elements().end(); ++it)
+    {
+        new_expr->args().push_back(std::move(*it));
+    }
+
+    A = new_expr;
+    A->element(B, D);
+
     delete B;
-}
-
-member_expr_no_fn ::= member_expr_no_fn DOT(A) IDENT(B).
-{
-    delete A;
-    delete B;
-}
-
-member_expr_no_fn ::= NEW(A) member_expr arguments.
-{
-    delete A;
 }
 
 /* Rule 'new_expr' */
+%type new_expr { Expression * }
 
-new_expr ::= member_expr.
+new_expr(A) ::= member_expr(B).
 {
+    A = B;
 }
 
-new_expr ::= NEW(A) new_expr.
+new_expr(A) ::= NEW(B) new_expr(C).
 {
-    delete A;
+    auto new_expr = new expr::New();
+    new_expr->expr(C);
+
+    A = new_expr;
+    A->element(B, C);
+
+    delete B;
 }
 
 /* Rule 'new_expr_no_fn' */
+%type new_expr_no_fn { Expression * }
 
-new_expr_no_fn ::= member_expr_no_fn.
+new_expr_no_fn(A) ::= member_expr_no_fn(B).
 {
+    A = B;
 }
 
-new_expr_no_fn ::= NEW(A) new_expr.
+new_expr_no_fn(A) ::= NEW(B) new_expr(C).
 {
-    delete A;
+    auto new_expr = new expr::New();
+    new_expr->expr(C);
+
+    A = new_expr;
+    A->element(B, C);
+
+    delete B;
 }
 
 /* Rule 'call_expr' */
+%type call_expr { Expression * }
 
-call_expr ::= member_expr arguments.
+call_expr(A) ::= member_expr(B) arguments(C).
 {
+    auto call = new expr::Call(B);
+
+    for(auto it = C->elements().begin(); it != C->elements().end(); ++it)
+    {
+        call->args().push_back(std::move(*it));
+    }
+
+    A = call;
+    A->element(B, C);
 }
 
-call_expr ::= call_expr arguments.
+call_expr(A) ::= call_expr(B) arguments(C).
 {
+    auto call = new expr::Call(B);
+
+    for(auto it = C->elements().begin(); it != C->elements().end(); ++it)
+    {
+        call->args().push_back(std::move(*it));
+    }
+
+    A = call;
+    A->element(B, C);
 }
 
-call_expr ::= call_expr LBRACKET(A) expr RBRACKET(B).
+call_expr(A) ::= call_expr(B) LBRACKET(E) expr(C) RBRACKET(D).
 {
-    delete A;
-    delete B;
+    auto index = new expr::Index();
+    index->expr(B);
+    index->index(C);
+
+    A = index;
+    A->element(B, D);
+
+    delete E;
+    delete D;
 }
 
-call_expr ::= call_expr DOT(A) IDENT(B).
+call_expr(A) ::= call_expr(B) DOT(D) IDENT(C).
 {
-    delete A;
-    delete B;
+    auto member = new expr::Member();
+    member->expr(B);
+    member->name(C->text());
+
+    A = member;
+    A->element(B, C);
+
+    delete D;
+    delete C;
 }
 
 /* Rule 'call_expr_no_fn' */
+%type call_expr_no_fn { Expression * }
 
-call_expr_no_fn ::= member_expr_no_fn arguments.
+call_expr_no_fn(A) ::= member_expr_no_fn(B) arguments(C).
 {
+    auto call = new expr::Call(B);
+
+    for(auto it = C->elements().begin(); it != C->elements().end(); ++it)
+    {
+        call->args().push_back(std::move(*it));
+    }
+
+    A = call;
+    A->element(B, C);
 }
 
-call_expr_no_fn ::= call_expr_no_fn arguments.
+call_expr_no_fn(A) ::= call_expr_no_fn(B) arguments(C).
 {
+    auto call = new expr::Call(B);
+
+    for(auto it = C->elements().begin(); it != C->elements().end(); ++it)
+    {
+        call->args().push_back(std::move(*it));
+    }
+
+    A = call;
+    A->element(B, C);
 }
 
-call_expr_no_fn ::= call_expr_no_fn LBRACKET(A) expr RBRACKET(B).
+call_expr_no_fn(A) ::= call_expr_no_fn(B) LBRACKET(E) expr(C) RBRACKET(D).
 {
-    delete A;
-    delete B;
+    auto index = new expr::Index();
+    index->expr(B);
+    index->index(C);
+
+    A = index;
+    A->element(B, D);
+
+    delete E;
+    delete D;
 }
 
-call_expr_no_fn ::= call_expr_no_fn DOT(A) IDENT(B).
+call_expr_no_fn(A) ::= call_expr_no_fn(B) DOT(D) IDENT(C).
 {
-    delete A;
-    delete B;
+    auto member = new expr::Member();
+    member->expr(B);
+    member->name(C->text());
+
+    A = member;
+    A->element(B, C);
+
+    delete D;
+    delete C;
 }
 
 /* Rule 'left_hand_expr' */
+%type left_hand_expr { Expression * }
 
-left_hand_expr ::= new_expr.
+left_hand_expr(A) ::= new_expr(B).
 {
+    A = B;
 }
 
-left_hand_expr ::= call_expr.
+left_hand_expr(A) ::= call_expr(B).
 {
+    A = B;
 }
 
 /* Rule 'left_hand_expr_no_fn' */
+%type left_hand_expr_no_fn { Expression * }
 
-left_hand_expr_no_fn ::= new_expr_no_fn.
+left_hand_expr_no_fn(A) ::= new_expr_no_fn(B).
 {
+    A = B;
 }
 
-left_hand_expr_no_fn ::= call_expr_no_fn.
+left_hand_expr_no_fn(A) ::= call_expr_no_fn(B).
 {
+    A = B;
 }
 
 /* Rule 'postfix_expr' */
+%type postfix_expr { Expression * }
 
-postfix_expr ::= left_hand_expr.
+postfix_expr(A) ::= left_hand_expr(B).
 {
+    A = B;
 }
 
-postfix_expr ::= left_hand_expr INCREMENT(A).
+postfix_expr(A) ::= left_hand_expr(B) INCREMENT(C).
 {
-    delete A;
+    A = new expr::Postfix(B, expr::Postfix::OpType::INCREMENT);
+    A->element(B, C);
+
+    delete C;
 }
 
-postfix_expr ::= left_hand_expr DECREMENT(A).
+postfix_expr(A) ::= left_hand_expr(B) DECREMENT(C).
 {
-    delete A;
+    A = new expr::Postfix(B, expr::Postfix::OpType::DECREMENT);
+    A->element(B, C);
+
+    delete C;
 }
 
 /* Rule 'postfix_expr_no_fn' */
+%type postfix_expr_no_fn { Expression * }
 
-postfix_expr_no_fn ::= left_hand_expr_no_fn.
+postfix_expr_no_fn(A) ::= left_hand_expr_no_fn(B).
 {
+    A = B;
 }
 
-postfix_expr_no_fn ::= left_hand_expr_no_fn INCREMENT(A).
+postfix_expr_no_fn(A) ::= left_hand_expr_no_fn(B) INCREMENT(C).
 {
-    delete A;
+    A = new expr::Postfix(B, expr::Postfix::OpType::INCREMENT);
+    A->element(B, C);
+
+    delete C;
 }
 
-postfix_expr_no_fn ::= left_hand_expr_no_fn DECREMENT(A).
+postfix_expr_no_fn(A) ::= left_hand_expr_no_fn(B) DECREMENT(C).
 {
-    delete A;
+    A = new expr::Postfix(B, expr::Postfix::OpType::DECREMENT);
+    A->element(B, C);
+
+    delete C;
 }
 
 /* Rule 'unary_expr' */
+%type unary_expr { Expression * }
 
-unary_expr ::= postfix_expr.
+unary_expr(A) ::= postfix_expr(B).
 {
+    A = B;
 }
 
-unary_expr ::= DELETE(A) unary_expr.
+unary_expr(A) ::= DELETE(B) unary_expr(C).
 {
-    delete A;
+    A = new expr::Unary(C, expr::Unary::OpType::DELETE);
+    A->element(B, C);
+
+    delete B;
 }
 
-unary_expr ::= VOID(A) unary_expr.
+unary_expr(A) ::= VOID(B) unary_expr(C).
 {
-    delete A;
+    A = new expr::Unary(C, expr::Unary::OpType::VOID);
+    A->element(B, C);
+
+    delete B;
 }
 
-unary_expr ::= TYPEOF(A) unary_expr.
+unary_expr(A) ::= TYPEOF(B) unary_expr(C).
 {
-    delete A;
+    A = new expr::Unary(C, expr::Unary::OpType::TYPEOF);
+    A->element(B, C);
+
+    delete B;
 }
 
-unary_expr ::= INCREMENT(A) unary_expr.
+unary_expr(A) ::= INCREMENT(B) unary_expr(C).
 {
-    delete A;
+    A = new expr::Unary(C, expr::Unary::OpType::INCREMENT);
+    A->element(B, C);
+
+    delete B;
 }
 
-unary_expr ::= DECREMENT(A) unary_expr.
+unary_expr(A) ::= DECREMENT(B) unary_expr(C).
 {
-    delete A;
+    A = new expr::Unary(C, expr::Unary::OpType::DECREMENT);
+    A->element(B, C);
+
+    delete B;
 }
 
-unary_expr ::= PLUS(A) unary_expr.
+unary_expr(A) ::= PLUS(B) unary_expr(C).
 {
-    delete A;
+    A = new expr::Unary(C, expr::Unary::OpType::PLUS);
+    A->element(B, C);
+
+    delete B;
 }
 
-unary_expr ::= MINUS(A) unary_expr.
+unary_expr(A) ::= MINUS(B) unary_expr(C).
 {
-    delete A;
+    A = new expr::Unary(C, expr::Unary::OpType::MINUS);
+    A->element(B, C);
+
+    delete B;
 }
 
-unary_expr ::= INV(A) unary_expr.
+unary_expr(A) ::= INV(B) unary_expr(C).
 {
-    delete A;
+    A = new expr::Unary(C, expr::Unary::OpType::INV);
+    A->element(B, C);
+
+    delete B;
 }
 
-unary_expr ::= NOT(A) unary_expr.
+unary_expr(A) ::= NOT(B) unary_expr(C).
 {
-    delete A;
+    A = new expr::Unary(C, expr::Unary::OpType::NOT);
+    A->element(B, C);
+
+    delete B;
 }
 
 /* Rule 'unary_expr_no_fn' */
+%type unary_expr_no_fn { Expression * }
 
-unary_expr_no_fn ::= postfix_expr_no_fn.
+unary_expr_no_fn(A) ::= postfix_expr_no_fn(B).
 {
+    A = B;
 }
 
-unary_expr_no_fn ::= DELETE(A) unary_expr.
+unary_expr_no_fn(A) ::= DELETE(B) unary_expr(C).
 {
-    delete A;
+    A = new expr::Unary(C, expr::Unary::OpType::DELETE);
+    A->element(B, C);
+
+    delete B;
 }
 
-unary_expr_no_fn ::= VOID(A) unary_expr.
+unary_expr_no_fn(A) ::= VOID(B) unary_expr(C).
 {
-    delete A;
+    A = new expr::Unary(C, expr::Unary::OpType::VOID);
+    A->element(B, C);
+
+    delete B;
 }
 
-unary_expr_no_fn ::= TYPEOF(A) unary_expr.
+unary_expr_no_fn(A) ::= TYPEOF(B) unary_expr(C).
 {
-    delete A;
+    A = new expr::Unary(C, expr::Unary::OpType::TYPEOF);
+    A->element(B, C);
+
+    delete B;
 }
 
-unary_expr_no_fn ::= INCREMENT(A) unary_expr.
+unary_expr_no_fn(A) ::= INCREMENT(B) unary_expr(C).
 {
-    delete A;
+    A = new expr::Unary(C, expr::Unary::OpType::INCREMENT);
+    A->element(B, C);
+
+    delete B;
 }
 
-unary_expr_no_fn ::= DECREMENT(A) unary_expr.
+unary_expr_no_fn(A) ::= DECREMENT(B) unary_expr(C).
 {
-    delete A;
+    A = new expr::Unary(C, expr::Unary::OpType::DECREMENT);
+    A->element(B, C);
+
+    delete B;
 }
 
-unary_expr_no_fn ::= PLUS(A) unary_expr.
+unary_expr_no_fn(A) ::= PLUS(B) unary_expr(C).
 {
-    delete A;
+    A = new expr::Unary(C, expr::Unary::OpType::PLUS);
+    A->element(B, C);
+
+    delete B;
 }
 
-unary_expr_no_fn ::= MINUS(A) unary_expr.
+unary_expr_no_fn(A) ::= MINUS(B) unary_expr(C).
 {
-    delete A;
+    A = new expr::Unary(C, expr::Unary::OpType::MINUS);
+    A->element(B, C);
+
+    delete B;
 }
 
-unary_expr_no_fn ::= INV(A) unary_expr.
+unary_expr_no_fn(A) ::= INV(B) unary_expr(C).
 {
-    delete A;
+    A = new expr::Unary(C, expr::Unary::OpType::INV);
+    A->element(B, C);
+
+    delete B;
 }
 
-unary_expr_no_fn ::= NOT(A) unary_expr.
+unary_expr_no_fn(A) ::= NOT(B) unary_expr(C).
 {
-    delete A;
+    A = new expr::Unary(C, expr::Unary::OpType::NOT);
+    A->element(B, C);
+
+    delete B;
 }
 
 /* Rule 'mul_expr' */
+%type mul_expr { Expression * }
 
-mul_expr ::= unary_expr.
+mul_expr(A) ::= unary_expr(B).
 {
+    A = B;
 }
 
-mul_expr ::= mul_expr MUL(A) unary_expr.
+mul_expr(A) ::= mul_expr(B) MUL(D) unary_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::MUL);
+    A->element(B, C);
+
+    delete D;
 }
 
-mul_expr ::= mul_expr DIV(A) unary_expr.
+mul_expr(A) ::= mul_expr(B) DIV(D) unary_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::DIV);
+    A->element(B, C);
+
+    delete D;
 }
 
-mul_expr ::= mul_expr MOD(A) unary_expr.
+mul_expr(A) ::= mul_expr(B) MOD(D) unary_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::MOD);
+    A->element(B, C);
+
+    delete D;
 }
 
 /* Rule 'mul_expr_no_fn' */
+%type mul_expr_no_fn { Expression * }
 
-mul_expr_no_fn ::= unary_expr_no_fn.
+mul_expr_no_fn(A) ::= unary_expr_no_fn(B).
 {
+    A = B;
 }
 
-mul_expr_no_fn ::= mul_expr_no_fn MUL(A) unary_expr.
+mul_expr_no_fn(A) ::= mul_expr_no_fn(B) MUL(D) unary_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::MUL);
+    A->element(B, C);
+
+    delete D;
 }
 
-mul_expr_no_fn ::= mul_expr_no_fn DIV(A) unary_expr.
+mul_expr_no_fn(A) ::= mul_expr_no_fn(B) DIV(D) unary_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::DIV);
+    A->element(B, C);
+
+    delete D;
 }
 
-mul_expr_no_fn ::= mul_expr_no_fn MOD(A) unary_expr.
+mul_expr_no_fn(A) ::= mul_expr_no_fn(B) MOD(D) unary_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::MOD);
+    A->element(B, C);
+
+    delete D;
 }
 
 /* Rule 'add_expr' */
+%type add_expr { Expression * }
 
-add_expr ::= mul_expr.
+add_expr(A) ::= mul_expr(B).
 {
+    A = B;
 }
 
-add_expr ::= add_expr PLUS(A) mul_expr.
+add_expr(A) ::= add_expr(B) PLUS(D) mul_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::PLUS);
+    A->element(B, C);
+
+    delete D;
 }
 
-add_expr ::= add_expr MINUS(A) mul_expr.
+add_expr(A) ::= add_expr(B) MINUS(D) mul_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::MINUS);
+    A->element(B, C);
+
+    delete D;
 }
 
 /* Rule 'add_expr_no_fn' */
+%type add_expr_no_fn { Expression * }
 
-add_expr_no_fn ::= mul_expr_no_fn.
+add_expr_no_fn(A) ::= mul_expr_no_fn(B).
 {
+    A = B;
 }
 
-add_expr_no_fn ::= add_expr_no_fn PLUS(A) mul_expr.
+add_expr_no_fn(A) ::= add_expr_no_fn(B) PLUS(D) mul_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::PLUS);
+    A->element(B, C);
+
+    delete D;
 }
 
-add_expr_no_fn ::= add_expr_no_fn MINUS(A) mul_expr.
+add_expr_no_fn(A) ::= add_expr_no_fn(B) MINUS(D) mul_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::MINUS);
+    A->element(B, C);
+
+    delete D;
 }
 
 /* Rule 'shift_expr' */
+%type shift_expr { Expression * }
 
-shift_expr ::= add_expr.
+shift_expr(A) ::= add_expr(B).
 {
+    A = B;
 }
 
-shift_expr ::= shift_expr LEFT_SHIFT(A) add_expr.
+shift_expr(A) ::= shift_expr(B) LEFT_SHIFT(D) add_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::LEFT_SHIFT);
+    A->element(B, C);
+
+    delete D;
 }
 
-shift_expr ::= shift_expr RIGHT_SHIFT(A) add_expr.
+shift_expr(A) ::= shift_expr(B) RIGHT_SHIFT(D) add_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::RIGHT_SHIFT);
+    A->element(B, C);
+
+    delete D;
 }
 
-shift_expr ::= shift_expr ZERO_RIGHT_SHIFT(A) add_expr.
+shift_expr(A) ::= shift_expr(B) ZERO_RIGHT_SHIFT(D) add_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::ZERO_RIGHT_SHIFT);
+    A->element(B, C);
+
+    delete D;
 }
 
 /* Rule 'shift_expr_no_fn' */
+%type shift_expr_no_fn { Expression * }
 
-shift_expr_no_fn ::= add_expr_no_fn.
+shift_expr_no_fn(A) ::= add_expr_no_fn(B).
 {
+    A = B;
 }
 
-shift_expr_no_fn ::= shift_expr_no_fn LEFT_SHIFT(A) add_expr.
+shift_expr_no_fn(A) ::= shift_expr_no_fn(B) LEFT_SHIFT(D) add_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::LEFT_SHIFT);
+    A->element(B, C);
+
+    delete D;
 }
 
-shift_expr_no_fn ::= shift_expr_no_fn RIGHT_SHIFT(A) add_expr.
+shift_expr_no_fn(A) ::= shift_expr_no_fn(B) RIGHT_SHIFT(D) add_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::RIGHT_SHIFT);
+    A->element(B, C);
+
+    delete D;
 }
 
-shift_expr_no_fn ::= shift_expr_no_fn ZERO_RIGHT_SHIFT(A) add_expr.
+shift_expr_no_fn(A) ::= shift_expr_no_fn(B) ZERO_RIGHT_SHIFT(D) add_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::ZERO_RIGHT_SHIFT);
+    A->element(B, C);
+
+    delete D;
 }
 
 /* Rule 'rel_expr' */
+%type rel_expr { Expression * }
 
-rel_expr ::= shift_expr.
+rel_expr(A) ::= shift_expr(B).
 {
+    A = B;
 }
 
-rel_expr ::= rel_expr LESSER(A) shift_expr.
+rel_expr(A) ::= rel_expr(B) LESSER(D) shift_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::LESSER_THAN);
+    A->element(B, C);
+
+    delete D;
 }
 
-rel_expr ::= rel_expr GREATER(A) shift_expr.
+rel_expr(A) ::= rel_expr(B) GREATER(D) shift_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::GREATER_THAN);
+    A->element(B, C);
+
+    delete D;
 }
 
-rel_expr ::= rel_expr LESSER_EQ(A) shift_expr.
+rel_expr(A) ::= rel_expr(B) LESSER_EQ(D) shift_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::LESSER_EQ_THAN);
+    A->element(B, C);
+
+    delete D;
 }
 
-rel_expr ::= rel_expr GREATER_EQ(A) shift_expr.
+rel_expr(A) ::= rel_expr(B) GREATER_EQ(D) shift_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::GREATER_EQ_THAN);
+    A->element(B, C);
+
+    delete D;
 }
 
-rel_expr ::= rel_expr INSTANCEOF(A) shift_expr.
+rel_expr(A) ::= rel_expr(B) INSTANCEOF(D) shift_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::INSTANCEOF);
+    A->element(B, C);
+
+    delete D;
 }
 
-rel_expr ::= rel_expr IN(A) shift_expr.
+rel_expr(A) ::= rel_expr(B) IN(D) shift_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::IN);
+    A->element(B, C);
+
+    delete D;
 }
 
 /* Rule 'rel_expr_no_fn' */
+%type rel_expr_no_fn { Expression * }
 
-rel_expr_no_fn ::= shift_expr_no_fn.
+rel_expr_no_fn(A) ::= shift_expr_no_fn(B).
 {
+    A = B;
 }
 
-rel_expr_no_fn ::= rel_expr_no_fn LESSER(A) shift_expr.
+rel_expr_no_fn(A) ::= rel_expr_no_fn(B) LESSER(D) shift_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::LESSER_THAN);
+    A->element(B, C);
+
+    delete D;
 }
 
-rel_expr_no_fn ::= rel_expr_no_fn GREATER(A) shift_expr.
+rel_expr_no_fn(A) ::= rel_expr_no_fn(B) GREATER(D) shift_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::GREATER_THAN);
+    A->element(B, C);
+
+    delete D;
 }
 
-rel_expr_no_fn ::= rel_expr_no_fn LESSER_EQ(A) shift_expr.
+rel_expr_no_fn(A) ::= rel_expr_no_fn(B) LESSER_EQ(D) shift_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::LESSER_EQ_THAN);
+    A->element(B, C);
+
+    delete D;
 }
 
-rel_expr_no_fn ::= rel_expr_no_fn GREATER_EQ(A) shift_expr.
+rel_expr_no_fn(A) ::= rel_expr_no_fn(B) GREATER_EQ(D) shift_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::GREATER_EQ_THAN);
+    A->element(B, C);
+
+    delete D;
 }
 
-rel_expr_no_fn ::= rel_expr_no_fn INSTANCEOF(A) shift_expr.
+rel_expr_no_fn(A) ::= rel_expr_no_fn(B) INSTANCEOF(D) shift_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::INSTANCEOF);
+    A->element(B, C);
+
+    delete D;
 }
 
-rel_expr_no_fn ::= rel_expr_no_fn IN(A) shift_expr.
+rel_expr_no_fn(A) ::= rel_expr_no_fn(B) IN(D) shift_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::IN);
+    A->element(B, C);
+
+    delete D;
 }
 
 /* Rule 'rel_expr_no_in' */
+%type rel_expr_no_in { Expression * }
 
-rel_expr_no_in ::= shift_expr.
+rel_expr_no_in(A) ::= shift_expr(B).
 {
+    A = B;
 }
 
-rel_expr_no_in ::= rel_expr_no_in LESSER(A) shift_expr.
+rel_expr_no_in(A) ::= rel_expr_no_in(B) LESSER(D) shift_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::LESSER_THAN);
+    A->element(B, C);
+
+    delete D;
 }
 
-rel_expr_no_in ::= rel_expr_no_in GREATER(A) shift_expr.
+rel_expr_no_in(A) ::= rel_expr_no_in(B) GREATER(D) shift_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::GREATER_THAN);
+    A->element(B, C);
+
+    delete D;
 }
 
-rel_expr_no_in ::= rel_expr_no_in LESSER_EQ(A) shift_expr.
+rel_expr_no_in(A) ::= rel_expr_no_in(B) LESSER_EQ(D) shift_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::LESSER_EQ_THAN);
+    A->element(B, C);
+
+    delete D;
 }
 
-rel_expr_no_in ::= rel_expr_no_in GREATER_EQ(A) shift_expr.
+rel_expr_no_in(A) ::= rel_expr_no_in(B) GREATER_EQ(D) shift_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::GREATER_EQ_THAN);
+    A->element(B, C);
+
+    delete D;
 }
 
-rel_expr_no_in ::= rel_expr_no_in INSTANCEOF(A) shift_expr.
+rel_expr_no_in(A) ::= rel_expr_no_in(B) INSTANCEOF(D) shift_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::INSTANCEOF);
+    A->element(B, C);
+
+    delete D;
 }
 
 /* Rule 'eq_expr' */
+%type eq_expr { Expression * }
 
-eq_expr ::= rel_expr.
+eq_expr(A) ::= rel_expr(B).
 {
+    A = B;
 }
 
-eq_expr ::= eq_expr EQUAL(A) rel_expr.
+eq_expr(A) ::= eq_expr(B) EQUAL(D) rel_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::EQUAL);
+    A->element(B, C);
+
+    delete D;
 }
 
-eq_expr ::= eq_expr NOT_EQUAL(A) rel_expr.
+eq_expr(A) ::= eq_expr(B) NOT_EQUAL(D) rel_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::NOT_EQUAL);
+    A->element(B, C);
+
+    delete D;
 }
 
-eq_expr ::= eq_expr STRICT_EQUAL(A) rel_expr.
+eq_expr(A) ::= eq_expr(B) STRICT_EQUAL(D) rel_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::STRICT_EQUAL);
+    A->element(B, C);
+
+    delete D;
 }
 
-eq_expr ::= eq_expr STRICT_NOT_EQUAL(A) rel_expr.
+eq_expr(A) ::= eq_expr(B) STRICT_NOT_EQUAL(D) rel_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::STRICT_NOT_EQUAL);
+    A->element(B, C);
+
+    delete D;
 }
 
 /* Rule 'eq_expr_no_fn' */
+%type eq_expr_no_fn { Expression * }
 
-eq_expr_no_fn ::= rel_expr_no_fn.
+eq_expr_no_fn(A) ::= rel_expr_no_fn(B).
 {
+    A = B;
 }
 
-eq_expr_no_fn ::= eq_expr_no_fn EQUAL(A) rel_expr.
+eq_expr_no_fn(A) ::= eq_expr_no_fn(B) EQUAL(D) rel_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::EQUAL);
+    A->element(B, C);
+
+    delete D;
 }
 
-eq_expr_no_fn ::= eq_expr_no_fn NOT_EQUAL(A) rel_expr.
+eq_expr_no_fn(A) ::= eq_expr_no_fn(B) NOT_EQUAL(D) rel_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::NOT_EQUAL);
+    A->element(B, C);
+
+    delete D;
 }
 
-eq_expr_no_fn ::= eq_expr_no_fn STRICT_EQUAL(A) rel_expr.
+eq_expr_no_fn(A) ::= eq_expr_no_fn(B) STRICT_EQUAL(D) rel_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::STRICT_EQUAL);
+    A->element(B, C);
+
+    delete D;
 }
 
-eq_expr_no_fn ::= eq_expr_no_fn STRICT_NOT_EQUAL(A) rel_expr.
+eq_expr_no_fn(A) ::= eq_expr_no_fn(B) STRICT_NOT_EQUAL(D) rel_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::STRICT_NOT_EQUAL);
+    A->element(B, C);
+
+    delete D;
 }
 
 /* Rule 'eq_expr_no_in' */
+%type eq_expr_no_in { Expression * }
 
-eq_expr_no_in ::= rel_expr_no_in.
+eq_expr_no_in(A) ::= rel_expr_no_in(B).
 {
+    A = B;
 }
 
-eq_expr_no_in ::= eq_expr_no_in EQUAL(A) rel_expr_no_in.
+eq_expr_no_in(A) ::= eq_expr_no_in(B) EQUAL(D) rel_expr_no_in(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::EQUAL);
+    A->element(B, C);
+
+    delete D;
 }
 
-eq_expr_no_in ::= eq_expr_no_in NOT_EQUAL(A) rel_expr_no_in.
+eq_expr_no_in(A) ::= eq_expr_no_in(B) NOT_EQUAL(D) rel_expr_no_in(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::NOT_EQUAL);
+    A->element(B, C);
+
+    delete D;
 }
 
-eq_expr_no_in ::= eq_expr_no_in STRICT_EQUAL(A) rel_expr_no_in.
+eq_expr_no_in(A) ::= eq_expr_no_in(B) STRICT_EQUAL(D) rel_expr_no_in(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::STRICT_EQUAL);
+    A->element(B, C);
+
+    delete D;
 }
 
-eq_expr_no_in ::= eq_expr_no_in STRICT_NOT_EQUAL(A) rel_expr_no_in.
+eq_expr_no_in(A) ::= eq_expr_no_in(B) STRICT_NOT_EQUAL(D) rel_expr_no_in(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::STRICT_NOT_EQUAL);
+    A->element(B, C);
+
+    delete D;
 }
 
 /* Rule 'bit_and_expr' */
+%type bit_and_expr { Expression * }
 
-bit_and_expr ::= eq_expr.
+bit_and_expr(A) ::= eq_expr(B).
 {
+    A = B;
 }
 
-bit_and_expr ::= bit_and_expr BITWISE_AND(A) eq_expr.
+bit_and_expr(A) ::= bit_and_expr(B) BITWISE_AND(D) eq_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::BIT_AND);
+    A->element(B, C);
+
+    delete D;
 }
 
 /* Rule 'bit_and_expr_no_fn' */
+%type bit_and_expr_no_fn { Expression * }
 
-bit_and_expr_no_fn ::= eq_expr_no_fn.
+bit_and_expr_no_fn(A) ::= eq_expr_no_fn(B).
 {
+    A = B;
 }
 
-bit_and_expr_no_fn ::= bit_and_expr_no_fn BITWISE_AND(A) eq_expr.
+bit_and_expr_no_fn(A) ::= bit_and_expr_no_fn(B) BITWISE_AND(D) eq_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::BIT_AND);
+    A->element(B, C);
+
+    delete D;
 }
 
 /* Rule 'bit_and_expr_no_in' */
+%type bit_and_expr_no_in { Expression * }
 
-bit_and_expr_no_in ::= eq_expr_no_in.
+bit_and_expr_no_in(A) ::= eq_expr_no_in(B).
 {
+    A = B;
 }
 
-bit_and_expr_no_in ::= bit_and_expr_no_in BITWISE_AND(A) eq_expr_no_in.
+bit_and_expr_no_in(A) ::= bit_and_expr_no_in(B) BITWISE_AND(D) eq_expr_no_in(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::BIT_AND);
+    A->element(B, C);
+
+    delete D;
 }
 
 /* Rule 'bit_xor_expr' */
+%type bit_xor_expr { Expression * }
 
-bit_xor_expr ::= bit_and_expr.
+bit_xor_expr(A) ::= bit_and_expr(B).
 {
+    A = B;
 }
 
-bit_xor_expr ::= bit_xor_expr BITWISE_XOR(A) bit_and_expr.
+bit_xor_expr(A) ::= bit_xor_expr(B) BITWISE_XOR(D) bit_and_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::BIT_XOR);
+    A->element(B, C);
+
+    delete D;
 }
 
 /* Rule 'bit_xor_expr_no_fn' */
+%type bit_xor_expr_no_fn { Expression * }
 
-bit_xor_expr_no_fn ::= bit_and_expr_no_fn.
+bit_xor_expr_no_fn(A) ::= bit_and_expr_no_fn(B).
 {
+    A = B;
 }
 
-bit_xor_expr_no_fn ::= bit_xor_expr_no_fn BITWISE_XOR(A) bit_and_expr.
+bit_xor_expr_no_fn(A) ::= bit_xor_expr_no_fn(B) BITWISE_XOR(D) bit_and_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::BIT_XOR);
+    A->element(B, C);
+
+    delete D;
 }
 
 /* Rule 'bit_xor_expr_no_in' */
+%type bit_xor_expr_no_in { Expression * }
 
-bit_xor_expr_no_in ::= bit_and_expr_no_in.
+bit_xor_expr_no_in(A) ::= bit_and_expr_no_in(B).
 {
+    A = B;
 }
 
-bit_xor_expr_no_in ::= bit_xor_expr_no_in BITWISE_XOR(A) bit_and_expr_no_in.
+bit_xor_expr_no_in(A) ::= bit_xor_expr_no_in(B) BITWISE_XOR(D) bit_and_expr_no_in(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::BIT_XOR);
+    A->element(B, C);
+
+    delete D;
 }
 
 /* Rule 'bit_or_expr' */
+%type bit_or_expr { Expression * }
 
-bit_or_expr ::= bit_xor_expr.
+bit_or_expr(A) ::= bit_xor_expr(B).
 {
+    A = B;
 }
 
-bit_or_expr ::= bit_or_expr BITWISE_OR(A) bit_xor_expr.
+bit_or_expr(A) ::= bit_or_expr(B) BITWISE_OR(D) bit_xor_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::BIT_OR);
+    A->element(B, C);
+
+    delete D;
 }
 
 /* Rule 'bit_or_expr_no_fn' */
+%type bit_or_expr_no_fn { Expression * }
 
-bit_or_expr_no_fn ::= bit_xor_expr_no_fn.
+bit_or_expr_no_fn(A) ::= bit_xor_expr_no_fn(B).
 {
+    A = B;
 }
 
-bit_or_expr_no_fn ::= bit_or_expr_no_fn BITWISE_OR(A) bit_xor_expr.
+bit_or_expr_no_fn(A) ::= bit_or_expr_no_fn(B) BITWISE_OR(D) bit_xor_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::BIT_OR);
+    A->element(B, C);
+
+    delete D;
 }
 
 /* Rule 'bit_or_expr_no_in' */
+%type bit_or_expr_no_in { Expression * }
 
-bit_or_expr_no_in ::= bit_xor_expr_no_in.
+bit_or_expr_no_in(A) ::= bit_xor_expr_no_in(B).
 {
+    A = B;
 }
 
-bit_or_expr_no_in ::= bit_or_expr_no_in BITWISE_OR(A) bit_xor_expr_no_in.
+bit_or_expr_no_in(A) ::= bit_or_expr_no_in(B) BITWISE_OR(D) bit_xor_expr_no_in(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::BIT_OR);
+    A->element(B, C);
+
+    delete D;
 }
 
 /* Rule 'logic_and_expr' */
+%type logic_and_expr { Expression * }
 
-logic_and_expr ::= bit_or_expr.
+logic_and_expr(A) ::= bit_or_expr(B).
 {
+    A = B;
 }
 
-logic_and_expr ::= logic_and_expr LOGIC_AND(A) bit_or_expr.
+logic_and_expr(A) ::= logic_and_expr(B) LOGIC_AND(D) bit_or_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::LOGIC_AND);
+    A->element(B, C);
+
+    delete D;
 }
 
 /* Rule 'logic_and_expr_no_fn' */
+%type logic_and_expr_no_fn { Expression * }
 
-logic_and_expr_no_fn ::= bit_or_expr_no_fn.
+logic_and_expr_no_fn(A) ::= bit_or_expr_no_fn(B).
 {
+    A = B;
 }
 
-logic_and_expr_no_fn ::= logic_and_expr_no_fn LOGIC_AND(A) bit_or_expr.
+logic_and_expr_no_fn(A) ::= logic_and_expr_no_fn(B) LOGIC_AND(D) bit_or_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::LOGIC_AND);
+    A->element(B, C);
+
+    delete D;
 }
 
 /* Rule 'logic_and_expr_no_in' */
+%type logic_and_expr_no_in { Expression * }
 
-logic_and_expr_no_in ::= bit_or_expr_no_in.
+logic_and_expr_no_in(A) ::= bit_or_expr_no_in(B).
 {
+    A = B;
 }
 
-logic_and_expr_no_in ::= logic_and_expr_no_in LOGIC_AND(A) bit_or_expr_no_in.
+logic_and_expr_no_in(A) ::= logic_and_expr_no_in(B) LOGIC_AND(D) bit_or_expr_no_in(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::LOGIC_AND);
+    A->element(B, C);
+
+    delete D;
 }
 
 /* Rule 'logic_or_expr' */
+%type logic_or_expr { Expression * }
 
-logic_or_expr ::= logic_and_expr.
+logic_or_expr(A) ::= logic_and_expr(B).
 {
+    A = B;
 }
 
-logic_or_expr ::= logic_or_expr LOGIC_OR(A) logic_and_expr.
+logic_or_expr(A) ::= logic_or_expr(B) LOGIC_OR(D) logic_and_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::LOGIC_OR);
+    A->element(B, C);
+
+    delete D;
 }
 
 /* Rule 'logic_or_expr_no_fn' */
+%type logic_or_expr_no_fn { Expression * }
 
-logic_or_expr_no_fn ::= logic_and_expr_no_fn.
+logic_or_expr_no_fn(A) ::= logic_and_expr_no_fn(B).
 {
+    A = B;
 }
 
-logic_or_expr_no_fn ::= logic_or_expr_no_fn LOGIC_OR(A) logic_and_expr.
+logic_or_expr_no_fn(A) ::= logic_or_expr_no_fn(B) LOGIC_OR(D) logic_and_expr(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::LOGIC_OR);
+    A->element(B, C);
+
+    delete D;
 }
 
 /* Rule 'logic_or_expr_no_in' */
+%type logic_or_expr_no_in { Expression * }
 
-logic_or_expr_no_in ::= logic_and_expr_no_in.
+logic_or_expr_no_in(A) ::= logic_and_expr_no_in(B).
 {
+    A = B;
 }
 
-logic_or_expr_no_in ::= logic_or_expr_no_in LOGIC_OR(A) logic_and_expr_no_in.
+logic_or_expr_no_in(A) ::= logic_or_expr_no_in(B) LOGIC_OR(D) logic_and_expr_no_in(C).
 {
-    delete A;
+    A = new expr::Binary(B, C, expr::Binary::OpType::LOGIC_OR);
+    A->element(B, C);
+
+    delete D;
 }
 
 /* Rule 'cond_expr' */
+%type cond_expr { Expression * }
 
-cond_expr ::= logic_or_expr.
+cond_expr(A) ::= logic_or_expr(B).
 {
+    A = B;
 }
 
-cond_expr ::= logic_or_expr QUESTION(A) assign_expr COLON(B) assign_expr.
+cond_expr(A) ::= logic_or_expr(B) QUESTION(E) assign_expr(C) COLON(F) assign_expr(D).
 {
-    delete A;
-    delete B;
+    A = new expr::Condition(B, C, D);
+    A->element(B, D);
+
+    delete E;
+    delete F;
 }
 
 /* Rule 'cond_expr_no_fn' */
+%type cond_expr_no_fn { Expression * }
 
-cond_expr_no_fn ::= logic_or_expr_no_fn.
+cond_expr_no_fn(A) ::= logic_or_expr_no_fn(B).
 {
+    A = B;
 }
 
-cond_expr_no_fn ::= logic_or_expr_no_fn QUESTION(A) assign_expr COLON(B) assign_expr.
+cond_expr_no_fn(A) ::= logic_or_expr_no_fn(B) QUESTION(E) assign_expr(C) COLON(F) assign_expr(D).
 {
-    delete A;
-    delete B;
+    A = new expr::Condition(B, C, D);
+    A->element(B, D);
+
+    delete E;
+    delete F;
 }
 
 /* Rule 'cond_expr_no_in' */
+%type cond_expr_no_in { Expression * }
 
-cond_expr_no_in ::= logic_or_expr_no_in.
+cond_expr_no_in(A) ::= logic_or_expr_no_in(B).
 {
+    A = B;
 }
 
-cond_expr_no_in ::= logic_or_expr_no_in QUESTION(A) assign_expr COLON(B) assign_expr_no_in.
+cond_expr_no_in(A) ::= logic_or_expr_no_in(B) QUESTION(E) assign_expr(C) COLON(F) assign_expr_no_in(D).
 {
-    delete A;
-    delete B;
+    A = new expr::Condition(B, C, D);
+    A->element(B, D);
+
+    delete E;
+    delete F;
 }
 
 /* Rule 'assign_expr' */
+%type assign_expr { Expression * }
 
-assign_expr ::= cond_expr.
+assign_expr(A) ::= cond_expr(B).
 {
+    A = B;
 }
 
-assign_expr ::= left_hand_expr assign_op assign_expr.
+assign_expr(A) ::= left_hand_expr(B) assign_op(C) assign_expr(D).
 {
+    A = new expr::Assign(B, D, C);
+    A->element(B, D);
 }
 
 /* Rule 'assign_expr_no_fn' */
+%type assign_expr_no_fn { Expression * }
 
-assign_expr_no_fn ::= cond_expr_no_fn.
+assign_expr_no_fn(A) ::= cond_expr_no_fn(B).
 {
+    A = B;
 }
 
-assign_expr_no_fn ::= left_hand_expr_no_fn assign_op assign_expr.
+assign_expr_no_fn(A) ::= left_hand_expr_no_fn(B) assign_op(C) assign_expr(D).
 {
+    A = new expr::Assign(B, D, C);
+    A->element(B, D);
 }
 
 /* Rule 'assign_expr_no_in' */
+%type assign_expr_no_in { Expression * }
 
-assign_expr_no_in ::= cond_expr_no_in.
+assign_expr_no_in(A) ::= cond_expr_no_in(B).
 {
+    A = B;
 }
 
-assign_expr_no_in ::= left_hand_expr assign_op assign_expr_no_in.
+assign_expr_no_in(A) ::= left_hand_expr(B) assign_op(C) assign_expr_no_in(D).
 {
+    A = new expr::Assign(B, D, C);
+    A->element(B, D);
 }
 
 /* Rule 'assign_op' */
+%type assign_op { expr::Assign::OpType }
 
-assign_op ::= ASSIGN(A).
+assign_op(A) ::= ASSIGN(B).
 {
-    delete A;
+    A = expr::Assign::OpType::SIMPLE;
+
+    delete B;
 }
 
-assign_op ::= MUL_ASSIGN(A).
+assign_op(A) ::= MUL_ASSIGN(B).
 {
-    delete A;
+    A = expr::Assign::OpType::MUL;
+
+    delete B;
 }
 
-assign_op ::= DIV_ASSIGN(A).
+assign_op(A) ::= DIV_ASSIGN(B).
 {
-    delete A;
+    A = expr::Assign::OpType::DIV;
+
+    delete B;
 }
 
-assign_op ::= MOD_ASSIGN(A).
+assign_op(A) ::= MOD_ASSIGN(B).
 {
-    delete A;
+    A = expr::Assign::OpType::MOD;
+
+    delete B;
 }
 
-assign_op ::= PLUS_ASSIGN(A).
+assign_op(A) ::= PLUS_ASSIGN(B).
 {
-    delete A;
+    A = expr::Assign::OpType::PLUS;
+
+    delete B;
 }
 
-assign_op ::= MINUS_ASSIGN(A).
+assign_op(A) ::= MINUS_ASSIGN(B).
 {
-    delete A;
+    A = expr::Assign::OpType::MINUS;
+
+    delete B;
 }
 
-assign_op ::= LEFT_SHIFT_ASSIGN(A).
+assign_op(A) ::= LEFT_SHIFT_ASSIGN(B).
 {
-    delete A;
+    A = expr::Assign::OpType::LEFT_SHIFT;
+
+    delete B;
 }
 
-assign_op ::= RIGHT_SHIFT_ASSIGN(A).
+assign_op(A) ::= RIGHT_SHIFT_ASSIGN(B).
 {
-    delete A;
+    A = expr::Assign::OpType::RIGHT_SHIFT;
+
+    delete B;
 }
 
-assign_op ::= ZERO_RIGHT_SHIFT_ASSIGN(A).
+assign_op(A) ::= ZERO_RIGHT_SHIFT_ASSIGN(B).
 {
-    delete A;
+    A = expr::Assign::OpType::ZERO_RIGHT_SHIFT;
+
+    delete B;
 }
 
-assign_op ::= BITWISE_AND_ASSIGN(A).
+assign_op(A) ::= BITWISE_AND_ASSIGN(B).
 {
-    delete A;
+    A = expr::Assign::OpType::BIT_AND;
+
+    delete B;
 }
 
-assign_op ::= BITWISE_XOR_ASSIGN(A).
+assign_op(A) ::= BITWISE_XOR_ASSIGN(B).
 {
-    delete A;
+    A = expr::Assign::OpType::BIT_XOR;
+
+    delete B;
 }
 
-assign_op ::= BITWISE_OR_ASSIGN(A).
+assign_op(A) ::= BITWISE_OR_ASSIGN(B).
 {
-    delete A;
+    A = expr::Assign::OpType::BIT_OR;
+
+    delete B;
 }
 
 /* Rule 'expr' */
+%type expr { Expression * }
 
-expr ::= assign_expr.
+expr(A) ::= assign_expr(B).
 {
+    A = B;
 }
 
 expr ::= expr COMMA(A) assign_expr.
@@ -1497,9 +2206,11 @@ expr ::= expr COMMA(A) assign_expr.
 }
 
 /* Rule 'expr_no_fn' */
+%type expr_no_fn { Expression * }
 
-expr_no_fn ::= assign_expr_no_fn.
+expr_no_fn(A) ::= assign_expr_no_fn(B).
 {
+    A = B;
 }
 
 expr_no_fn ::= expr_no_fn COMMA(A) assign_expr.
@@ -1508,9 +2219,11 @@ expr_no_fn ::= expr_no_fn COMMA(A) assign_expr.
 }
 
 /* Rule 'expr_no_in' */
+%type expr_no_in { Expression * }
 
-expr_no_in ::= assign_expr_no_in.
+expr_no_in(A) ::= assign_expr_no_in(B).
 {
+    A = B;
 }
 
 expr_no_in ::= expr_no_in COMMA(A) assign_expr_no_in.
@@ -1580,73 +2293,129 @@ literal(A) ::= REGEXP(B).
 /* Rule 'array' */
 %type array { expr::Array * }
 
-array ::= LBRACKET(A) RBRACKET(B).
+array(A) ::= LBRACKET(B) RBRACKET(C).
 {
-    delete A;
-    delete B;
-}
+    A = new expr::Array();
 
-array ::= LBRACKET(A) array_elision RBRACKET(B).
-{
-    delete A;
-    delete B;
-}
-
-array ::= LBRACKET(A) array_element_list RBRACKET(B).
-{
-    delete A;
-    delete B;
-}
-
-array ::= LBRACKET(A) array_element_list COMMA(B) RBRACKET(C).
-{
-    delete A;
     delete B;
     delete C;
 }
 
-array ::= LBRACKET(A) array_element_list COMMA(B) array_elision RBRACKET(C).
+array(A) ::= LBRACKET(C) array_elision(B) RBRACKET(D).
 {
-    delete A;
-    delete B;
+    A = new expr::Array();
+
+    for (auto it = B->begin(); it != B->end(); ++it)
+    {
+        A->elements().push_back(std::move(*it));
+    }
+
     delete C;
+    delete D;
+}
+
+array(A) ::= LBRACKET(C) array_element_list(B) RBRACKET(D).
+{
+    A = new expr::Array();
+
+    for (auto it = B->begin(); it != B->end(); ++it)
+    {
+        A->elements().push_back(std::move(*it));
+    }
+
+    delete C;
+    delete D;
+}
+
+array(A) ::= LBRACKET(C) array_element_list(B) COMMA(D) RBRACKET(E).
+{
+    A = new expr::Array();
+
+    for (auto it = B->begin(); it != B->end(); ++it)
+    {
+        A->elements().push_back(std::move(*it));
+    }
+
+    delete C;
+    delete D;
+    delete E;
+}
+
+array(A) ::= LBRACKET(D) array_element_list(B) COMMA(E) array_elision(C) RBRACKET(F).
+{
+    A = new expr::Array();
+
+    for (auto it = B->begin(); it != B->end(); ++it)
+    {
+        A->elements().push_back(std::move(*it));
+    }
+
+    for (auto it = C->begin(); it != C->end(); ++it)
+    {
+        A->elements().push_back(std::move(*it));
+    }
+
+    delete D;
+    delete E;
+    delete F;
 }
 
 /* Rule 'array_elision' */
 %type array_elision { std::vector<std::unique_ptr<Expression>> * }
 
-array_elision ::= COMMA(A).
+array_elision(A) ::= COMMA(B).
 {
-    delete A;
+    A = new std::vector<std::unique_ptr<Expression>>();
+    A->push_back(nullptr);
+
+    delete B;
 }
 
-array_elision ::= array_elision COMMA(A).
+array_elision(A) ::= array_elision(B) COMMA(C).
 {
-    delete A;
+    A = B;
+    A->push_back(nullptr);
+
+    delete C;
 }
 
 /* Rule 'array_element_list' */
 %type array_element_list { std::vector<std::unique_ptr<Expression>> * }
 
-array_element_list ::= assign_expr.
+array_element_list(A) ::= assign_expr(B).
 {
+    A = new std::vector<std::unique_ptr<Expression>>();
+    A->push_back(std::unique_ptr<Expression>(B));
 }
 
-array_element_list ::= array_elision assign_expr.
+array_element_list(A) ::= array_elision(B) assign_expr(C).
 {
+    A = B;
+    A->push_back(std::unique_ptr<Expression>(C));
 }
 
-array_element_list ::= array_element_list COMMA(A) assign_expr.
+array_element_list(A) ::= array_element_list(B) COMMA(D) assign_expr(C).
 {
-    delete A;
+    A = B;
+    A->push_back(std::unique_ptr<Expression>(C));
+
+    delete D;
 }
 
-array_element_list ::= array_element_list COMMA(A) array_elision assign_expr.
+array_element_list(A) ::= array_element_list(B) COMMA(D) array_elision(C) assign_expr.
 {
-    delete A;
+    A = B;
+
+    for (auto it = C->begin(); it != C->end(); ++it)
+    {
+        A->push_back(std::move(*it));
+    }
+
+    delete D;
 }
 
 /* Rule 'object' */
+%type object { expr::Object * }
 
 object ::= LBRACE(A) RBRACE(B).
 {
@@ -1668,21 +2437,33 @@ object ::= LBRACE(A) object_properties COMMA(B) RBRACE(C).
 }
 
 /* Rule 'object_properties' */
+%type object_properties { std::vector<std::unique_ptr<expr::object::Property>> * }
 
-object_properties ::= object_property.
+object_properties(A) ::= object_property(B).
 {
+    A = new std::vector<std::unique_ptr<expr::object::Property>>();
+    A->push_back(std::unique_ptr<expr::object::Property>(B));
 }
 
-object_properties ::= object_properties COMMA(A) object_property.
+object_properties(A) ::= object_properties(B) COMMA(D) object_property(C).
 {
-    delete A;
+    A = B;
+    A->push_back(std::unique_ptr<expr::object::Property>(C));
+
+    delete D;
 }
 
 /* Rule 'object_property' */
+%type object_property { expr::object::Property * }
 
-object_property ::= object_property_name COLON(A) assign_expr.
+object_property(A) ::= object_property_name(B) COLON(D) assign_expr(C).
 {
-    delete A;
+    A = new expr::object::Property();
+    A->key(nullptr);
+    A->value(nullptr);
+    A->element(B, C);
+
+    delete D;
 }
 
 object_property ::= GET(A) object_property_name LPAREN(B) RPAREN(C) LBRACE(D) function_body RBRACE(E).
@@ -1694,7 +2475,7 @@ object_property ::= GET(A) object_property_name LPAREN(B) RPAREN(C) LBRACE(D) fu
     delete E;
 }
 
-object_property ::= GET(A) object_property_name LPAREN(B) object_property_set_params RPAREN(C) LBRACE(D) function_body RBRACE(E).
+object_property ::= SET(A) object_property_name LPAREN(B) object_property_set_params RPAREN(C) LBRACE(D) function_body RBRACE(E).
 {
     delete A;
     delete B;
@@ -1704,50 +2485,83 @@ object_property ::= GET(A) object_property_name LPAREN(B) object_property_set_pa
 }
 
 /* Rule 'object_property_name' */
+%type object_property_name { Expression * }
 
-object_property_name ::= IDENT(A).
+object_property_name(A) ::= IDENT(B).
 {
-    delete A;
+    A = new expr::Ident(B->text());
+    A->element(B);
+
+    delete B;
 }
 
-object_property_name ::= STRING(A).
+object_property_name(A) ::= STRING(B).
 {
-    delete A;
+    A = new expr::literal::String(B->text());
+    A->element(B);
+
+    delete B;
 }
 
-object_property_name ::= NUMBER(A).
+object_property_name(A) ::= NUMBER(B).
 {
-    delete A;
+    A = new expr::literal::Number(B->text());
+    A->element(B);
+
+    delete B;
 }
 
 /* Rule 'object_property_set_params' */
+%type object_property_set_params { std::vector<std::string> * }
 
-object_property_set_params ::= IDENT(A).
+object_property_set_params(A) ::= IDENT(B).
 {
-    delete A;
+    A = new std::vector<std::string>();
+    A->push_back(B->text());
+
+    delete B;
 }
 
 /* Rule 'arguments' */
+%type arguments { args::Arguments * }
 
-arguments ::= LPAREN(A) RPAREN(B).
+arguments(A) ::= LPAREN(B) RPAREN(C).
 {
-    delete A;
+    A = new args::Arguments();
+    A->element(B, C);
+
     delete B;
+    delete C;
 }
 
-arguments ::= LPAREN(A) arguments_list RPAREN(B).
+arguments(A) ::= LPAREN(B) arguments_list(C) RPAREN(D).
 {
-    delete A;
+    A = new args::Arguments();
+
+    for (auto it = C->begin(); it != C->end(); ++it)
+    {
+        A->elements().push_back(std::move(*it));
+    }
+
+    A->element(B, D);
+
     delete B;
+    delete D;
 }
 
 /* Rule 'arguments_list' */
+%type arguments_list { std::vector<std::unique_ptr<Expression>> * }
 
-arguments_list ::= assign_expr.
+arguments_list(A) ::= assign_expr(B).
 {
+    A = new std::vector<std::unique_ptr<Expression>>();
+    A->push_back(std::unique_ptr<Expression>(B));
 }
 
-arguments_list ::= arguments_list COMMA(A) assign_expr.
+arguments_list(A) ::= arguments_list(B) COMMA(D) assign_expr(C).
 {
-    delete A;
+    A = B;
+    A->push_back(std::unique_ptr<Expression>(C));
+
+    delete D;
 }

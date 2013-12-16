@@ -19,14 +19,14 @@ class Item(object):
         self.rawtype = ty
         if isinstance(ty, (str)):
             self.pointer = self.list = False
-        else:
+        elif isinstance(ty, (ast_ast.Func)):
             self.pointer = ty.param('pointer', False)
             self.list = ty.param('list', False)
             self.type = self.resolve_type(ty)
 
     def resolve_type(self, ty, nowrap = False):
         name = ty.params[0]
-        if isinstance(name, (ast_ast.Func)) and name.name == 'type':
+        if isinstance(name, (ast_ast.Func)):
             name = self.resolve_type(name)
 
         force_pointer = False
@@ -38,6 +38,9 @@ class Item(object):
         if ty.pointer or (force_pointer and not nowrap):
             self.node.add_include('<memory>')
             name = 'std::unique_ptr<{:s}>'.format(name)
+
+        if ty.name == 'enum':
+            self.node.enums[name] = ty.params[1]
 
         return name
 
@@ -65,6 +68,7 @@ class Node(object):
         self.namespace = namespace
         self.attrs = attrs
         self.includes = []
+        self.enums = OrderedDict()
 
         self.type = '::'.join(namespace + [self.name])
 

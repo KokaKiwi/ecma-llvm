@@ -90,9 +90,22 @@ class NodeGenerator(Writeable):
             self.write_class_members(ww)
 
     def write_class_public(self, w):
+        self.write_class_enums(w)
         self.write_class_constructor(w)
         self.write_class_methods(w)
         self.write_class_accept(w)
+
+    def write_class_enums(self, w):
+        for (name, values) in self.node.enums.items():
+            w += 'enum class {name:s}'.format(name = name)
+            w += '{'
+
+            with w.sub_indent() as ww:
+                for value in values:
+                    ww += '{:s},'.format(value)
+
+            w += '};'
+            w.writeln()
 
     def write_class_constructor(self, w):
         constructor_args = []
@@ -106,7 +119,8 @@ class NodeGenerator(Writeable):
 
         args = []
         for item in constructor_args:
-            arg = '{ty:s} {name:s}'.format(ty = item.itype, name = item.name)
+            star = '*' if item.pointer else ''
+            arg = '{ty:s} {star:s}{name:s}'.format(ty = item.itype, name = item.name, star = star)
             args.append(arg)
 
         init = []

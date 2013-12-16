@@ -103,6 +103,12 @@ def p_rule_value_empty(p):
     '''
     p[0] = RuleValue(attrs = p[1])
 
+def p_rule_value_only_mapping(p):
+    '''
+        rule_value : '.' FAT_ARROW rule_mapping
+    '''
+    p[0] = RuleValue(mapping = p[3])
+
 # Rule value attributes
 def p_value_attrs(p):
     '''

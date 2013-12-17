@@ -18,7 +18,7 @@ How to build
 ~~~
 
 Build files:
-- bin/ecmap: small dev parser executable. It just parse input and print out the AST.
+- bin/ecmap: small dev parser executable. Used for parsing unit tests.
 - lib/*: Core libraries
 
 Requirements

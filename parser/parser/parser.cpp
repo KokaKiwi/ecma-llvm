@@ -32,10 +32,12 @@ void Parser::parse(lex::Lexer &lexer)
         ECMA_TOKEN(COMMENT),
     };
 
+    #ifndef NDEBUG
     if (m_debug)
     {
         ecma_parseTrace(stderr, (char *)"[ecma-llvm] ");
     }
+    #endif /* NDEBUG */
 
     while (true)
     {

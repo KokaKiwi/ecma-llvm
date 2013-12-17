@@ -171,13 +171,11 @@
 #[start]
 module ::=
     ,
-    source_elements => {
+    source_elements(delete) => {
         for (auto it = $1->begin(); it != $1->end(); ++it)
         {
             parser->module()->statements().push_back(std::move(*it));
         }
-
-        delete $1;
     }
 ;
 
@@ -258,7 +256,7 @@ ident ::=
 
 #[type = 'stmt::decl::Function *']
 function_decl ::=
-    'function' ident(delete) '(' ')' '{' function_body '}' => {
+    'function' ident(delete) '(' ')' '{' function_body(delete) '}' => {
         auto func = new expr::Function($2->name());
 
         for (auto it = $6->begin(); it != $6->end(); ++it)
@@ -268,8 +266,6 @@ function_decl ::=
 
         $0 = new stmt::decl::Function(func);
         $0->element($1, $7);
-
-        delete $6;
     }
     'function' ident(delete) '(' formal_params ')' '{' function_body '}' => {
         auto func = new expr::Function($2->name());

@@ -21,18 +21,7 @@
 }
 
 %syntax_error {
-    std::vector<std::string> expected;
-
-    int n = sizeof(yyTokenName) / sizeof(*yyTokenName);
-    for (int i = 0; i < n; i++)
-    {
-        int a = yy_find_shift_action(yypParser, static_cast<YYCODETYPE>(i));
-        if (a < YY_ERROR_ACTION)
-        {
-            expected.push_back(yyTokenName[i]);
-        }
-    }
-    throw parser::UnexpectedToken(TOKEN, expected);
+    throw parser::UnexpectedToken(TOKEN);
 }
 
 %left REGEXP STRING NUMBER IDENT.
@@ -102,13 +91,12 @@ function_decl(A) ::= FUNCTION(B) ident(C) LPAREN(F) RPAREN(G) LBRACE(H) function
     A = new stmt::decl::Function(func);
     A->element(B, E);
 
-    delete D;
-
     delete B;
     delete C;
     delete F;
     delete G;
     delete H;
+    delete D;
     delete E;
 }
 

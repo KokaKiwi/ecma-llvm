@@ -60,83 +60,186 @@ module ::= source_elements(A).
     delete A;
 }
 
-/* Rule 'function_decl' */
+/* Rule 'ident' */
+%type ident { expr::Ident * }
 
-function_decl ::= FUNCTION(A) IDENT(B) LPAREN(C) RPAREN(D) LBRACE(E) function_body RBRACE(F).
+ident(A) ::= IDENT(B).
 {
-    delete A;
+    A = new expr::Ident(B->text());
+    A->element(B);
+
     delete B;
-    delete C;
-    delete D;
-    delete E;
-    delete F;
 }
 
-function_decl ::= FUNCTION(A) IDENT(B) LPAREN(C) formal_params RPAREN(D) LBRACE(E) function_body RBRACE(F).
+ident(A) ::= SET(B).
 {
-    delete A;
+    A = new expr::Ident(B->text());
+    A->element(B);
+
+    delete B;
+}
+
+ident(A) ::= GET(B).
+{
+    A = new expr::Ident(B->text());
+    A->element(B);
+
+    delete B;
+}
+
+/* Rule 'function_decl' */
+%type function_decl { stmt::decl::Function * }
+
+function_decl(A) ::= FUNCTION(B) ident(C) LPAREN(F) RPAREN(G) LBRACE(H) function_body(D) RBRACE(E).
+{
+    auto func = new expr::Function(C->name());
+
+    for (auto it = D->begin(); it != D->end(); ++it)
+    {
+        func->body().push_back(std::move(*it));
+    }
+
+    A = new stmt::decl::Function(func);
+    A->element(B, E);
+
+    delete D;
+
     delete B;
     delete C;
+    delete F;
+    delete G;
+    delete H;
+    delete E;
+}
+
+function_decl(A) ::= FUNCTION(B) ident(C) LPAREN(G) formal_params(D) RPAREN(H) LBRACE(I) function_body(E) RBRACE(F).
+{
+    auto func = new expr::Function(C->name());
+    func->args().insert(func->args().end(), D->begin(), D->end());
+
+    for (auto it = E->begin(); it != E->end(); ++it)
+    {
+        func->body().push_back(std::move(*it));
+    }
+
+    A = new stmt::decl::Function(func);
+    A->element(B, F);
+
     delete D;
     delete E;
+
+    delete B;
+    delete C;
+    delete G;
+    delete H;
+    delete I;
     delete F;
 }
 
 /* Rule 'function_expr' */
+%type function_expr { expr::Function * }
 
-function_expr ::= FUNCTION(A) IDENT(B) LPAREN(C) RPAREN(D) LBRACE(E) function_body RBRACE(F).
+function_expr(A) ::= FUNCTION(B) ident(C) LPAREN(F) RPAREN(G) LBRACE(H) function_body(D) RBRACE(E).
 {
-    delete A;
+    A = new expr::Function(C->name());
+
+    for (auto it = D->begin(); it != D->end(); ++it)
+    {
+        A->body().push_back(std::move(*it));
+    }
+
+    A->element(B, E);
+
+    delete D;
+
     delete B;
     delete C;
+    delete F;
+    delete G;
+    delete H;
+    delete E;
+}
+
+function_expr(A) ::= FUNCTION(B) ident(C) LPAREN(G) formal_params(D) RPAREN(H) LBRACE(I) function_body(E) RBRACE(F).
+{
+    A = new expr::Function(C->name());
+    A->args().insert(A->args().end(), D->begin(), D->end());
+
+    for (auto it = E->begin(); it != E->end(); ++it)
+    {
+        A->body().push_back(std::move(*it));
+    }
+
+    A->element(B, F);
+
     delete D;
     delete E;
+
+    delete B;
+    delete C;
+    delete G;
+    delete H;
+    delete I;
     delete F;
 }
 
-function_expr ::= FUNCTION(A) IDENT(B) LPAREN(C) formal_params RPAREN(D) LBRACE(E) function_body RBRACE(F).
+function_expr(A) ::= FUNCTION(B) LPAREN(E) RPAREN(F) LBRACE(G) function_body(C) RBRACE(D).
 {
-    delete A;
-    delete B;
+    A = new expr::Function("");
+
+    for (auto it = C->begin(); it != C->end(); ++it)
+    {
+        A->body().push_back(std::move(*it));
+    }
+
+    A->element(B, D);
+
     delete C;
-    delete D;
+
+    delete B;
     delete E;
     delete F;
+    delete G;
+    delete D;
 }
 
-function_expr ::= FUNCTION(A) LPAREN(B) RPAREN(C) LBRACE(D) function_body RBRACE(E).
+function_expr(A) ::= FUNCTION(B) LPAREN(F) formal_params(C) RPAREN(G) LBRACE(H) function_body(D) RBRACE(E).
 {
-    delete A;
-    delete B;
-    delete C;
-    delete D;
-    delete E;
-}
+    A = new expr::Function("");
+    A->args().insert(A->args().end(), C->begin(), C->end());
 
-function_expr ::= FUNCTION(A) LPAREN(B) formal_params RPAREN(C) LBRACE(D) function_body RBRACE(E).
-{
-    delete A;
-    delete B;
+    for (auto it = D->begin(); it != D->end(); ++it)
+    {
+        A->body().push_back(std::move(*it));
+    }
+
+    A->element(B, E);
+
     delete C;
     delete D;
+
+    delete B;
+    delete F;
+    delete G;
+    delete H;
     delete E;
 }
 
 /* Rule 'formal_params' */
 %type formal_params { std::vector<std::string> * }
 
-formal_params(A) ::= IDENT(B).
+formal_params(A) ::= ident(B).
 {
     A = new std::vector<std::string>();
-    A->push_back(B->text());
+    A->push_back(B->name());
 
     delete B;
 }
 
-formal_params(A) ::= formal_params(B) COMMA(D) IDENT(C).
+formal_params(A) ::= formal_params(B) COMMA(D) ident(C).
 {
     A = B;
-    A->push_back(C->text());
+    A->push_back(C->name());
 
     delete D;
     delete C;
@@ -180,7 +283,7 @@ source_element(A) ::= stmt(B).
 
 source_element(A) ::= function_decl(B).
 {
-    // A = B;
+    A = B;
 }
 
 /* Rule 'stmt' */
@@ -373,17 +476,18 @@ var_decls_no_in(A) ::= var_decls_no_in(B) COMMA(D) var_decl_no_in(C).
 /* Rule 'var_decl' */
 %type var_decl { stmt::decl::Var * }
 
-var_decl(A) ::= IDENT(B).
+var_decl(A) ::= ident(B).
 {
-    A = new stmt::decl::Var(B->text());
+    A = new stmt::decl::Var(B->name());
     A->element(B);
 
     delete B;
 }
 
-var_decl(A) ::= IDENT(B) init(C).
+var_decl(A) ::= ident(B) init(C).
 {
-    A = new stmt::decl::Var(B->text());
+    A = new stmt::decl::Var(B->name());
+    A->init(C);
     A->element(B, C);
 
     delete B;
@@ -392,17 +496,18 @@ var_decl(A) ::= IDENT(B) init(C).
 /* Rule 'var_decl_no_in' */
 %type var_decl_no_in { stmt::decl::Var * }
 
-var_decl_no_in(A) ::= IDENT(B).
+var_decl_no_in(A) ::= ident(B).
 {
-    A = new stmt::decl::Var(B->text());
+    A = new stmt::decl::Var(B->name());
     A->element(B);
 
     delete B;
 }
 
-var_decl_no_in(A) ::= IDENT(B) init_no_in(C).
+var_decl_no_in(A) ::= ident(B) init_no_in(C).
 {
-    A = new stmt::decl::Var(B->text());
+    A = new stmt::decl::Var(B->name());
+    A->init(C);
     A->element(B, C);
 
     delete B;
@@ -447,11 +552,11 @@ expr_stmt(A) ::= expr_no_fn(B) SEMICOLON(C).
 }
 
 /* Rule 'if_stmt' */
-%type if_stmt { stmt::If * }
+%type if_stmt { stmt::ctrl::If * }
 
 if_stmt(A) ::= IF(B) LPAREN(E) expr(C) RPAREN(F) stmt(D).
 {
-    A = new stmt::If(C, D);
+    A = new stmt::ctrl::If(C, D);
     A->element(B, D);
 
     delete B;
@@ -461,7 +566,7 @@ if_stmt(A) ::= IF(B) LPAREN(E) expr(C) RPAREN(F) stmt(D).
 
 if_stmt(A) ::= IF(B) LPAREN(F) expr(C) RPAREN(G) stmt(D) ELSE(H) stmt(E).
 {
-    A = new stmt::If(C, D);
+    A = new stmt::ctrl::If(C, D);
     A->else_stmt(E);
     A->element(B, E);
 
@@ -490,11 +595,11 @@ iter_stmt(A) ::= for_in_stmt(B).
 }
 
 /* Rule 'while_stmt' */
-%type while_stmt { stmt::While * }
+%type while_stmt { stmt::ctrl::While * }
 
 while_stmt(A) ::= WHILE(B) LPAREN(E) expr(C) RPAREN(F) stmt(D).
 {
-    A = new stmt::While(false, C, D);
+    A = new stmt::ctrl::While(false, C, D);
     A->element(B, D);
 
     delete B;
@@ -504,7 +609,7 @@ while_stmt(A) ::= WHILE(B) LPAREN(E) expr(C) RPAREN(F) stmt(D).
 
 while_stmt(A) ::= DO(B) stmt(C) WHILE(F) LPAREN(G) expr(D) RPAREN(E).
 {
-    A = new stmt::While(true, D, C);
+    A = new stmt::ctrl::While(true, D, C);
     A->element(B, E);
 
     delete B;
@@ -514,11 +619,11 @@ while_stmt(A) ::= DO(B) stmt(C) WHILE(F) LPAREN(G) expr(D) RPAREN(E).
 }
 
 /* Rule 'for_stmt' */
-%type for_stmt { stmt::For * }
+%type for_stmt { stmt::ctrl::For * }
 
 for_stmt(A) ::= FOR(B) LPAREN(G) for_init(C) SEMICOLON(H) for_cond(D) SEMICOLON(I) for_loop(E) RPAREN(J) stmt(F).
 {
-    A = new stmt::For(C, D, E, F);
+    A = new stmt::ctrl::For(C, D, E, F);
     A->element(B, F);
 
     delete B;
@@ -526,16 +631,6 @@ for_stmt(A) ::= FOR(B) LPAREN(G) for_init(C) SEMICOLON(H) for_cond(D) SEMICOLON(
     delete H;
     delete I;
     delete J;
-}
-
-for_stmt ::= FOR(A) LPAREN(B) VAR(C) var_decls_no_in SEMICOLON(D) for_cond SEMICOLON(E) for_loop RPAREN(F) stmt.
-{
-    delete A;
-    delete B;
-    delete C;
-    delete D;
-    delete E;
-    delete F;
 }
 
 /* Rule 'for_init' */
@@ -550,6 +645,21 @@ for_init(A) ::= expr_no_in(B).
 {
     A = new stmt::ExpressionStmt(B);
     A->element(B);
+}
+
+for_init(A) ::= VAR(C) var_decls_no_in(B).
+{
+    auto vars = new stmt::decl::Vars();
+
+    for (auto it = B->begin(); it != B->end(); ++it)
+    {
+        vars->decls().push_back(std::move(*it));
+    }
+
+    A = vars;
+    delete B;
+
+    delete C;
 }
 
 /* Rule 'for_cond' */
@@ -581,11 +691,11 @@ for_loop(A) ::= expr(B).
 }
 
 /* Rule 'for_in_stmt' */
-%type for_in_stmt { stmt::ForIn * }
+%type for_in_stmt { stmt::ctrl::ForIn * }
 
 for_in_stmt(A) ::= FOR(B) LPAREN(F) left_hand_expr(C) IN(G) expr(D) RPAREN(H) stmt(E).
 {
-    A = new stmt::ForIn(C, D, E);
+    A = new stmt::ctrl::ForIn(C, D, E);
     A->element(B, E);
 
     delete B;
@@ -596,9 +706,7 @@ for_in_stmt(A) ::= FOR(B) LPAREN(F) left_hand_expr(C) IN(G) expr(D) RPAREN(H) st
 
 for_in_stmt(A) ::= FOR(B) LPAREN(F) VAR(G) var_decl_no_in(C) IN(H) expr(D) RPAREN(I) stmt(E).
 {
-    auto counter = new expr::Ident(C->name());
-
-    A = new stmt::ForIn(counter, D, E);
+    A = new stmt::ctrl::ForIn(new expr::Ident(C->name()), D, E);
     A->init(C->take_init());
     A->element(B, E);
 
@@ -612,21 +720,21 @@ for_in_stmt(A) ::= FOR(B) LPAREN(F) VAR(G) var_decl_no_in(C) IN(H) expr(D) RPARE
 }
 
 /* Rule 'cont_stmt' */
-%type cont_stmt { stmt::Continue * }
+%type cont_stmt { stmt::ctrl::Continue * }
 
 cont_stmt(A) ::= CONTINUE(B) SEMICOLON(C).
 {
-    A = new stmt::Continue();
+    A = new stmt::ctrl::Continue();
     A->element(B, C);
 
     delete B;
     delete C;
 }
 
-cont_stmt(A) ::= CONTINUE(B) IDENT(C) SEMICOLON(D).
+cont_stmt(A) ::= CONTINUE(B) ident(C) SEMICOLON(D).
 {
-    A = new stmt::Continue();
-    A->name(new std::string(C->text()));
+    A = new stmt::ctrl::Continue();
+    A->name(new std::string(C->name()));
     A->element(B, D);
 
     delete B;
@@ -635,21 +743,21 @@ cont_stmt(A) ::= CONTINUE(B) IDENT(C) SEMICOLON(D).
 }
 
 /* Rule 'break_stmt' */
-%type break_stmt { stmt::Break * }
+%type break_stmt { stmt::ctrl::Break * }
 
 break_stmt(A) ::= BREAK(B) SEMICOLON(C).
 {
-    A = new stmt::Break();
+    A = new stmt::ctrl::Break();
     A->element(B, C);
 
     delete B;
     delete C;
 }
 
-break_stmt(A) ::= BREAK(B) IDENT(C) SEMICOLON(D).
+break_stmt(A) ::= BREAK(B) ident(C) SEMICOLON(D).
 {
-    A = new stmt::Break();
-    A->name(new std::string(C->text()));
+    A = new stmt::ctrl::Break();
+    A->name(new std::string(C->name()));
     A->element(B, D);
 
     delete B;
@@ -658,11 +766,11 @@ break_stmt(A) ::= BREAK(B) IDENT(C) SEMICOLON(D).
 }
 
 /* Rule 'return_stmt' */
-%type return_stmt { stmt::Return * }
+%type return_stmt { stmt::ctrl::Return * }
 
 return_stmt(A) ::= RETURN(B) SEMICOLON(C).
 {
-    A = new stmt::Return();
+    A = new stmt::ctrl::Return();
     A->element(B, C);
 
     delete B;
@@ -671,7 +779,7 @@ return_stmt(A) ::= RETURN(B) SEMICOLON(C).
 
 return_stmt(A) ::= RETURN(B) expr(C) SEMICOLON(D).
 {
-    A = new stmt::Return();
+    A = new stmt::ctrl::Return();
     A->expr(C);
     A->element(B, D);
 
@@ -680,11 +788,11 @@ return_stmt(A) ::= RETURN(B) expr(C) SEMICOLON(D).
 }
 
 /* Rule 'with_stmt' */
-%type with_stmt { stmt::With * }
+%type with_stmt { stmt::ctrl::With * }
 
 with_stmt(A) ::= WITH(B) LPAREN(E) expr(C) RPAREN(F) stmt(D).
 {
-    A = new stmt::With(C, D);
+    A = new stmt::ctrl::With(C, D);
     A->element(B, D);
 
     delete B;
@@ -693,11 +801,11 @@ with_stmt(A) ::= WITH(B) LPAREN(E) expr(C) RPAREN(F) stmt(D).
 }
 
 /* Rule 'switch_stmt' */
-%type switch_stmt { stmt::Switch * }
+%type switch_stmt { stmt::ctrl::Switch * }
 
 switch_stmt(A) ::= SWITCH(B) LPAREN(E) expr(C) RPAREN(F) case_block(D).
 {
-    A = new stmt::Switch(C);
+    A = new stmt::ctrl::Switch(C);
 
     for (auto it = D->cases().begin(); it != D->cases().end(); ++it)
     {
@@ -714,11 +822,11 @@ switch_stmt(A) ::= SWITCH(B) LPAREN(E) expr(C) RPAREN(F) case_block(D).
 }
 
 /* Rule 'case_block' */
-%type case_block { stmt::CaseBlock * }
+%type case_block { stmt::ctrl::CaseBlock * }
 
 case_block(A) ::= LBRACE(B) RBRACE(C).
 {
-    A = new stmt::CaseBlock();
+    A = new stmt::ctrl::CaseBlock();
 
     delete B;
     delete C;
@@ -726,7 +834,7 @@ case_block(A) ::= LBRACE(B) RBRACE(C).
 
 case_block(A) ::= LBRACE(B) case_clauses(C) RBRACE(D).
 {
-    A = new stmt::CaseBlock();
+    A = new stmt::ctrl::CaseBlock();
 
     for (auto it = C->begin(); it != C->end(); ++it)
     {
@@ -742,26 +850,26 @@ case_block(A) ::= LBRACE(B) case_clauses(C) RBRACE(D).
 }
 
 /* Rule 'case_clauses' */
-%type case_clauses { std::vector<std::unique_ptr<stmt::Case>> * }
+%type case_clauses { std::vector<std::unique_ptr<stmt::ctrl::Case>> * }
 
 case_clauses(A) ::= case_clause(B).
 {
-    A = new std::vector<std::unique_ptr<stmt::Case>>();
-    A->push_back(std::unique_ptr<stmt::Case>(B));
+    A = new std::vector<std::unique_ptr<stmt::ctrl::Case>>();
+    A->push_back(std::unique_ptr<stmt::ctrl::Case>(B));
 }
 
 case_clauses(A) ::= case_clauses(B) case_clause(C).
 {
     A = B;
-    A->push_back(std::unique_ptr<stmt::Case>(C));
+    A->push_back(std::unique_ptr<stmt::ctrl::Case>(C));
 }
 
 /* Rule 'case_clause' */
-%type case_clause { stmt::Case * }
+%type case_clause { stmt::ctrl::Case * }
 
 case_clause(A) ::= case_key(B) COLON(C).
 {
-    A = new stmt::Case(B);
+    A = new stmt::ctrl::Case(B);
     A->element(B, C);
 
     delete C;
@@ -769,7 +877,7 @@ case_clause(A) ::= case_key(B) COLON(C).
 
 case_clause(A) ::= case_key(B) COLON(C) stmt_list(D).
 {
-    A = new stmt::Case(B);
+    A = new stmt::ctrl::Case(B);
 
     for (auto it = D->begin(); it != D->end(); ++it)
     {
@@ -790,11 +898,11 @@ case_clause(A) ::= case_key(B) COLON(C) stmt_list(D).
 }
 
 /* Rule 'case_key' */
-%type case_key { stmt::CaseKey * }
+%type case_key { stmt::ctrl::CaseKey * }
 
 case_key(A) ::= CASE(B) expr(C).
 {
-    A = new stmt::CaseKey();
+    A = new stmt::ctrl::CaseKey();
     A->expr(C);
     A->element(B, C);
 
@@ -803,18 +911,18 @@ case_key(A) ::= CASE(B) expr(C).
 
 case_key(A) ::= DEFAULT(B).
 {
-    A = new stmt::CaseKey();
+    A = new stmt::ctrl::CaseKey();
     A->element(B);
 
     delete B;
 }
 
 /* Rule 'throw_stmt' */
-%type throw_stmt { stmt::Throw * }
+%type throw_stmt { stmt::ctrl::Throw * }
 
 throw_stmt(A) ::= THROW(B) expr(C) SEMICOLON(D).
 {
-    A = new stmt::Throw(C);
+    A = new stmt::ctrl::Throw(C);
     A->element(B, D);
 
     delete B;
@@ -822,11 +930,11 @@ throw_stmt(A) ::= THROW(B) expr(C) SEMICOLON(D).
 }
 
 /* Rule 'try_stmt' */
-%type try_stmt { stmt::Try * }
+%type try_stmt { stmt::ctrl::Try * }
 
 try_stmt(A) ::= TRY(B) block_stmt(C) catch(D).
 {
-    A = new stmt::Try(C);
+    A = new stmt::ctrl::Try(C);
     A->catch_action(D);
     A->element(B, D);
 
@@ -835,7 +943,7 @@ try_stmt(A) ::= TRY(B) block_stmt(C) catch(D).
 
 try_stmt(A) ::= TRY(B) block_stmt(C) finally(D).
 {
-    A = new stmt::Try(C);
+    A = new stmt::ctrl::Try(C);
     A->finally_action(D);
     A->element(B, D);
 
@@ -844,7 +952,7 @@ try_stmt(A) ::= TRY(B) block_stmt(C) finally(D).
 
 try_stmt(A) ::= TRY(B) block_stmt(C) catch(D) finally(E).
 {
-    A = new stmt::Try(C);
+    A = new stmt::ctrl::Try(C);
     A->catch_action(D);
     A->finally_action(E);
     A->element(B, E);
@@ -853,11 +961,11 @@ try_stmt(A) ::= TRY(B) block_stmt(C) catch(D) finally(E).
 }
 
 /* Rule 'catch' */
-%type catch { stmt::Catch * }
+%type catch { stmt::ctrl::Catch * }
 
-catch(A) ::= CATCH(B) LPAREN(E) IDENT(C) RPAREN(F) block_stmt(D).
+catch(A) ::= CATCH(B) LPAREN(E) ident(C) RPAREN(F) block_stmt(D).
 {
-    A = new stmt::Catch(C->text(), D);
+    A = new stmt::ctrl::Catch(C->name(), D);
     A->element(B, D);
 
     delete B;
@@ -867,11 +975,11 @@ catch(A) ::= CATCH(B) LPAREN(E) IDENT(C) RPAREN(F) block_stmt(D).
 }
 
 /* Rule 'finally' */
-%type finally { stmt::Finally * }
+%type finally { stmt::ctrl::Finally * }
 
 finally(A) ::= FINALLY(B) block_stmt(C).
 {
-    A = new stmt::Finally(C);
+    A = new stmt::ctrl::Finally(C);
     A->element(B, C);
 
     delete B;
@@ -900,9 +1008,9 @@ primary_expr(A) ::= THIS(B).
     delete B;
 }
 
-primary_expr(A) ::= IDENT(B).
+primary_expr(A) ::= ident(B).
 {
-    A = new expr::Ident(B->text());
+    A = B;
     A->element(B);
 
     delete B;
@@ -939,8 +1047,9 @@ member_expr(A) ::= primary_expr(B).
     A = B;
 }
 
-member_expr ::= function_expr.
+member_expr(A) ::= function_expr(B).
 {
+    A = B;
 }
 
 member_expr(A) ::= member_expr(B) LBRACKET(E) expr(C) RBRACKET(D).
@@ -956,11 +1065,11 @@ member_expr(A) ::= member_expr(B) LBRACKET(E) expr(C) RBRACKET(D).
     delete D;
 }
 
-member_expr(A) ::= member_expr(B) DOT(D) IDENT(C).
+member_expr(A) ::= member_expr(B) DOT(D) ident(C).
 {
     auto member = new expr::Member();
     member->expr(B);
-    member->name(C->text());
+    member->name(C->name());
 
     A = member;
     A->element(B, C);
@@ -1008,11 +1117,11 @@ member_expr_no_fn(A) ::= member_expr_no_fn(B) LBRACKET(E) expr(C) RBRACKET(D).
     delete D;
 }
 
-member_expr_no_fn(A) ::= member_expr_no_fn(B) DOT(D) IDENT(C).
+member_expr_no_fn(A) ::= member_expr_no_fn(B) DOT(D) ident(C).
 {
     auto member = new expr::Member();
     member->expr(B);
-    member->name(C->text());
+    member->name(C->name());
 
     A = member;
     A->element(B, C);
@@ -1123,11 +1232,11 @@ call_expr(A) ::= call_expr(B) LBRACKET(E) expr(C) RBRACKET(D).
     delete D;
 }
 
-call_expr(A) ::= call_expr(B) DOT(D) IDENT(C).
+call_expr(A) ::= call_expr(B) DOT(D) ident(C).
 {
     auto member = new expr::Member();
     member->expr(B);
-    member->name(C->text());
+    member->name(C->name());
 
     A = member;
     A->element(B, C);
@@ -1182,11 +1291,11 @@ call_expr_no_fn(A) ::= call_expr_no_fn(B) LBRACKET(E) expr(C) RBRACKET(D).
     delete D;
 }
 
-call_expr_no_fn(A) ::= call_expr_no_fn(B) DOT(D) IDENT(C).
+call_expr_no_fn(A) ::= call_expr_no_fn(B) DOT(D) ident(C).
 {
     auto member = new expr::Member();
     member->expr(B);
-    member->name(C->text());
+    member->name(C->name());
 
     A = member;
     A->element(B, C);
@@ -2306,42 +2415,54 @@ assign_op(A) ::= BITWISE_OR_ASSIGN(B).
 }
 
 /* Rule 'expr' */
-%type expr { Expression * }
+%type expr { expr::Expressions * }
 
 expr(A) ::= assign_expr(B).
 {
-    A = B;
+    A = new expr::Expressions();
+    A->items().push_back(std::unique_ptr<Expression>(B));
 }
 
-expr ::= expr COMMA(A) assign_expr.
+expr(A) ::= expr(B) COMMA(D) assign_expr(C).
 {
-    delete A;
+    A = B;
+    A->items().push_back(std::unique_ptr<Expression>(C));
+
+    delete D;
 }
 
 /* Rule 'expr_no_fn' */
-%type expr_no_fn { Expression * }
+%type expr_no_fn { expr::Expressions * }
 
 expr_no_fn(A) ::= assign_expr_no_fn(B).
 {
-    A = B;
+    A = new expr::Expressions();
+    A->items().push_back(std::unique_ptr<Expression>(B));
 }
 
-expr_no_fn ::= expr_no_fn COMMA(A) assign_expr.
+expr_no_fn(A) ::= expr_no_fn(B) COMMA(D) assign_expr(C).
 {
-    delete A;
+    A = B;
+    A->items().push_back(std::unique_ptr<Expression>(C));
+
+    delete D;
 }
 
 /* Rule 'expr_no_in' */
-%type expr_no_in { Expression * }
+%type expr_no_in { expr::Expressions * }
 
 expr_no_in(A) ::= assign_expr_no_in(B).
 {
-    A = B;
+    A = new expr::Expressions();
+    A->items().push_back(std::unique_ptr<Expression>(B));
 }
 
-expr_no_in ::= expr_no_in COMMA(A) assign_expr_no_in.
+expr_no_in(A) ::= expr_no_in(B) COMMA(D) assign_expr_no_in(C).
 {
-    delete A;
+    A = B;
+    A->items().push_back(std::unique_ptr<Expression>(C));
+
+    delete D;
 }
 
 /* Rule 'literal' */
@@ -2607,8 +2728,8 @@ object_properties(A) ::= object_properties(B) COMMA(D) object_property(C).
 object_property(A) ::= object_property_name(B) COLON(D) assign_expr(C).
 {
     A = new expr::object::Property();
-    A->key(nullptr);
-    A->value(nullptr);
+    A->key(B);
+    A->value(C);
     A->element(B, C);
 
     delete D;
@@ -2635,10 +2756,9 @@ object_property ::= SET(A) object_property_name LPAREN(B) object_property_set_pa
 /* Rule 'object_property_name' */
 %type object_property_name { Expression * }
 
-object_property_name(A) ::= IDENT(B).
+object_property_name(A) ::= ident(B).
 {
-    A = new expr::Ident(B->text());
-    A->element(B);
+    A = B;
 
     delete B;
 }
@@ -2662,10 +2782,10 @@ object_property_name(A) ::= NUMBER(B).
 /* Rule 'object_property_set_params' */
 %type object_property_set_params { std::vector<std::string> * }
 
-object_property_set_params(A) ::= IDENT(B).
+object_property_set_params(A) ::= ident(B).
 {
     A = new std::vector<std::string>();
-    A->push_back(B->text());
+    A->push_back(B->name());
 
     delete B;
 }

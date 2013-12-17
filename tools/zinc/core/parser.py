@@ -43,7 +43,7 @@ class Mapping(object):
         self.delete = []
         for (i, item) in enumerate(self.value.items):
             idx = i + 1
-            if not item.item.nt:
+            if not item.item.nt or item.delete:
                 self.create_mapping(idx)
                 self.delete.append(idx)
 

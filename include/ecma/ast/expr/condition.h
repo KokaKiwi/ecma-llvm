@@ -66,7 +66,7 @@ namespace ecma
                         return m_else_expr.release();
                     }
 
-                    virtual inline void accept(tools::Visitor &visitor)
+                    virtual inline void accept(tools::Visitor &visitor) const
                     {
                         visitor.visit(*this);
                     }

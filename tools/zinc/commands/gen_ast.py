@@ -270,7 +270,7 @@ class NodeGenerator(Writeable):
 
     def write_class_accept(self, w):
         w.writeln()
-        w += 'virtual inline void accept(tools::Visitor &visitor)'
+        w += 'virtual inline void accept(tools::Visitor &visitor) const'
         w += '{'
 
         with w.sub_indent() as ww:
@@ -428,7 +428,7 @@ class GenASTCommand(BaseCommand):
         ntype = '::'.join(ntype)
 
         w.writeln()
-        w += 'virtual inline void visit({ntype:s} &node)'.format(ntype = ntype)
+        w += 'virtual inline void visit(const {ntype:s} &node)'.format(ntype = ntype)
         w += '{'
 
         with w.sub_indent() as ww:

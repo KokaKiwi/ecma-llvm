@@ -12,40 +12,11 @@ namespace ecma
         class Statement;
         class Module;
 
-        namespace stmt
-        {
-            class Block;
-
-            namespace decl
-            {
-                class Vars;
-                class Var;
-            }
-            class ExpressionStmt;
-            class If;
-            class While;
-            class For;
-            class ForIn;
-            class Continue;
-            class Break;
-            class Return;
-            class With;
-            class Switch;
-            class CaseBlock;
-            class Case;
-            class CaseKey;
-            class Label;
-            class Throw;
-            class Try;
-            class Catch;
-            class Finally;
-            class Debug;
-        }
-
         namespace expr
         {
-            class This;
             class Ident;
+            class Function;
+            class This;
             class Index;
             class Member;
             class New;
@@ -55,6 +26,7 @@ namespace ecma
             class Binary;
             class Condition;
             class Assign;
+            class Expressions;
 
             namespace literal
             {
@@ -74,6 +46,41 @@ namespace ecma
             }
         }
 
+        namespace stmt
+        {
+
+            namespace decl
+            {
+                class Function;
+                class Vars;
+                class Var;
+            }
+            class Block;
+            class ExpressionStmt;
+
+            namespace ctrl
+            {
+                class If;
+                class While;
+                class For;
+                class ForIn;
+                class Continue;
+                class Break;
+                class Return;
+                class With;
+                class Switch;
+                class CaseBlock;
+                class Case;
+                class CaseKey;
+                class Label;
+                class Throw;
+                class Try;
+                class Catch;
+                class Finally;
+            }
+            class Debug;
+        }
+
         namespace args
         {
             class Arguments;
@@ -86,237 +93,252 @@ namespace ecma
             public:
                 inline ~Visitor() {}
 
-                virtual inline void visit(ecma::ast::Node &node)
+                virtual inline void visit(const ecma::ast::Node &node)
                 {
                     throw std::runtime_error("Unknown AST branch (ecma::ast::Node).");
                 }
 
-                virtual inline void visit(ecma::ast::Expression &node)
+                virtual inline void visit(const ecma::ast::Expression &node)
                 {
                     throw std::runtime_error("Unknown AST branch (ecma::ast::Expression).");
                 }
 
-                virtual inline void visit(ecma::ast::Statement &node)
+                virtual inline void visit(const ecma::ast::Statement &node)
                 {
                     throw std::runtime_error("Unknown AST branch (ecma::ast::Statement).");
                 }
 
-                virtual inline void visit(ecma::ast::Module &node)
+                virtual inline void visit(const ecma::ast::Module &node)
                 {
                     throw std::runtime_error("Unknown AST branch (ecma::ast::Module).");
                 }
 
-                virtual inline void visit(ecma::ast::stmt::Block &node)
-                {
-                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::Block).");
-                }
-
-                virtual inline void visit(ecma::ast::stmt::decl::Vars &node)
-                {
-                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::decl::Vars).");
-                }
-
-                virtual inline void visit(ecma::ast::stmt::decl::Var &node)
-                {
-                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::decl::Var).");
-                }
-
-                virtual inline void visit(ecma::ast::stmt::ExpressionStmt &node)
-                {
-                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::ExpressionStmt).");
-                }
-
-                virtual inline void visit(ecma::ast::stmt::If &node)
-                {
-                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::If).");
-                }
-
-                virtual inline void visit(ecma::ast::stmt::While &node)
-                {
-                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::While).");
-                }
-
-                virtual inline void visit(ecma::ast::stmt::For &node)
-                {
-                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::For).");
-                }
-
-                virtual inline void visit(ecma::ast::stmt::ForIn &node)
-                {
-                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::ForIn).");
-                }
-
-                virtual inline void visit(ecma::ast::stmt::Continue &node)
-                {
-                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::Continue).");
-                }
-
-                virtual inline void visit(ecma::ast::stmt::Break &node)
-                {
-                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::Break).");
-                }
-
-                virtual inline void visit(ecma::ast::stmt::Return &node)
-                {
-                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::Return).");
-                }
-
-                virtual inline void visit(ecma::ast::stmt::With &node)
-                {
-                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::With).");
-                }
-
-                virtual inline void visit(ecma::ast::stmt::Switch &node)
-                {
-                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::Switch).");
-                }
-
-                virtual inline void visit(ecma::ast::stmt::CaseBlock &node)
-                {
-                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::CaseBlock).");
-                }
-
-                virtual inline void visit(ecma::ast::stmt::Case &node)
-                {
-                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::Case).");
-                }
-
-                virtual inline void visit(ecma::ast::stmt::CaseKey &node)
-                {
-                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::CaseKey).");
-                }
-
-                virtual inline void visit(ecma::ast::stmt::Label &node)
-                {
-                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::Label).");
-                }
-
-                virtual inline void visit(ecma::ast::stmt::Throw &node)
-                {
-                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::Throw).");
-                }
-
-                virtual inline void visit(ecma::ast::stmt::Try &node)
-                {
-                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::Try).");
-                }
-
-                virtual inline void visit(ecma::ast::stmt::Catch &node)
-                {
-                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::Catch).");
-                }
-
-                virtual inline void visit(ecma::ast::stmt::Finally &node)
-                {
-                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::Finally).");
-                }
-
-                virtual inline void visit(ecma::ast::stmt::Debug &node)
-                {
-                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::Debug).");
-                }
-
-                virtual inline void visit(ecma::ast::expr::This &node)
-                {
-                    throw std::runtime_error("Unknown AST branch (ecma::ast::expr::This).");
-                }
-
-                virtual inline void visit(ecma::ast::expr::Ident &node)
+                virtual inline void visit(const ecma::ast::expr::Ident &node)
                 {
                     throw std::runtime_error("Unknown AST branch (ecma::ast::expr::Ident).");
                 }
 
-                virtual inline void visit(ecma::ast::expr::Index &node)
+                virtual inline void visit(const ecma::ast::expr::Function &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ecma::ast::expr::Function).");
+                }
+
+                virtual inline void visit(const ecma::ast::expr::This &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ecma::ast::expr::This).");
+                }
+
+                virtual inline void visit(const ecma::ast::expr::Index &node)
                 {
                     throw std::runtime_error("Unknown AST branch (ecma::ast::expr::Index).");
                 }
 
-                virtual inline void visit(ecma::ast::expr::Member &node)
+                virtual inline void visit(const ecma::ast::expr::Member &node)
                 {
                     throw std::runtime_error("Unknown AST branch (ecma::ast::expr::Member).");
                 }
 
-                virtual inline void visit(ecma::ast::expr::New &node)
+                virtual inline void visit(const ecma::ast::expr::New &node)
                 {
                     throw std::runtime_error("Unknown AST branch (ecma::ast::expr::New).");
                 }
 
-                virtual inline void visit(ecma::ast::expr::Call &node)
+                virtual inline void visit(const ecma::ast::expr::Call &node)
                 {
                     throw std::runtime_error("Unknown AST branch (ecma::ast::expr::Call).");
                 }
 
-                virtual inline void visit(ecma::ast::expr::Postfix &node)
+                virtual inline void visit(const ecma::ast::expr::Postfix &node)
                 {
                     throw std::runtime_error("Unknown AST branch (ecma::ast::expr::Postfix).");
                 }
 
-                virtual inline void visit(ecma::ast::expr::Unary &node)
+                virtual inline void visit(const ecma::ast::expr::Unary &node)
                 {
                     throw std::runtime_error("Unknown AST branch (ecma::ast::expr::Unary).");
                 }
 
-                virtual inline void visit(ecma::ast::expr::Binary &node)
+                virtual inline void visit(const ecma::ast::expr::Binary &node)
                 {
                     throw std::runtime_error("Unknown AST branch (ecma::ast::expr::Binary).");
                 }
 
-                virtual inline void visit(ecma::ast::expr::Condition &node)
+                virtual inline void visit(const ecma::ast::expr::Condition &node)
                 {
                     throw std::runtime_error("Unknown AST branch (ecma::ast::expr::Condition).");
                 }
 
-                virtual inline void visit(ecma::ast::expr::Assign &node)
+                virtual inline void visit(const ecma::ast::expr::Assign &node)
                 {
                     throw std::runtime_error("Unknown AST branch (ecma::ast::expr::Assign).");
                 }
 
-                virtual inline void visit(ecma::ast::expr::literal::Null &node)
+                virtual inline void visit(const ecma::ast::expr::Expressions &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ecma::ast::expr::Expressions).");
+                }
+
+                virtual inline void visit(const ecma::ast::expr::literal::Null &node)
                 {
                     throw std::runtime_error("Unknown AST branch (ecma::ast::expr::literal::Null).");
                 }
 
-                virtual inline void visit(ecma::ast::expr::literal::Undefined &node)
+                virtual inline void visit(const ecma::ast::expr::literal::Undefined &node)
                 {
                     throw std::runtime_error("Unknown AST branch (ecma::ast::expr::literal::Undefined).");
                 }
 
-                virtual inline void visit(ecma::ast::expr::literal::Boolean &node)
+                virtual inline void visit(const ecma::ast::expr::literal::Boolean &node)
                 {
                     throw std::runtime_error("Unknown AST branch (ecma::ast::expr::literal::Boolean).");
                 }
 
-                virtual inline void visit(ecma::ast::expr::literal::Number &node)
+                virtual inline void visit(const ecma::ast::expr::literal::Number &node)
                 {
                     throw std::runtime_error("Unknown AST branch (ecma::ast::expr::literal::Number).");
                 }
 
-                virtual inline void visit(ecma::ast::expr::literal::String &node)
+                virtual inline void visit(const ecma::ast::expr::literal::String &node)
                 {
                     throw std::runtime_error("Unknown AST branch (ecma::ast::expr::literal::String).");
                 }
 
-                virtual inline void visit(ecma::ast::expr::literal::Regexp &node)
+                virtual inline void visit(const ecma::ast::expr::literal::Regexp &node)
                 {
                     throw std::runtime_error("Unknown AST branch (ecma::ast::expr::literal::Regexp).");
                 }
 
-                virtual inline void visit(ecma::ast::expr::Array &node)
+                virtual inline void visit(const ecma::ast::expr::Array &node)
                 {
                     throw std::runtime_error("Unknown AST branch (ecma::ast::expr::Array).");
                 }
 
-                virtual inline void visit(ecma::ast::expr::Object &node)
+                virtual inline void visit(const ecma::ast::expr::Object &node)
                 {
                     throw std::runtime_error("Unknown AST branch (ecma::ast::expr::Object).");
                 }
 
-                virtual inline void visit(ecma::ast::expr::object::Property &node)
+                virtual inline void visit(const ecma::ast::expr::object::Property &node)
                 {
                     throw std::runtime_error("Unknown AST branch (ecma::ast::expr::object::Property).");
                 }
 
-                virtual inline void visit(ecma::ast::args::Arguments &node)
+                virtual inline void visit(const ecma::ast::stmt::decl::Function &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::decl::Function).");
+                }
+
+                virtual inline void visit(const ecma::ast::stmt::decl::Vars &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::decl::Vars).");
+                }
+
+                virtual inline void visit(const ecma::ast::stmt::decl::Var &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::decl::Var).");
+                }
+
+                virtual inline void visit(const ecma::ast::stmt::Block &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::Block).");
+                }
+
+                virtual inline void visit(const ecma::ast::stmt::ExpressionStmt &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::ExpressionStmt).");
+                }
+
+                virtual inline void visit(const ecma::ast::stmt::ctrl::If &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::ctrl::If).");
+                }
+
+                virtual inline void visit(const ecma::ast::stmt::ctrl::While &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::ctrl::While).");
+                }
+
+                virtual inline void visit(const ecma::ast::stmt::ctrl::For &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::ctrl::For).");
+                }
+
+                virtual inline void visit(const ecma::ast::stmt::ctrl::ForIn &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::ctrl::ForIn).");
+                }
+
+                virtual inline void visit(const ecma::ast::stmt::ctrl::Continue &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::ctrl::Continue).");
+                }
+
+                virtual inline void visit(const ecma::ast::stmt::ctrl::Break &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::ctrl::Break).");
+                }
+
+                virtual inline void visit(const ecma::ast::stmt::ctrl::Return &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::ctrl::Return).");
+                }
+
+                virtual inline void visit(const ecma::ast::stmt::ctrl::With &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::ctrl::With).");
+                }
+
+                virtual inline void visit(const ecma::ast::stmt::ctrl::Switch &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::ctrl::Switch).");
+                }
+
+                virtual inline void visit(const ecma::ast::stmt::ctrl::CaseBlock &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::ctrl::CaseBlock).");
+                }
+
+                virtual inline void visit(const ecma::ast::stmt::ctrl::Case &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::ctrl::Case).");
+                }
+
+                virtual inline void visit(const ecma::ast::stmt::ctrl::CaseKey &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::ctrl::CaseKey).");
+                }
+
+                virtual inline void visit(const ecma::ast::stmt::ctrl::Label &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::ctrl::Label).");
+                }
+
+                virtual inline void visit(const ecma::ast::stmt::ctrl::Throw &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::ctrl::Throw).");
+                }
+
+                virtual inline void visit(const ecma::ast::stmt::ctrl::Try &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::ctrl::Try).");
+                }
+
+                virtual inline void visit(const ecma::ast::stmt::ctrl::Catch &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::ctrl::Catch).");
+                }
+
+                virtual inline void visit(const ecma::ast::stmt::ctrl::Finally &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::ctrl::Finally).");
+                }
+
+                virtual inline void visit(const ecma::ast::stmt::Debug &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ecma::ast::stmt::Debug).");
+                }
+
+                virtual inline void visit(const ecma::ast::args::Arguments &node)
                 {
                     throw std::runtime_error("Unknown AST branch (ecma::ast::args::Arguments).");
                 }

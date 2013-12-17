@@ -34,7 +34,7 @@ namespace ecma
                             return *this;
                         }
 
-                        virtual inline void accept(tools::Visitor &visitor)
+                        virtual inline void accept(tools::Visitor &visitor) const
                         {
                             visitor.visit(*this);
                         }

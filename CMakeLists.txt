@@ -80,3 +80,19 @@ list(APPEND ecma_LIBRARIES ${ecma_utils_LIBRARIES})
 ## Parser
 add_executable(ecmap parser/main.cpp)
 target_link_libraries(ecmap ${ecma_LIBRARIES})
+
+# Special rules
+## Tests
+find_package(PythonInterp)
+if (PYTHONINTERP_FOUND)
+    add_custom_target(test
+        COMMAND
+            ${PYTHON_EXECUTABLE}
+            ${PROJECT_SOURCE_DIR}/tests/runner.py
+            --bin-dir=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+        DEPENDS
+            ecmap
+        WORKING_DIRECTORY
+            ${PROJECT_SOURCE_DIR}/tests
+    )
+endif (PYTHONINTERP_FOUND)

@@ -6,7 +6,6 @@
 #include "ecma/parser/exception.h"
 #include "ecma/toolchain/source.h"
 #include "ecma/utils/messages.h"
-#include "ecma/utils/ast/pretty.h"
 #include "ecma/ast/ast.h"
 
 using namespace ecma;
@@ -29,6 +28,7 @@ int main(int argc, char **argv)
 {
     std::unique_ptr<toolchain::Source> source;
     ast::Module *module = nullptr;
+    bool success = true;
 
     if (argc == 1)
     {
@@ -48,21 +48,26 @@ int main(int argc, char **argv)
         catch (parser::UnexpectedToken &e)
         {
             e.printMessage();
+            success = false;
         }
         catch (lex::UnknownTokenException &e)
         {
             e.printMessage();
+            success = false;
         }
     }
 
     if (module)
     {
-        utils::ast::PrettyPrintVisitor visitor;
-        module->accept(visitor);
+        //TODO: Compile!
+    }
+    else
+    {
+        success = false;
     }
 
     utils::Messages::Summary();
 
     delete module;
-    return EXIT_SUCCESS;
+    return success ? EXIT_SUCCESS : EXIT_FAILURE;
 }

@@ -181,28 +181,178 @@ module ::=
     }
 ;
 
-/// Function
-function_decl ::=
-    'function' IDENT '(' ')' '{' function_body '}',
-    'function' IDENT '(' formal_params ')' '{' function_body '}',
+/// Utils
+#[ast(
+    name = 'Ident',
+    namespace = 'expr',
+    parent = 'Expression',
+    constructor = ['name'],
+    items = [
+        item('name', type = 'std::string'),
+    ],
+    includes = [
+        '<string>',
+    ],
+)];
+
+#[type = 'expr::Ident *']
+ident ::=
+    IDENT => {
+        $0 = new expr::Ident($1->text());
+        $0->element($1);
+    }
+    'set' => {
+        $0 = new expr::Ident($1->text());
+        $0->element($1);
+    }
+    'get' => {
+        $0 = new expr::Ident($1->text());
+        $0->element($1);
+    }
 ;
 
+/// Function
+#[ast(
+    name = 'Function',
+    namespace = 'expr',
+    parent = 'Expression',
+    constructor = ['name'],
+    items = [
+        item('name',
+            type = 'std::string',
+        ),
+        item('args',
+            type = type(
+                'std::string',
+                list = true,
+            ),
+        ),
+        item('body',
+            type = type(
+                type(
+                    'Statement',
+                    pointer = true,
+                ),
+                list = true,
+            ),
+        ),
+    ],
+    includes = [
+        '<string>',
+    ],
+)];
+#[ast(
+    name = 'Function',
+    namespace = 'stmt::decl',
+    parent = 'Statement',
+    constructor = ['func'],
+    items = [
+        item('func',
+            type = type(
+                'expr::Function',
+                pointer = true,
+            ),
+        ),
+    ],
+)];
+
+#[type = 'stmt::decl::Function *']
+function_decl ::=
+    'function' ident(delete) '(' ')' '{' function_body '}' => {
+        auto func = new expr::Function($2->name());
+
+        for (auto it = $6->begin(); it != $6->end(); ++it)
+        {
+            func->body().push_back(std::move(*it));
+        }
+
+        $0 = new stmt::decl::Function(func);
+        $0->element($1, $7);
+
+        delete $6;
+    }
+    'function' ident(delete) '(' formal_params ')' '{' function_body '}' => {
+        auto func = new expr::Function($2->name());
+        func->args().insert(func->args().end(), $4->begin(), $4->end());
+
+        for (auto it = $7->begin(); it != $7->end(); ++it)
+        {
+            func->body().push_back(std::move(*it));
+        }
+
+        $0 = new stmt::decl::Function(func);
+        $0->element($1, $8);
+
+        delete $4;
+        delete $7;
+    }
+;
+
+#[type = 'expr::Function *']
 function_expr ::=
-    'function' IDENT '(' ')' '{' function_body '}',
-    'function' IDENT '(' formal_params ')' '{' function_body '}',
-    'function' '(' ')' '{' function_body '}',
-    'function' '(' formal_params ')' '{' function_body '}',
+    'function' ident(delete) '(' ')' '{' function_body '}' => {
+        $0 = new expr::Function($2->name());
+
+        for (auto it = $6->begin(); it != $6->end(); ++it)
+        {
+            $0->body().push_back(std::move(*it));
+        }
+
+        $0->element($1, $7);
+
+        delete $6;
+    }
+    'function' ident(delete) '(' formal_params ')' '{' function_body '}' => {
+        $0 = new expr::Function($2->name());
+        $0->args().insert($0->args().end(), $4->begin(), $4->end());
+
+        for (auto it = $7->begin(); it != $7->end(); ++it)
+        {
+            $0->body().push_back(std::move(*it));
+        }
+
+        $0->element($1, $8);
+
+        delete $4;
+        delete $7;
+    }
+    'function' '(' ')' '{' function_body '}' => {
+        $0 = new expr::Function("");
+
+        for (auto it = $5->begin(); it != $5->end(); ++it)
+        {
+            $0->body().push_back(std::move(*it));
+        }
+
+        $0->element($1, $6);
+
+        delete $5;
+    }
+    'function' '(' formal_params ')' '{' function_body '}' => {
+        $0 = new expr::Function("");
+        $0->args().insert($0->args().end(), $3->begin(), $3->end());
+
+        for (auto it = $6->begin(); it != $6->end(); ++it)
+        {
+            $0->body().push_back(std::move(*it));
+        }
+
+        $0->element($1, $7);
+
+        delete $3;
+        delete $6;
+    }
 ;
 
 #[type = 'std::vector<std::string> *']
 formal_params ::=
-    IDENT => {
+    ident(delete) => {
         $0 = new std::vector<std::string>();
-        $0->push_back($1->text());
+        $0->push_back($1->name());
     }
-    formal_params ',' IDENT => {
+    formal_params ',' ident(delete) => {
         $0 = $1;
-        $0->push_back($3->text());
+        $0->push_back($3->name());
     }
 ;
 
@@ -234,7 +384,7 @@ source_element ::=
         $0 = $1;
     }
     function_decl => {
-        // $0 = $1;
+        $0 = $1;
     }
 ;
 
@@ -426,12 +576,13 @@ var_decls ::=
 
 #[type = 'stmt::decl::Var *']
 var_decl ::=
-    IDENT => {
-        $0 = new stmt::decl::Var($1->text());
+    ident(delete) => {
+        $0 = new stmt::decl::Var($1->name());
         $0->element($1);
     }
-    IDENT init(variants = ['{}_no_in']) => {
-        $0 = new stmt::decl::Var($1->text());
+    ident(delete) init(variants = ['{}_no_in']) => {
+        $0 = new stmt::decl::Var($1->name());
+        $0->init($2);
         $0->element($1, $2);
     }
 ;
@@ -472,7 +623,7 @@ expr_stmt ::=
 
 #[ast(
     name = 'If',
-    namespace = 'stmt',
+    namespace = 'stmt::ctrl',
     parent = 'Statement',
     constructor = ['cond_expr', 'then_stmt'],
     items = [
@@ -497,14 +648,14 @@ expr_stmt ::=
     ],
 )];
 
-#[type = 'stmt::If *']
+#[type = 'stmt::ctrl::If *']
 if_stmt ::=
     'if' '(' expr ')' stmt => {
-        $0 = new stmt::If($3, $5);
+        $0 = new stmt::ctrl::If($3, $5);
         $0->element($1, $5);
     }
     'if' '(' expr ')' stmt 'else' stmt => {
-        $0 = new stmt::If($3, $5);
+        $0 = new stmt::ctrl::If($3, $5);
         $0->else_stmt($7);
         $0->element($1, $7);
     }
@@ -525,7 +676,7 @@ iter_stmt ::=
 
 #[ast(
     name = 'While',
-    namespace = 'stmt',
+    namespace = 'stmt::ctrl',
     parent = 'Statement',
     constructor = ['action_first', 'cond_expr', 'action'],
     items = [
@@ -547,21 +698,21 @@ iter_stmt ::=
     ],
 )];
 
-#[type = 'stmt::While *']
+#[type = 'stmt::ctrl::While *']
 while_stmt ::=
     'while' '(' expr ')' stmt => {
-        $0 = new stmt::While(false, $3, $5);
+        $0 = new stmt::ctrl::While(false, $3, $5);
         $0->element($1, $5);
     }
     'do' stmt 'while' '(' expr ')' => {
-        $0 = new stmt::While(true, $5, $2);
+        $0 = new stmt::ctrl::While(true, $5, $2);
         $0->element($1, $6);
     }
 ;
 
 #[ast(
     name = 'For',
-    namespace = 'stmt',
+    namespace = 'stmt::ctrl',
     parent = 'Statement',
     constructor = ['init', 'cond', 'loop', 'action'],
     items = [
@@ -592,13 +743,13 @@ while_stmt ::=
     ],
 )];
 
-#[type = 'stmt::For *']
+#[type = 'stmt::ctrl::For *']
 for_stmt ::=
     'for' '(' for_init ';' for_cond ';' for_loop ')' stmt => {
-        $0 = new stmt::For($3, $5, $7, $9);
+        $0 = new stmt::ctrl::For($3, $5, $7, $9);
         $0->element($1, $9);
     }
-    'for' '(' 'var' var_decls_no_in ';' for_cond ';' for_loop ')' stmt,
+    // 'for' '(' 'var' var_decls_no_in ';' for_cond ';' for_loop ')' stmt,
 ;
 
 #[type = 'Statement *']
@@ -609,6 +760,17 @@ for_init ::=
     expr_no_in => {
         $0 = new stmt::ExpressionStmt($1);
         $0->element($1);
+    }
+    'var' var_decls_no_in => {
+        auto vars = new stmt::decl::Vars();
+
+        for (auto it = $2->begin(); it != $2->end(); ++it)
+        {
+            vars->decls().push_back(std::move(*it));
+        }
+
+        $0 = vars;
+        delete $2;
     }
 ;
 
@@ -636,7 +798,7 @@ for_loop ::=
 
 #[ast(
     name = 'ForIn',
-    namespace = 'stmt',
+    namespace = 'stmt::ctrl',
     parent = 'Statement',
     constructor = ['counter', 'expr', 'action'],
     items = [
@@ -667,16 +829,14 @@ for_loop ::=
     ],
 )];
 
-#[type = 'stmt::ForIn *']
+#[type = 'stmt::ctrl::ForIn *']
 for_in_stmt ::=
     'for' '(' left_hand_expr 'in' expr ')' stmt => {
-        $0 = new stmt::ForIn($3, $5, $7);
+        $0 = new stmt::ctrl::ForIn($3, $5, $7);
         $0->element($1, $7);
     }
     'for' '(' 'var' var_decl_no_in 'in' expr ')' stmt => {
-        auto counter = new expr::Ident($4->name());
-
-        $0 = new stmt::ForIn(counter, $6, $8);
+        $0 = new stmt::ctrl::ForIn(new expr::Ident($4->name()), $6, $8);
         $0->init($4->take_init());
         $0->element($1, $8);
 
@@ -686,7 +846,7 @@ for_in_stmt ::=
 
 #[ast(
     name = 'Continue',
-    namespace = 'stmt',
+    namespace = 'stmt::ctrl',
     parent = 'Statement',
     items = [
         item('name',
@@ -701,22 +861,22 @@ for_in_stmt ::=
     ],
 )];
 
-#[type = 'stmt::Continue *']
+#[type = 'stmt::ctrl::Continue *']
 cont_stmt ::=
     'continue' ';' => {
-        $0 = new stmt::Continue();
+        $0 = new stmt::ctrl::Continue();
         $0->element($1, $2);
     }
-    'continue' IDENT ';' => {
-        $0 = new stmt::Continue();
-        $0->name(new std::string($2->text()));
+    'continue' ident(delete) ';' => {
+        $0 = new stmt::ctrl::Continue();
+        $0->name(new std::string($2->name()));
         $0->element($1, $3);
     }
 ;
 
 #[ast(
     name = 'Break',
-    namespace = 'stmt',
+    namespace = 'stmt::ctrl',
     parent = 'Statement',
     items = [
         item('name',
@@ -731,22 +891,22 @@ cont_stmt ::=
     ],
 )];
 
-#[type = 'stmt::Break *']
+#[type = 'stmt::ctrl::Break *']
 break_stmt ::=
     'break' ';' => {
-        $0 = new stmt::Break();
+        $0 = new stmt::ctrl::Break();
         $0->element($1, $2);
     }
-    'break' IDENT ';' => {
-        $0 = new stmt::Break();
-        $0->name(new std::string($2->text()));
+    'break' ident(delete) ';' => {
+        $0 = new stmt::ctrl::Break();
+        $0->name(new std::string($2->name()));
         $0->element($1, $3);
     }
 ;
 
 #[ast(
     name = 'Return',
-    namespace = 'stmt',
+    namespace = 'stmt::ctrl',
     parent = 'Statement',
     items = [
         item('expr',
@@ -758,14 +918,14 @@ break_stmt ::=
     ],
 )];
 
-#[type = 'stmt::Return *']
+#[type = 'stmt::ctrl::Return *']
 return_stmt ::=
     'return' ';' => {
-        $0 = new stmt::Return();
+        $0 = new stmt::ctrl::Return();
         $0->element($1, $2);
     }
     'return' expr ';' => {
-        $0 = new stmt::Return();
+        $0 = new stmt::ctrl::Return();
         $0->expr($2);
         $0->element($1, $3);
     }
@@ -773,7 +933,7 @@ return_stmt ::=
 
 #[ast(
     name = 'With',
-    namespace = 'stmt',
+    namespace = 'stmt::ctrl',
     parent = 'Statement',
     constructor = ['expr', 'action'],
     items = [
@@ -792,17 +952,17 @@ return_stmt ::=
     ],
 )];
 
-#[type = 'stmt::With *']
+#[type = 'stmt::ctrl::With *']
 with_stmt ::=
     'with' '(' expr ')' stmt => {
-        $0 = new stmt::With($3, $5);
+        $0 = new stmt::ctrl::With($3, $5);
         $0->element($1, $5);
     }
 ;
 
 #[ast(
     name = 'Switch',
-    namespace = 'stmt',
+    namespace = 'stmt::ctrl',
     parent = 'Statement',
     constructor = ['expr'],
     items = [
@@ -815,7 +975,7 @@ with_stmt ::=
         item('cases',
             type = type(
                 type(
-                    'stmt::Case',
+                    'stmt::ctrl::Case',
                     pointer = true,
                 ),
                 list = true,
@@ -824,10 +984,10 @@ with_stmt ::=
     ],
 )];
 
-#[type = 'stmt::Switch *']
+#[type = 'stmt::ctrl::Switch *']
 switch_stmt ::=
     'switch' '(' expr ')' case_block => {
-        $0 = new stmt::Switch($3);
+        $0 = new stmt::ctrl::Switch($3);
 
         for (auto it = $5->cases().begin(); it != $5->cases().end(); ++it)
         {
@@ -842,14 +1002,14 @@ switch_stmt ::=
 
 #[ast(
     name = 'CaseBlock',
-    namespace = 'stmt',
+    namespace = 'stmt::ctrl',
     parent = 'utils::Element',
     constructor = ['key'],
     items = [
         item('cases',
             type = type(
                 type(
-                    'stmt::Case',
+                    'stmt::ctrl::Case',
                     pointer = true,
                 ),
                 list = true,
@@ -862,7 +1022,7 @@ switch_stmt ::=
 )];
 #[ast(
     name = 'Case',
-    namespace = 'stmt',
+    namespace = 'stmt::ctrl',
     parent = 'utils::Element',
     constructor = ['key'],
     items = [
@@ -888,7 +1048,7 @@ switch_stmt ::=
 )];
 #[ast(
     name = 'CaseKey',
-    namespace = 'stmt',
+    namespace = 'stmt::ctrl',
     parent = 'utils::Element',
     items = [
         item('expr',
@@ -903,13 +1063,13 @@ switch_stmt ::=
     ],
 )];
 
-#[type = 'stmt::CaseBlock *']
+#[type = 'stmt::ctrl::CaseBlock *']
 case_block ::=
     '{' '}' => {
-        $0 = new stmt::CaseBlock();
+        $0 = new stmt::ctrl::CaseBlock();
     }
     '{' case_clauses '}' => {
-        $0 = new stmt::CaseBlock();
+        $0 = new stmt::ctrl::CaseBlock();
 
         for (auto it = $2->begin(); it != $2->end(); ++it)
         {
@@ -922,26 +1082,26 @@ case_block ::=
     }
 ;
 
-#[type = 'std::vector<std::unique_ptr<stmt::Case>> *']
+#[type = 'std::vector<std::unique_ptr<stmt::ctrl::Case>> *']
 case_clauses ::=
     case_clause => {
-        $0 = new std::vector<std::unique_ptr<stmt::Case>>();
-        $0->push_back(std::unique_ptr<stmt::Case>($1));
+        $0 = new std::vector<std::unique_ptr<stmt::ctrl::Case>>();
+        $0->push_back(std::unique_ptr<stmt::ctrl::Case>($1));
     }
     case_clauses case_clause => {
         $0 = $1;
-        $0->push_back(std::unique_ptr<stmt::Case>($2));
+        $0->push_back(std::unique_ptr<stmt::ctrl::Case>($2));
     }
 ;
 
-#[type = 'stmt::Case *']
+#[type = 'stmt::ctrl::Case *']
 case_clause ::=
     case_key ':' => {
-        $0 = new stmt::Case($1);
+        $0 = new stmt::ctrl::Case($1);
         $0->element($1, $2);
     }
     case_key ':' stmt_list => {
-        $0 = new stmt::Case($1);
+        $0 = new stmt::ctrl::Case($1);
 
         for (auto it = $3->begin(); it != $3->end(); ++it)
         {
@@ -960,22 +1120,22 @@ case_clause ::=
     }
 ;
 
-#[type = 'stmt::CaseKey *']
+#[type = 'stmt::ctrl::CaseKey *']
 case_key ::=
     'case' expr => {
-        $0 = new stmt::CaseKey();
+        $0 = new stmt::ctrl::CaseKey();
         $0->expr($2);
         $0->element($1, $2);
     }
     'default' => {
-        $0 = new stmt::CaseKey();
+        $0 = new stmt::ctrl::CaseKey();
         $0->element($1);
     }
 ;
 
 #[ast(
     name = 'Label',
-    namespace = 'stmt',
+    namespace = 'stmt::ctrl',
     parent = 'Statement',
     constructor = ['name', 'action'],
     items = [
@@ -995,17 +1155,17 @@ case_key ::=
 )];
 
 #[unused]
-#[type = 'stmt::Label *']
+#[type = 'stmt::ctrl::Label *']
 label_stmt ::=
-    IDENT ':' stmt => {
-        $0 = new stmt::Label($1->text(), $3);
+    ident(delete) ':' stmt => {
+        $0 = new stmt::ctrl::Label($1->name(), $3);
         $0->element($1, $3);
     }
 ;
 
 #[ast(
     name = 'Throw',
-    namespace = 'stmt',
+    namespace = 'stmt::ctrl',
     parent = 'Statement',
     constructor = ['expr'],
     items = [
@@ -1018,17 +1178,17 @@ label_stmt ::=
     ],
 )];
 
-#[type = 'stmt::Throw *']
+#[type = 'stmt::ctrl::Throw *']
 throw_stmt ::=
     'throw' expr ';' => {
-        $0 = new stmt::Throw($2);
+        $0 = new stmt::ctrl::Throw($2);
         $0->element($1, $3);
     }
 ;
 
 #[ast(
     name = 'Try',
-    namespace = 'stmt',
+    namespace = 'stmt::ctrl',
     parent = 'Statement',
     constructor = ['block'],
     items = [
@@ -1040,33 +1200,33 @@ throw_stmt ::=
         ),
         item('catch_action',
             type = type(
-                'stmt::Catch',
+                'stmt::ctrl::Catch',
                 pointer = true,
             ),
         ),
         item('finally_action',
             type = type(
-                'stmt::Finally',
+                'stmt::ctrl::Finally',
                 pointer = true,
             ),
         ),
     ],
 )];
 
-#[type = 'stmt::Try *']
+#[type = 'stmt::ctrl::Try *']
 try_stmt ::=
     'try' block_stmt catch => {
-        $0 = new stmt::Try($2);
+        $0 = new stmt::ctrl::Try($2);
         $0->catch_action($3);
         $0->element($1, $3);
     }
     'try' block_stmt finally => {
-        $0 = new stmt::Try($2);
+        $0 = new stmt::ctrl::Try($2);
         $0->finally_action($3);
         $0->element($1, $3);
     }
     'try' block_stmt catch finally => {
-        $0 = new stmt::Try($2);
+        $0 = new stmt::ctrl::Try($2);
         $0->catch_action($3);
         $0->finally_action($4);
         $0->element($1, $4);
@@ -1075,7 +1235,7 @@ try_stmt ::=
 
 #[ast(
     name = 'Catch',
-    namespace = 'stmt',
+    namespace = 'stmt::ctrl',
     parent = 'utils::Element',
     constructor = ['name', 'action'],
     items = [
@@ -1094,17 +1254,17 @@ try_stmt ::=
     ],
 )];
 
-#[type = 'stmt::Catch *']
+#[type = 'stmt::ctrl::Catch *']
 catch ::=
-    'catch' '(' IDENT ')' block_stmt => {
-        $0 = new stmt::Catch($3->text(), $5);
+    'catch' '(' ident(delete) ')' block_stmt => {
+        $0 = new stmt::ctrl::Catch($3->name(), $5);
         $0->element($1, $5);
     }
 ;
 
 #[ast(
     name = 'Finally',
-    namespace = 'stmt',
+    namespace = 'stmt::ctrl',
     parent = 'utils::Element',
     constructor = ['action'],
     items = [
@@ -1120,10 +1280,10 @@ catch ::=
     ],
 )];
 
-#[type = 'stmt::Finally *']
+#[type = 'stmt::ctrl::Finally *']
 finally ::=
     'finally' block_stmt => {
-        $0 = new stmt::Finally($2);
+        $0 = new stmt::ctrl::Finally($2);
         $0->element($1, $2);
     }
 ;
@@ -1148,18 +1308,6 @@ debug_stmt ::=
     namespace = 'expr',
     parent = 'Expression',
 )];
-#[ast(
-    name = 'Ident',
-    namespace = 'expr',
-    parent = 'Expression',
-    constructor = ['name'],
-    items = [
-        item('name', type = 'std::string'),
-    ],
-    includes = [
-        '<string>',
-    ],
-)];
 
 #[type = 'Expression *']
 primary_expr ::=
@@ -1167,8 +1315,8 @@ primary_expr ::=
         $0 = new expr::This();
         $0->element($1);
     }
-    IDENT => {
-        $0 = new expr::Ident($1->text());
+    ident(delete) => {
+        $0 = $1;
         $0->element($1);
     }
     literal => {
@@ -1251,7 +1399,9 @@ member_expr ::=
     primary_expr => {
         $0 = $1;
     }
-    [variant = '{}_no_fn'] function_expr,
+    [variant = '{}_no_fn'] function_expr => {
+        $0 = $1;
+    }
     member_expr(variants = ['{}_no_fn']) '[' expr ']' => {
         auto index = new expr::Index();
         index->expr($1);
@@ -1260,10 +1410,10 @@ member_expr ::=
         $0 = index;
         $0->element($1, $4);
     }
-    member_expr(variants = ['{}_no_fn']) '.' IDENT => {
+    member_expr(variants = ['{}_no_fn']) '.' ident(delete) => {
         auto member = new expr::Member();
         member->expr($1);
-        member->name($3->text());
+        member->name($3->name());
 
         $0 = member;
         $0->element($1, $3);
@@ -1360,10 +1510,10 @@ call_expr ::=
         $0 = index;
         $0->element($1, $4);
     }
-    call_expr(variants = ['{}_no_fn']) '.' IDENT => {
+    call_expr(variants = ['{}_no_fn']) '.' ident(delete) => {
         auto member = new expr::Member();
         member->expr($1);
-        member->name($3->text());
+        member->name($3->name());
 
         $0 = member;
         $0->element($1, $3);
@@ -1825,12 +1975,33 @@ assign_op ::=
     }
 ;
 
-#[type = 'Expression *']
+#[ast(
+    name = 'Expressions',
+    namespace = 'expr',
+    parent = 'Expression',
+    items = [
+        item('items',
+            type = type(
+                type(
+                    'Expression',
+                    pointer = true,
+                ),
+                list = true,
+            ),
+        ),
+    ],
+)];
+
+#[type = 'expr::Expressions *']
 expr ::=
     assign_expr(variants = ['{}_no_fn', '{}_no_in']) => {
-        $0 = $1;
+        $0 = new expr::Expressions();
+        $0->items().push_back(std::unique_ptr<Expression>($1));
     }
-    expr(variants = ['{}_no_fn', '{}_no_in']) ',' assign_expr(variants = ['{}_no_in']),
+    expr(variants = ['{}_no_fn', '{}_no_in']) ',' assign_expr(variants = ['{}_no_in']) => {
+        $0 = $1;
+        $0->items().push_back(std::unique_ptr<Expression>($3));
+    }
 ;
 
 /// Literal
@@ -2118,8 +2289,8 @@ object_properties ::=
 object_property ::=
     object_property_name ':' assign_expr => {
         $0 = new expr::object::Property();
-        $0->key(nullptr);
-        $0->value(nullptr);
+        $0->key($1);
+        $0->value($3);
         $0->element($1, $3);
     }
     'get' object_property_name '(' ')' '{' function_body '}',
@@ -2129,9 +2300,8 @@ object_property ::=
 
 #[type = 'Expression *']
 object_property_name ::=
-    IDENT => {
-        $0 = new expr::Ident($1->text());
-        $0->element($1);
+    ident(delete) => {
+        $0 = $1;
     }
     STRING => {
         $0 = new expr::literal::String($1->text());
@@ -2145,9 +2315,9 @@ object_property_name ::=
 
 #[type = 'std::vector<std::string> *']
 object_property_set_params ::=
-    IDENT => {
+    ident(delete) => {
         $0 = new std::vector<std::string>();
-        $0->push_back($1->text());
+        $0->push_back($1->name());
     }
 ;
 

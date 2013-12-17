@@ -20,7 +20,7 @@ namespace ecma
                         , m_action(action)
                     {
                     }
-                    inline ~Label()
+                    virtual inline ~Label()
                     {
                     }
 
@@ -43,12 +43,12 @@ namespace ecma
                         m_action.reset(action);
                         return *this;
                     }
-                    inline Statement *action()
+                    inline Statement *take_action()
                     {
                         return m_action.release();
                     }
 
-                    inline void accept(tools::Visitor &visitor)
+                    virtual inline void accept(tools::Visitor &visitor)
                     {
                         visitor.visit(*this);
                     }

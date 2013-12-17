@@ -20,7 +20,7 @@ namespace ecma
                         , m_action(action)
                     {
                     }
-                    inline ~ForIn()
+                    virtual inline ~ForIn()
                     {
                     }
 
@@ -33,7 +33,7 @@ namespace ecma
                         m_counter.reset(counter);
                         return *this;
                     }
-                    inline Expression *counter()
+                    inline Expression *take_counter()
                     {
                         return m_counter.release();
                     }
@@ -47,7 +47,7 @@ namespace ecma
                         m_init.reset(init);
                         return *this;
                     }
-                    inline Expression *init()
+                    inline Expression *take_init()
                     {
                         return m_init.release();
                     }
@@ -61,7 +61,7 @@ namespace ecma
                         m_expr.reset(expr);
                         return *this;
                     }
-                    inline Expression *expr()
+                    inline Expression *take_expr()
                     {
                         return m_expr.release();
                     }
@@ -75,12 +75,12 @@ namespace ecma
                         m_action.reset(action);
                         return *this;
                     }
-                    inline Statement *action()
+                    inline Statement *take_action()
                     {
                         return m_action.release();
                     }
 
-                    inline void accept(tools::Visitor &visitor)
+                    virtual inline void accept(tools::Visitor &visitor)
                     {
                         visitor.visit(*this);
                     }

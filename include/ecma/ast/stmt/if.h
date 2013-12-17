@@ -19,7 +19,7 @@ namespace ecma
                         , m_then_stmt(then_stmt)
                     {
                     }
-                    inline ~If()
+                    virtual inline ~If()
                     {
                     }
 
@@ -32,7 +32,7 @@ namespace ecma
                         m_cond_expr.reset(cond_expr);
                         return *this;
                     }
-                    inline Expression *cond_expr()
+                    inline Expression *take_cond_expr()
                     {
                         return m_cond_expr.release();
                     }
@@ -46,7 +46,7 @@ namespace ecma
                         m_then_stmt.reset(then_stmt);
                         return *this;
                     }
-                    inline Statement *then_stmt()
+                    inline Statement *take_then_stmt()
                     {
                         return m_then_stmt.release();
                     }
@@ -60,12 +60,12 @@ namespace ecma
                         m_else_stmt.reset(else_stmt);
                         return *this;
                     }
-                    inline Statement *else_stmt()
+                    inline Statement *take_else_stmt()
                     {
                         return m_else_stmt.release();
                     }
 
-                    inline void accept(tools::Visitor &visitor)
+                    virtual inline void accept(tools::Visitor &visitor)
                     {
                         visitor.visit(*this);
                     }

@@ -17,7 +17,7 @@ namespace ecma
                         : Statement()
                     {
                     }
-                    inline ~Return()
+                    virtual inline ~Return()
                     {
                     }
 
@@ -30,12 +30,12 @@ namespace ecma
                         m_expr.reset(expr);
                         return *this;
                     }
-                    inline Expression *expr()
+                    inline Expression *take_expr()
                     {
                         return m_expr.release();
                     }
 
-                    inline void accept(tools::Visitor &visitor)
+                    virtual inline void accept(tools::Visitor &visitor)
                     {
                         visitor.visit(*this);
                     }

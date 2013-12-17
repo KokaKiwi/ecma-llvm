@@ -18,7 +18,7 @@ namespace ecma
                         , m_name(name)
                     {
                     }
-                    inline ~Ident()
+                    virtual inline ~Ident()
                     {
                     }
 
@@ -32,7 +32,7 @@ namespace ecma
                         return *this;
                     }
 
-                    inline void accept(tools::Visitor &visitor)
+                    virtual inline void accept(tools::Visitor &visitor)
                     {
                         visitor.visit(*this);
                     }

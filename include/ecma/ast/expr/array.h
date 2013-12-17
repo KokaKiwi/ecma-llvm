@@ -18,7 +18,7 @@ namespace ecma
                         : Expression()
                     {
                     }
-                    inline ~Array()
+                    virtual inline ~Array()
                     {
                     }
 
@@ -31,7 +31,7 @@ namespace ecma
                         return m_elements;
                     }
 
-                    inline void accept(tools::Visitor &visitor)
+                    virtual inline void accept(tools::Visitor &visitor)
                     {
                         visitor.visit(*this);
                     }

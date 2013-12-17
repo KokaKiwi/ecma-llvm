@@ -21,7 +21,7 @@ namespace ecma
                             , m_name(name)
                         {
                         }
-                        inline ~Var()
+                        virtual inline ~Var()
                         {
                         }
 
@@ -44,12 +44,12 @@ namespace ecma
                             m_init.reset(init);
                             return *this;
                         }
-                        inline Expression *init()
+                        inline Expression *take_init()
                         {
                             return m_init.release();
                         }
 
-                        inline void accept(tools::Visitor &visitor)
+                        virtual inline void accept(tools::Visitor &visitor)
                         {
                             visitor.visit(*this);
                         }

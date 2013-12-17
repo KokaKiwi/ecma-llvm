@@ -20,7 +20,7 @@ namespace ecma
                             : Statement()
                         {
                         }
-                        inline ~Vars()
+                        virtual inline ~Vars()
                         {
                         }
 
@@ -33,7 +33,7 @@ namespace ecma
                             return m_decls;
                         }
 
-                        inline void accept(tools::Visitor &visitor)
+                        virtual inline void accept(tools::Visitor &visitor)
                         {
                             visitor.visit(*this);
                         }

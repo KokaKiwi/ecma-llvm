@@ -20,7 +20,7 @@ namespace ecma
                             : utils::Element()
                         {
                         }
-                        inline ~Property()
+                        virtual inline ~Property()
                         {
                         }
 
@@ -33,7 +33,7 @@ namespace ecma
                             m_key.reset(key);
                             return *this;
                         }
-                        inline Expression *key()
+                        inline Expression *take_key()
                         {
                             return m_key.release();
                         }
@@ -47,12 +47,12 @@ namespace ecma
                             m_value.reset(value);
                             return *this;
                         }
-                        inline Expression *value()
+                        inline Expression *take_value()
                         {
                             return m_value.release();
                         }
 
-                        inline void accept(tools::Visitor &visitor)
+                        virtual inline void accept(tools::Visitor &visitor)
                         {
                             visitor.visit(*this);
                         }

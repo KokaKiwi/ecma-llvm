@@ -1,7 +1,7 @@
-#include <stdexcept>
-
 #ifndef ECMA_AST_TOOLS_VISITOR_H_
 #define ECMA_AST_TOOLS_VISITOR_H_
+
+#include <stdexcept>
 
 namespace ecma
 {

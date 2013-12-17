@@ -15,7 +15,7 @@ namespace ecma
                 inline Module()
                 {
                 }
-                inline ~Module()
+                virtual inline ~Module()
                 {
                 }
 
@@ -28,7 +28,7 @@ namespace ecma
                     return m_statements;
                 }
 
-                inline void accept(tools::Visitor &visitor)
+                virtual inline void accept(tools::Visitor &visitor)
                 {
                     visitor.visit(*this);
                 }

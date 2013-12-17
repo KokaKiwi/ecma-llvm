@@ -19,7 +19,7 @@ namespace ecma
                         : utils::Element()
                     {
                     }
-                    inline ~Arguments()
+                    virtual inline ~Arguments()
                     {
                     }
 
@@ -32,7 +32,7 @@ namespace ecma
                         return m_elements;
                     }
 
-                    inline void accept(tools::Visitor &visitor)
+                    virtual inline void accept(tools::Visitor &visitor)
                     {
                         visitor.visit(*this);
                     }

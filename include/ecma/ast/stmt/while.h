@@ -20,7 +20,7 @@ namespace ecma
                         , m_action(action)
                     {
                     }
-                    inline ~While()
+                    virtual inline ~While()
                     {
                     }
 
@@ -33,7 +33,7 @@ namespace ecma
                         m_cond_expr.reset(cond_expr);
                         return *this;
                     }
-                    inline Expression *cond_expr()
+                    inline Expression *take_cond_expr()
                     {
                         return m_cond_expr.release();
                     }
@@ -47,7 +47,7 @@ namespace ecma
                         m_action.reset(action);
                         return *this;
                     }
-                    inline Statement *action()
+                    inline Statement *take_action()
                     {
                         return m_action.release();
                     }
@@ -62,7 +62,7 @@ namespace ecma
                         return *this;
                     }
 
-                    inline void accept(tools::Visitor &visitor)
+                    virtual inline void accept(tools::Visitor &visitor)
                     {
                         visitor.visit(*this);
                     }

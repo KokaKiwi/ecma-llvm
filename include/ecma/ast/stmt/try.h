@@ -18,7 +18,7 @@ namespace ecma
                         , m_block(block)
                     {
                     }
-                    inline ~Try()
+                    virtual inline ~Try()
                     {
                     }
 
@@ -31,7 +31,7 @@ namespace ecma
                         m_block.reset(block);
                         return *this;
                     }
-                    inline stmt::Block *block()
+                    inline stmt::Block *take_block()
                     {
                         return m_block.release();
                     }
@@ -45,7 +45,7 @@ namespace ecma
                         m_catch_action.reset(catch_action);
                         return *this;
                     }
-                    inline stmt::Catch *catch_action()
+                    inline stmt::Catch *take_catch_action()
                     {
                         return m_catch_action.release();
                     }
@@ -59,12 +59,12 @@ namespace ecma
                         m_finally_action.reset(finally_action);
                         return *this;
                     }
-                    inline stmt::Finally *finally_action()
+                    inline stmt::Finally *take_finally_action()
                     {
                         return m_finally_action.release();
                     }
 
-                    inline void accept(tools::Visitor &visitor)
+                    virtual inline void accept(tools::Visitor &visitor)
                     {
                         visitor.visit(*this);
                     }

@@ -15,11 +15,11 @@ namespace ecma
                     : utils::Element()
                 {
                 }
-                inline ~Node()
+                virtual inline ~Node()
                 {
                 }
 
-                inline void accept(tools::Visitor &visitor)
+                virtual inline void accept(tools::Visitor &visitor)
                 {
                     visitor.visit(*this);
                 }

@@ -18,7 +18,7 @@ namespace ecma
                         : Expression()
                     {
                     }
-                    inline ~Object()
+                    virtual inline ~Object()
                     {
                     }
 
@@ -31,7 +31,7 @@ namespace ecma
                         return m_properties;
                     }
 
-                    inline void accept(tools::Visitor &visitor)
+                    virtual inline void accept(tools::Visitor &visitor)
                     {
                         visitor.visit(*this);
                     }

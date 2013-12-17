@@ -599,7 +599,7 @@ for_in_stmt(A) ::= FOR(B) LPAREN(F) VAR(G) var_decl_no_in(C) IN(H) expr(D) RPARE
     auto counter = new expr::Ident(C->name());
 
     A = new stmt::ForIn(counter, D, E);
-    A->init(C->init());
+    A->init(C->take_init());
     A->element(B, E);
 
     delete C;

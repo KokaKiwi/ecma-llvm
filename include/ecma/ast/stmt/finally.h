@@ -19,7 +19,7 @@ namespace ecma
                         , m_action(action)
                     {
                     }
-                    inline ~Finally()
+                    virtual inline ~Finally()
                     {
                     }
 
@@ -32,12 +32,12 @@ namespace ecma
                         m_action.reset(action);
                         return *this;
                     }
-                    inline stmt::Block *action()
+                    inline stmt::Block *take_action()
                     {
                         return m_action.release();
                     }
 
-                    inline void accept(tools::Visitor &visitor)
+                    virtual inline void accept(tools::Visitor &visitor)
                     {
                         visitor.visit(*this);
                     }

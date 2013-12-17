@@ -25,7 +25,7 @@ namespace ecma
                         , m_op(op)
                     {
                     }
-                    inline ~Postfix()
+                    virtual inline ~Postfix()
                     {
                     }
 
@@ -38,7 +38,7 @@ namespace ecma
                         m_expr.reset(expr);
                         return *this;
                     }
-                    inline Expression *expr()
+                    inline Expression *take_expr()
                     {
                         return m_expr.release();
                     }
@@ -53,7 +53,7 @@ namespace ecma
                         return *this;
                     }
 
-                    inline void accept(tools::Visitor &visitor)
+                    virtual inline void accept(tools::Visitor &visitor)
                     {
                         visitor.visit(*this);
                     }

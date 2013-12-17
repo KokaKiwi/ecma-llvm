@@ -18,7 +18,7 @@ namespace ecma
                         : Statement()
                     {
                     }
-                    inline ~Block()
+                    virtual inline ~Block()
                     {
                     }
 
@@ -31,7 +31,7 @@ namespace ecma
                         return m_statements;
                     }
 
-                    inline void accept(tools::Visitor &visitor)
+                    virtual inline void accept(tools::Visitor &visitor)
                     {
                         visitor.visit(*this);
                     }

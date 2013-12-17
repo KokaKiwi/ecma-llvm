@@ -144,17 +144,21 @@ class NodeGenerator(Writeable):
 
         w += '{'
 
-        # with w.sub_indent() as ww:
-        #     ww += 'std::cerr << "Creating {name:s}" << std::endl;'.format(name = self.node.name)
+        """
+        with w.sub_indent() as ww:
+            ww += 'std::cerr << "Creating {name:s}" << std::endl;'.format(name = self.node.name)
+        """
 
         w += '}'
 
     def write_class_destructor(self, w):
-        w += 'inline ~{name:s}()'.format(name = self.node.name)
+        w += 'virtual inline ~{name:s}()'.format(name = self.node.name)
         w += '{'
 
-        # with w.sub_indent() as ww:
-        #     ww += 'std::cerr << "Deleting {name:s}" << std::endl;'.format(name = self.node.name)
+        """
+        with w.sub_indent() as ww:
+            ww += 'std::cerr << "Deleting {name:s}" << std::endl;'.format(name = self.node.name)
+        """
 
         w += '}'
 
@@ -196,7 +200,7 @@ class NodeGenerator(Writeable):
         w += '}'
 
         # Taker
-        w += 'inline {type:s} *{name:s}()'.format(type = itype, name = item.name)
+        w += 'inline {type:s} *take_{name:s}()'.format(type = itype, name = item.name)
         w += '{'
 
         with w.sub_indent() as ww:
@@ -266,7 +270,7 @@ class NodeGenerator(Writeable):
 
     def write_class_accept(self, w):
         w.writeln()
-        w += 'inline void accept(tools::Visitor &visitor)'
+        w += 'virtual inline void accept(tools::Visitor &visitor)'
         w += '{'
 
         with w.sub_indent() as ww:
@@ -370,13 +374,14 @@ class GenASTCommand(BaseCommand):
         includes = [
             '<stdexcept>',
         ]
-        for inc in includes:
-            w += '#include {:s}'.format(inc)
-
-        w.writeln()
 
         w += '#ifndef {:s}'.format(header_constant)
         w += '#define {:s}'.format(header_constant)
+        w.writeln()
+
+        for inc in includes:
+            w += '#include {:s}'.format(inc)
+
         w.writeln()
 
         def write_tree(w, tree):

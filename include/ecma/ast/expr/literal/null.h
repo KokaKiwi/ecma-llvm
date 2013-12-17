@@ -18,11 +18,11 @@ namespace ecma
                             : Expression()
                         {
                         }
-                        inline ~Null()
+                        virtual inline ~Null()
                         {
                         }
 
-                        inline void accept(tools::Visitor &visitor)
+                        virtual inline void accept(tools::Visitor &visitor)
                         {
                             visitor.visit(*this);
                         }

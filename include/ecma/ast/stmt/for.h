@@ -21,7 +21,7 @@ namespace ecma
                         , m_action(action)
                     {
                     }
-                    inline ~For()
+                    virtual inline ~For()
                     {
                     }
 
@@ -34,7 +34,7 @@ namespace ecma
                         m_init.reset(init);
                         return *this;
                     }
-                    inline Statement *init()
+                    inline Statement *take_init()
                     {
                         return m_init.release();
                     }
@@ -48,7 +48,7 @@ namespace ecma
                         m_cond.reset(cond);
                         return *this;
                     }
-                    inline Statement *cond()
+                    inline Statement *take_cond()
                     {
                         return m_cond.release();
                     }
@@ -62,7 +62,7 @@ namespace ecma
                         m_loop.reset(loop);
                         return *this;
                     }
-                    inline Statement *loop()
+                    inline Statement *take_loop()
                     {
                         return m_loop.release();
                     }
@@ -76,12 +76,12 @@ namespace ecma
                         m_action.reset(action);
                         return *this;
                     }
-                    inline Statement *action()
+                    inline Statement *take_action()
                     {
                         return m_action.release();
                     }
 
-                    inline void accept(tools::Visitor &visitor)
+                    virtual inline void accept(tools::Visitor &visitor)
                     {
                         visitor.visit(*this);
                     }

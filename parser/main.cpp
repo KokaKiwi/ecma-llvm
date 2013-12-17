@@ -6,6 +6,7 @@
 #include "ecma/parser/exception.h"
 #include "ecma/toolchain/source.h"
 #include "ecma/utils/messages.h"
+#include "ecma/utils/ast/pretty.h"
 #include "ecma/ast/ast.h"
 
 using namespace ecma;
@@ -52,6 +53,12 @@ int main(int argc, char **argv)
         {
             e.printMessage();
         }
+    }
+
+    if (module)
+    {
+        utils::ast::PrettyPrintVisitor visitor;
+        module->accept(visitor);
     }
 
     utils::Messages::Summary();

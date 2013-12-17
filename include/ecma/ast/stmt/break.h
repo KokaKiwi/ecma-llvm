@@ -18,7 +18,7 @@ namespace ecma
                         : Statement()
                     {
                     }
-                    inline ~Break()
+                    virtual inline ~Break()
                     {
                     }
 
@@ -31,12 +31,12 @@ namespace ecma
                         m_name.reset(name);
                         return *this;
                     }
-                    inline std::string *name()
+                    inline std::string *take_name()
                     {
                         return m_name.release();
                     }
 
-                    inline void accept(tools::Visitor &visitor)
+                    virtual inline void accept(tools::Visitor &visitor)
                     {
                         visitor.visit(*this);
                     }

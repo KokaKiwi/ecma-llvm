@@ -677,7 +677,7 @@ for_in_stmt ::=
         auto counter = new expr::Ident($4->name());
 
         $0 = new stmt::ForIn(counter, $6, $8);
-        $0->init($4->init());
+        $0->init($4->take_init());
         $0->element($1, $8);
 
         delete $4;

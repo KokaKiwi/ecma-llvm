@@ -14,11 +14,11 @@ namespace ecma
                     : Node()
                 {
                 }
-                inline ~Statement()
+                virtual inline ~Statement()
                 {
                 }
 
-                inline void accept(tools::Visitor &visitor)
+                virtual inline void accept(tools::Visitor &visitor)
                 {
                     visitor.visit(*this);
                 }

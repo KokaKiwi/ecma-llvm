@@ -20,7 +20,7 @@ namespace ecma
                         , m_key(key)
                     {
                     }
-                    inline ~Case()
+                    virtual inline ~Case()
                     {
                     }
 
@@ -33,7 +33,7 @@ namespace ecma
                         m_key.reset(key);
                         return *this;
                     }
-                    inline CaseKey *key()
+                    inline CaseKey *take_key()
                     {
                         return m_key.release();
                     }
@@ -47,7 +47,7 @@ namespace ecma
                         return m_actions;
                     }
 
-                    inline void accept(tools::Visitor &visitor)
+                    virtual inline void accept(tools::Visitor &visitor)
                     {
                         visitor.visit(*this);
                     }

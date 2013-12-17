@@ -20,7 +20,7 @@ namespace ecma
                             , m_value(value)
                         {
                         }
-                        inline ~Number()
+                        virtual inline ~Number()
                         {
                         }
 
@@ -34,7 +34,7 @@ namespace ecma
                             return *this;
                         }
 
-                        inline void accept(tools::Visitor &visitor)
+                        virtual inline void accept(tools::Visitor &visitor)
                         {
                             visitor.visit(*this);
                         }

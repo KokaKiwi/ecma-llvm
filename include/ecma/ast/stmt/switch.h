@@ -19,7 +19,7 @@ namespace ecma
                         , m_expr(expr)
                     {
                     }
-                    inline ~Switch()
+                    virtual inline ~Switch()
                     {
                     }
 
@@ -32,7 +32,7 @@ namespace ecma
                         m_expr.reset(expr);
                         return *this;
                     }
-                    inline Expression *expr()
+                    inline Expression *take_expr()
                     {
                         return m_expr.release();
                     }
@@ -46,7 +46,7 @@ namespace ecma
                         return m_cases;
                     }
 
-                    inline void accept(tools::Visitor &visitor)
+                    virtual inline void accept(tools::Visitor &visitor)
                     {
                         visitor.visit(*this);
                     }

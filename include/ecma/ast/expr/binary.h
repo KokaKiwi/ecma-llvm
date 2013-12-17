@@ -47,7 +47,7 @@ namespace ecma
                         , m_op(op)
                     {
                     }
-                    inline ~Binary()
+                    virtual inline ~Binary()
                     {
                     }
 
@@ -60,7 +60,7 @@ namespace ecma
                         m_left.reset(left);
                         return *this;
                     }
-                    inline Expression *left()
+                    inline Expression *take_left()
                     {
                         return m_left.release();
                     }
@@ -74,7 +74,7 @@ namespace ecma
                         m_right.reset(right);
                         return *this;
                     }
-                    inline Expression *right()
+                    inline Expression *take_right()
                     {
                         return m_right.release();
                     }
@@ -89,7 +89,7 @@ namespace ecma
                         return *this;
                     }
 
-                    inline void accept(tools::Visitor &visitor)
+                    virtual inline void accept(tools::Visitor &visitor)
                     {
                         visitor.visit(*this);
                     }

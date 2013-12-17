@@ -16,11 +16,11 @@ namespace ecma
                         : Statement()
                     {
                     }
-                    inline ~Debug()
+                    virtual inline ~Debug()
                     {
                     }
 
-                    inline void accept(tools::Visitor &visitor)
+                    virtual inline void accept(tools::Visitor &visitor)
                     {
                         visitor.visit(*this);
                     }

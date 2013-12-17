@@ -16,11 +16,11 @@ namespace ecma
                         : Expression()
                     {
                     }
-                    inline ~This()
+                    virtual inline ~This()
                     {
                     }
 
-                    inline void accept(tools::Visitor &visitor)
+                    virtual inline void accept(tools::Visitor &visitor)
                     {
                         visitor.visit(*this);
                     }

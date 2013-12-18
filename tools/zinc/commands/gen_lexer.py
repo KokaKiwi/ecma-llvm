@@ -23,12 +23,15 @@ class GenLexerCommand(BaseCommand):
             s += '# {:s}\n'.format(g_name)
             for (name, token) in g_tokens.items():
                 def output_token(token):
-                    if isinstance(token, (Regex, Ident)):
+                    value = token
+                    if isinstance(token, (Func)):
+                        value = token.params[0]
+                    if isinstance(value, (Regex, Ident)):
                         fmt = '{}'
                         token = token[:]
                     else:
                         fmt = '"{}"'
-                    return fmt.format(token)
+                    return fmt.format(value)
 
                 s += '{token:23s} =>  {{ type = ECMA_TOKEN({name:s}); fbreak; }};\n'.format(name = name, token = output_token(token))
             s += '\n'

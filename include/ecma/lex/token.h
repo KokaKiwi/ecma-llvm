@@ -98,9 +98,9 @@ namespace ecma
 
         enum class Token::AutoType
         {
-            #define ECMA_TOKEN_DEFINE(name, value)
-            #define ECMA_TOKEN_AUTO(name) name,
-            #define ECMA_TOKEN(name)
+            #define ECMA_TOKEN_DEFINE(name, value, repr)
+            #define ECMA_TOKEN_AUTO(name, repr) name,
+            #define ECMA_TOKEN(name, repr)
 
             #include "ecma/lex/types.h"
 
@@ -111,9 +111,9 @@ namespace ecma
 
         enum class Token::Type
         {
-            #define ECMA_TOKEN_DEFINE(name, value) name = value,
-            #define ECMA_TOKEN_AUTO(name)
-            #define ECMA_TOKEN(name) ECMA_TOKEN_DEFINE(name, ECMA_TOKEN_TYPE_##name)
+            #define ECMA_TOKEN_DEFINE(name, value, repr) name = value,
+            #define ECMA_TOKEN_AUTO(name, repr)
+            #define ECMA_TOKEN(name, repr) ECMA_TOKEN_DEFINE(name, ECMA_TOKEN_TYPE_##name, repr)
 
             #include "ecma/lex/types.h"
 
@@ -121,9 +121,9 @@ namespace ecma
             #undef ECMA_TOKEN_AUTO
             #undef ECMA_TOKEN
 
-            #define ECMA_TOKEN_DEFINE(name, value)
-            #define ECMA_TOKEN_AUTO(name) name = -(static_cast<int>(Token::AutoType::name) + 1),
-            #define ECMA_TOKEN(name)
+            #define ECMA_TOKEN_DEFINE(name, value, repr)
+            #define ECMA_TOKEN_AUTO(name, repr) name = -(static_cast<int>(Token::AutoType::name) + 1),
+            #define ECMA_TOKEN(name, repr)
 
             #include "ecma/lex/types.h"
 

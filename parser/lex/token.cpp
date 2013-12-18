@@ -8,12 +8,12 @@ const std::string Token::typeString(Token::Type type)
     switch (type)
     {
         #define ECMA_TOKEN_NAME(name) #name
-        #define ECMA_TOKEN_CASE(name)   \
-            case Token::Type::name:     \
-                return ECMA_TOKEN_NAME(name);
-        #define ECMA_TOKEN_DEFINE(name, value) ECMA_TOKEN_CASE(name)
-        #define ECMA_TOKEN_AUTO(name) ECMA_TOKEN_CASE(name)
-        #define ECMA_TOKEN(name) ECMA_TOKEN_CASE(name)
+        #define ECMA_TOKEN_CASE(name, repr) \
+            case Token::Type::name:         \
+                return repr;
+        #define ECMA_TOKEN_DEFINE(name, value, repr) ECMA_TOKEN_CASE(name, repr)
+        #define ECMA_TOKEN_AUTO(name, repr) ECMA_TOKEN_CASE(name, repr)
+        #define ECMA_TOKEN(name, repr) ECMA_TOKEN_CASE(name, repr)
 
         #include "ecma/lex/types.h"
 

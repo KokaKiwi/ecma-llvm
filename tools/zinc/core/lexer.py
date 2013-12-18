@@ -9,6 +9,7 @@ class Lexer(object):
 
     def prepare(self):
         self.tokens = OrderedDict()
+        self.raw = OrderedDict()
 
         self.prepare_ast()
         self.prepare_prec()
@@ -29,10 +30,13 @@ class Lexer(object):
                 if isinstance(param, (Named)):
                     tokens[param.name] = param.value
 
-            if name not in self.tokens.keys():
-                self.tokens[name] = OrderedDict()
+            if name != 'raw':
+                if name not in self.tokens.keys():
+                    self.tokens[name] = OrderedDict()
 
-            self.tokens[name].update(tokens)
+                self.tokens[name].update(tokens)
+            else:
+                self.raw.update(tokens)
 
     def prepare_prec(self):
         self.prec = OrderedDict()
@@ -50,6 +54,8 @@ class Lexer(object):
 
             def token_cmp(tok):
                 (name, token) = tok
+                if isinstance(token, (Func)) and token.name == 'token':
+                    return len(token.params[0])
                 return len(token)
 
             tokens = sorted(tokens, key = token_cmp, reverse = True)
@@ -77,5 +83,10 @@ class Lexer(object):
         else:
             tokens.update(self.tokens[group])
 
-        tokens = OrderedDict([(val, key) for (key, val) in tokens.items()])
+        def token_value(tok):
+            if isinstance(tok, (Func)) and tok.name == 'token':
+                return tok.params[0]
+            return tok
+
+        tokens = OrderedDict([(token_value(val), key) for (key, val) in tokens.items()])
         return tokens[token]

@@ -209,7 +209,6 @@ Token *Lexer::consume()
             "~"                     =>  { type = ECMA_TOKEN(INV); fbreak; };
 
             # literal
-            "undefined"             =>  { type = ECMA_TOKEN(LIT_UNDEFINED); fbreak; };
             "false"                 =>  { type = ECMA_TOKEN(LIT_FALSE); fbreak; };
             "null"                  =>  { type = ECMA_TOKEN(LIT_NULL); fbreak; };
             "true"                  =>  { type = ECMA_TOKEN(LIT_TRUE); fbreak; };

@@ -121,9 +121,6 @@
     // boolean
     LIT_TRUE                =   "true",
     LIT_FALSE               =   "false",
-
-    // undefined
-    LIT_UNDEFINED           =   "undefined",
 )];
 
 #[prec(
@@ -1977,11 +1974,6 @@ expr ::=
     parent = 'Expression',
 )];
 #[ast(
-    name = 'Undefined',
-    namespace = 'expr::literal',
-    parent = 'Expression',
-)];
-#[ast(
     name = 'Boolean',
     namespace = 'expr::literal',
     parent = 'Expression',
@@ -2031,10 +2023,6 @@ expr ::=
 literal ::=
     'null' => {
         $0 = new expr::literal::Null();
-        $0->element($1);
-    }
-    'undefined' => {
-        $0 = new expr::literal::Undefined();
         $0->element($1);
     }
     'true' => {

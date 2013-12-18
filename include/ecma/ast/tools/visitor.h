@@ -31,7 +31,6 @@ namespace ecma
             namespace literal
             {
                 class Null;
-                class Undefined;
                 class Boolean;
                 class Number;
                 class String;
@@ -181,11 +180,6 @@ namespace ecma
                 virtual inline void visit(const ecma::ast::expr::literal::Null &node)
                 {
                     throw std::runtime_error("Unknown AST branch (ecma::ast::expr::literal::Null).");
-                }
-
-                virtual inline void visit(const ecma::ast::expr::literal::Undefined &node)
-                {
-                    throw std::runtime_error("Unknown AST branch (ecma::ast::expr::literal::Undefined).");
                 }
 
                 virtual inline void visit(const ecma::ast::expr::literal::Boolean &node)

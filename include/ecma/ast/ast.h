@@ -19,7 +19,6 @@
 #include "ecma/ast/expr/assign.h"
 #include "ecma/ast/expr/expressions.h"
 #include "ecma/ast/expr/literal/null.h"
-#include "ecma/ast/expr/literal/undefined.h"
 #include "ecma/ast/expr/literal/boolean.h"
 #include "ecma/ast/expr/literal/number.h"
 #include "ecma/ast/expr/literal/string.h"

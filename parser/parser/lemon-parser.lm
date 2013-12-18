@@ -103,7 +103,11 @@ function_decl(A) ::= FUNCTION(B) ident(C) LPAREN(F) RPAREN(G) LBRACE(H) function
 function_decl(A) ::= FUNCTION(B) ident(C) LPAREN(G) formal_params(D) RPAREN(H) LBRACE(I) function_body(E) RBRACE(F).
 {
     auto func = new expr::Function(C->name());
-    func->args().insert(func->args().end(), D->begin(), D->end());
+
+    for (auto it = D->begin(); it != D->end(); ++it)
+    {
+        func->args().push_back(*it);
+    }
 
     for (auto it = E->begin(); it != E->end(); ++it)
     {
@@ -113,14 +117,13 @@ function_decl(A) ::= FUNCTION(B) ident(C) LPAREN(G) formal_params(D) RPAREN(H) L
     A = new stmt::decl::Function(func);
     A->element(B, F);
 
-    delete D;
-    delete E;
-
     delete B;
     delete C;
     delete G;
+    delete D;
     delete H;
     delete I;
+    delete E;
     delete F;
 }
 
@@ -138,13 +141,12 @@ function_expr(A) ::= FUNCTION(B) ident(C) LPAREN(F) RPAREN(G) LBRACE(H) function
 
     A->element(B, E);
 
-    delete D;
-
     delete B;
     delete C;
     delete F;
     delete G;
     delete H;
+    delete D;
     delete E;
 }
 
@@ -289,7 +291,7 @@ stmt(A) ::= var_stmt(B).
 
 stmt(A) ::= empty_stmt.
 {
-    A = nullptr;
+    A = new Statement();
 }
 
 stmt(A) ::= expr_stmt(B).
@@ -361,9 +363,8 @@ block(A) ::= LBRACE(B) stmt_list(C) RBRACE(D).
 
     A->element(B, D);
 
-    delete C;
-
     delete B;
+    delete C;
     delete D;
 }
 
@@ -421,9 +422,8 @@ var_stmt(A) ::= VAR(B) var_decls(C) SEMICOLON(D).
 
     A->element(B, D);
 
-    delete C;
-
     delete B;
+    delete C;
     delete D;
 }
 
@@ -645,9 +645,9 @@ for_init(A) ::= VAR(C) var_decls_no_in(B).
     }
 
     A = vars;
-    delete B;
 
     delete C;
+    delete B;
 }
 
 /* Rule 'for_cond' */
@@ -802,11 +802,10 @@ switch_stmt(A) ::= SWITCH(B) LPAREN(E) expr(C) RPAREN(F) case_block(D).
 
     A->element(B, D);
 
-    delete D;
-
     delete B;
     delete E;
     delete F;
+    delete D;
 }
 
 /* Rule 'case_block' */
@@ -831,9 +830,8 @@ case_block(A) ::= LBRACE(B) case_clauses(C) RBRACE(D).
 
     A->element(B, D);
 
-    delete C;
-
     delete B;
+    delete C;
     delete D;
 }
 
@@ -863,25 +861,16 @@ case_clause(A) ::= case_key(B) COLON(C).
     delete C;
 }
 
-case_clause(A) ::= case_key(B) COLON(C) stmt_list(D).
+case_clause(A) ::= case_key(B) COLON(D) stmt_list(C).
 {
     A = new stmt::ctrl::Case(B);
 
-    for (auto it = D->begin(); it != D->end(); ++it)
+    for (auto it = C->begin(); it != C->end(); ++it)
     {
         A->actions().push_back(std::move(*it));
     }
 
-    auto last = D->back().get();
-    if (last)
-    {
-        A->element(B, last);
-    }
-    else
-    {
-        A->element(B, C);
-    }
-
+    delete D;
     delete C;
 }
 
@@ -1000,8 +989,6 @@ primary_expr(A) ::= ident(B).
 {
     A = B;
     A->element(B);
-
-    delete B;
 }
 
 primary_expr(A) ::= literal(B).
@@ -1079,9 +1066,8 @@ member_expr(A) ::= NEW(B) member_expr(C) arguments(D).
     A = new_expr;
     A->element(B, D);
 
-    delete D;
-
     delete B;
+    delete D;
 }
 
 /* Rule 'member_expr_no_fn' */
@@ -1131,9 +1117,8 @@ member_expr_no_fn(A) ::= NEW(B) member_expr(C) arguments(D).
     A = new_expr;
     A->element(B, D);
 
-    delete D;
-
     delete B;
+    delete D;
 }
 
 /* Rule 'new_expr' */
@@ -2532,9 +2517,8 @@ array(A) ::= LBRACKET(C) array_elision(B) RBRACKET(D).
         A->elements().push_back(std::move(*it));
     }
 
-    delete B;
-
     delete C;
+    delete B;
     delete D;
 }
 
@@ -2547,9 +2531,8 @@ array(A) ::= LBRACKET(C) array_element_list(B) RBRACKET(D).
         A->elements().push_back(std::move(*it));
     }
 
-    delete B;
-
     delete C;
+    delete B;
     delete D;
 }
 
@@ -2562,9 +2545,8 @@ array(A) ::= LBRACKET(C) array_element_list(B) COMMA(D) RBRACKET(E).
         A->elements().push_back(std::move(*it));
     }
 
-    delete B;
-
     delete C;
+    delete B;
     delete D;
     delete E;
 }
@@ -2583,11 +2565,10 @@ array(A) ::= LBRACKET(D) array_element_list(B) COMMA(E) array_elision(C) RBRACKE
         A->elements().push_back(std::move(*it));
     }
 
-    delete B;
-    delete C;
-
     delete D;
+    delete B;
     delete E;
+    delete C;
     delete F;
 }
 
@@ -2633,7 +2614,7 @@ array_element_list(A) ::= array_element_list(B) COMMA(D) assign_expr(C).
     delete D;
 }
 
-array_element_list(A) ::= array_element_list(B) COMMA(D) array_elision(C) assign_expr.
+array_element_list(A) ::= array_element_list(B) COMMA(E) array_elision(C) assign_expr(D).
 {
     A = B;
 
@@ -2642,9 +2623,10 @@ array_element_list(A) ::= array_element_list(B) COMMA(D) array_elision(C) assign
         A->push_back(std::move(*it));
     }
 
-    delete C;
+    A->push_back(std::unique_ptr<Expression>(D));
 
-    delete D;
+    delete E;
+    delete C;
 }
 
 /* Rule 'object' */
@@ -2669,9 +2651,8 @@ object(A) ::= LBRACE(B) object_properties(C) RBRACE(D).
 
     A->element(B, D);
 
-    delete C;
-
     delete B;
+    delete C;
     delete D;
 }
 
@@ -2686,9 +2667,8 @@ object(A) ::= LBRACE(B) object_properties(C) COMMA(E) RBRACE(D).
 
     A->element(B, D);
 
-    delete C;
-
     delete B;
+    delete C;
     delete E;
     delete D;
 }
@@ -2801,9 +2781,8 @@ arguments(A) ::= LPAREN(B) arguments_list(C) RPAREN(D).
 
     A->element(B, D);
 
-    delete C;
-
     delete B;
+    delete C;
     delete D;
 }
 

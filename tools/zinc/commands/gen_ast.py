@@ -144,10 +144,9 @@ class NodeGenerator(Writeable):
 
         w += '{'
 
-        """
-        with w.sub_indent() as ww:
-            ww += 'std::cerr << "Creating {name:s}" << std::endl;'.format(name = self.node.name)
-        """
+        if 'DEBUG_ECHO' in os.environ.keys() and os.environ['DEBUG_ECHO'] == '1':
+            with w.sub_indent() as ww:
+                ww += 'std::cerr << "Creating {name:s}" << std::endl;'.format(name = self.node.name)
 
         w += '}'
 
@@ -155,10 +154,9 @@ class NodeGenerator(Writeable):
         w += 'virtual inline ~{name:s}()'.format(name = self.node.name)
         w += '{'
 
-        """
-        with w.sub_indent() as ww:
-            ww += 'std::cerr << "Deleting {name:s}" << std::endl;'.format(name = self.node.name)
-        """
+        if 'DEBUG_ECHO' in os.environ.keys() and os.environ['DEBUG_ECHO'] == '1':
+            with w.sub_indent() as ww:
+                ww += 'std::cerr << "Deleting {name:s}" << std::endl;'.format(name = self.node.name)
 
         w += '}'
 

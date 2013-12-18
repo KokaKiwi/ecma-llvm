@@ -44,6 +44,24 @@ class GenParserCommand(BaseCommand):
             if len(right) > 0:
                 s += '%right {:s}.\n'.format(' '.join(right))
 
+        left = []
+        right = []
+
+        for token in lexer.raw.keys():
+            if token in lexer.prec.keys():
+                prec = lexer.prec[token]
+                if prec == 'left':
+                    left.append(token)
+                elif prec == 'right':
+                    right.append(token)
+            else:
+                left.append(token)
+
+        if len(left) > 0:
+            s += '%left {:s}.\n'.format(' '.join(left))
+
+        if len(right) > 0:
+            s += '%right {:s}.\n'.format(' '.join(right))
 
         return s
 

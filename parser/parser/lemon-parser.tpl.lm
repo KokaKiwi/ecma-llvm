@@ -24,6 +24,5 @@
     throw parser::UnexpectedToken(TOKEN);
 }
 
-%left REGEXP STRING NUMBER IDENT.
 {{ tokens }}
 {{ rules }}

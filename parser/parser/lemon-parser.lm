@@ -2475,7 +2475,9 @@ literal(A) ::= NUMBER(B).
 
 literal(A) ::= STRING(B).
 {
-    A = new expr::literal::String(B->text());
+    const std::string content = B->text().substr(1, B->text().length() - 2);
+
+    A = new expr::literal::String(content);
     A->element(B);
 
     delete B;

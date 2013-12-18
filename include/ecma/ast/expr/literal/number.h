@@ -16,23 +16,9 @@ namespace ecma
                 class Number: public Expression
                 {
                     public:
-                        inline Number(std::string value)
-                            : Expression()
-                            , m_value(value)
-                        {
-                        }
+                        Number(const std::string &value);
                         virtual inline ~Number()
                         {
-                        }
-
-                        inline const std::string value() const
-                        {
-                            return m_value;
-                        }
-                        inline Number &value(std::string value)
-                        {
-                            m_value = value;
-                            return *this;
                         }
 
                         virtual inline void accept(tools::Visitor &visitor) const
@@ -41,7 +27,6 @@ namespace ecma
                         }
 
                     private:
-                        std::string m_value;
                 };
             }
         }

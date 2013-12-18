@@ -1986,9 +1986,8 @@ expr ::=
     name = 'Number',
     namespace = 'expr::literal',
     parent = 'Expression',
-    constructor = ['value'],
+    constructor = raw('const std::string &value'),
     items = [
-        item('value', type = 'std::string'),
     ],
     includes = [
         '<string>',
@@ -2039,7 +2038,9 @@ literal ::=
         $0->element($1);
     }
     STRING => {
-        $0 = new expr::literal::String($1->text());
+        const std::string content = $1->text().substr(1, $1->text().length() - 2);
+
+        $0 = new expr::literal::String(content);
         $0->element($1);
     }
     REGEXP => {

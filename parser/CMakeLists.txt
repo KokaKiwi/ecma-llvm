@@ -26,6 +26,7 @@ set(ecma_parser_SOURCES
     parser/parser.cpp
     parser/exception.cpp
 
+    ast/expr/literal/number.cpp
     ast/expr/literal/regexp.cpp
 
     toolchain/source.cpp

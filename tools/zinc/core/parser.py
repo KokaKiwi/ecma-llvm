@@ -134,9 +134,8 @@ class Parser(object):
                     if not isinstance(item.value, (Ident)):
                         item.value = Ident(self.lexer.name(item.value))
                         item.nt = False
-                    for name in self.lexer.raw.keys():
-                        if name == item.value:
-                            item.nt = False
+                    if str(item.value) in self.lexer.raw.keys():
+                        item.nt = False
                     items.append(Item(value, i, item))
 
                 value.items = items

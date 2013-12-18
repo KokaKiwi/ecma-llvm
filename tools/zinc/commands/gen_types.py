@@ -20,13 +20,16 @@ class GenTypesCommand(BaseCommand):
         s = ''
 
         def token_repr(name, tok):
-            value = tok.params[0]
-            tok_name = tok.param('name')
+            if isinstance(tok, (Func)):
+                value = tok.params[0]
+                tok_name = tok.param('name')
 
-            if tok_name is not None:
-                return tok_name
+                if tok_name is not None:
+                    return tok_name
+                else:
+                    return '\'{:s}\''.format(value)
             else:
-                return '\'{:s}\''.format(value)
+                return '\'{:s}\''.format(token)
 
         for (g_name, g_tokens) in lexer.tokens.items():
             s += '// {:s}\n'.format(g_name)

@@ -1903,7 +1903,7 @@ assign_expr ::=
     }
 ;
 
-#[type = 'expr::Assign::OpType']
+#[type = 'expr::Assign::OpType', keep]
 assign_op ::=
     '=' => {
         $0 = expr::Assign::OpType::SIMPLE;

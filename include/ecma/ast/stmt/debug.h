@@ -1,6 +1,7 @@
 #ifndef ECMA_AST_STMT_DEBUG_H_
 #define ECMA_AST_STMT_DEBUG_H_
 
+#include "ecma/ast/statement.h"
 #include "ecma/ast/tools/visitor.h"
 
 namespace ecma

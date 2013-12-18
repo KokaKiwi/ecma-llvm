@@ -1,3 +1,4 @@
+import os
 from collections import OrderedDict
 from ast import ast as ast_ast
 
@@ -64,7 +65,8 @@ class Item(object):
         return self.attrs.__getattr__(name)
 
 class Node(object):
-    def __init__(self, namespace, attrs):
+    def __init__(self, ast, namespace, attrs):
+        self.ast = ast
         self.namespace = namespace
         self.attrs = attrs
         self.includes = []
@@ -80,7 +82,10 @@ class Node(object):
                 self.add_include(i)
         elif inc is not None:
             if inc not in self.includes:
-                self.includes.append(inc)
+                if inc[0] == '<':
+                    self.includes.insert(0, inc)
+                else:
+                    self.includes.append(inc)
 
     def prepare(self):
         self.prepare_includes()
@@ -88,6 +93,25 @@ class Node(object):
 
     def prepare_includes(self):
         self.add_include(self.attrs.includes)
+
+        def find_node(tree, path):
+            if len(path) == 0:
+                return None
+            name = path[0]
+            if name not in tree.keys():
+                return None
+            if isinstance(tree[name], (map)):
+                return find_node(tree[name], path[1:])
+            else:
+                return tree[name]
+
+        for parent in self.parents:
+            path = parent.split('::')
+            node = find_node(self.ast.tree, path)
+            if node:
+                header_dirname = '/'.join(path[:-1])
+                header = os.path.join(self.ast.path, header_dirname, node.header_filename)
+                self.add_include('"{:s}"'.format(header))
 
     def prepare_items(self):
         self.items = OrderedDict()
@@ -162,7 +186,7 @@ class AST(object):
                 node_namespace = node.namespace.split('::')
             namespace += node_namespace
 
-            place_node(self.tree, node_namespace, Node(namespace, node))
+            place_node(self.tree, node_namespace, Node(self, namespace, node))
 
     @property
     def path(self):

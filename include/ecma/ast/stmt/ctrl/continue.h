@@ -2,6 +2,7 @@
 #define ECMA_AST_STMT_CTRL_CONTINUE_H_
 
 #include <string>
+#include "ecma/ast/statement.h"
 #include "ecma/ast/tools/visitor.h"
 
 namespace ecma

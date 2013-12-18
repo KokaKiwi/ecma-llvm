@@ -2010,9 +2010,10 @@ expr ::=
     name = 'Regexp',
     namespace = 'expr::literal',
     parent = 'Expression',
-    constructor = ['value'],
+    constructor = raw('const std::string &value'),
     items = [
         item('value', type = 'std::string'),
+        item('attrs', type = 'std::string'),
     ],
     includes = [
         '<string>',

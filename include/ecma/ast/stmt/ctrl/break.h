@@ -1,8 +1,9 @@
 #ifndef ECMA_AST_STMT_CTRL_BREAK_H_
 #define ECMA_AST_STMT_CTRL_BREAK_H_
 
-#include <string>
 #include <memory>
+#include <string>
+#include "ecma/ast/statement.h"
 #include "ecma/ast/tools/visitor.h"
 
 namespace ecma

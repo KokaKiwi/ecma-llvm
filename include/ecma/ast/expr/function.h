@@ -1,9 +1,10 @@
 #ifndef ECMA_AST_EXPR_FUNCTION_H_
 #define ECMA_AST_EXPR_FUNCTION_H_
 
-#include <string>
-#include <vector>
 #include <memory>
+#include <vector>
+#include <string>
+#include "ecma/ast/expression.h"
 #include "ecma/ast/tools/visitor.h"
 
 namespace ecma

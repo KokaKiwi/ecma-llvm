@@ -2,6 +2,7 @@
 #define ECMA_AST_EXPR_LITERAL_NUMBER_H_
 
 #include <string>
+#include "ecma/ast/expression.h"
 #include "ecma/ast/tools/visitor.h"
 
 namespace ecma

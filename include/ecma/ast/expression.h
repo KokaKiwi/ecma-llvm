@@ -1,6 +1,7 @@
 #ifndef ECMA_AST_EXPRESSION_H_
 #define ECMA_AST_EXPRESSION_H_
 
+#include "ecma/ast/node.h"
 #include "ecma/ast/tools/visitor.h"
 
 namespace ecma

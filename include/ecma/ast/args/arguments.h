@@ -1,9 +1,9 @@
 #ifndef ECMA_AST_ARGS_ARGUMENTS_H_
 #define ECMA_AST_ARGS_ARGUMENTS_H_
 
-#include "ecma/utils/element.h"
-#include <memory>
 #include <vector>
+#include <memory>
+#include "ecma/utils/element.h"
 #include "ecma/ast/tools/visitor.h"
 
 namespace ecma

@@ -2,6 +2,7 @@
 #define ECMA_AST_EXPR_LITERAL_REGEXP_H_
 
 #include <string>
+#include "ecma/ast/expression.h"
 #include "ecma/ast/tools/visitor.h"
 
 namespace ecma
@@ -15,11 +16,7 @@ namespace ecma
                 class Regexp: public Expression
                 {
                     public:
-                        inline Regexp(std::string value)
-                            : Expression()
-                            , m_value(value)
-                        {
-                        }
+                        Regexp(const std::string &value);
                         virtual inline ~Regexp()
                         {
                         }
@@ -34,6 +31,16 @@ namespace ecma
                             return *this;
                         }
 
+                        inline const std::string attrs() const
+                        {
+                            return m_attrs;
+                        }
+                        inline Regexp &attrs(std::string attrs)
+                        {
+                            m_attrs = attrs;
+                            return *this;
+                        }
+
                         virtual inline void accept(tools::Visitor &visitor) const
                         {
                             visitor.visit(*this);
@@ -41,6 +48,7 @@ namespace ecma
 
                     private:
                         std::string m_value;
+                        std::string m_attrs;
                 };
             }
         }

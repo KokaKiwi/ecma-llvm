@@ -1,8 +1,8 @@
 #ifndef ECMA_AST_EXPR_OBJECT_PROPERTY_H_
 #define ECMA_AST_EXPR_OBJECT_PROPERTY_H_
 
-#include "ecma/utils/element.h"
 #include <memory>
+#include "ecma/utils/element.h"
 #include "ecma/ast/tools/visitor.h"
 
 namespace ecma

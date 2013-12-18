@@ -1,4 +1,2 @@
 
-{
-    // Disallow empty block for now.
-}
+while (true) {} // Disallow empty block for now.

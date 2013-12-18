@@ -1,8 +1,8 @@
 #ifndef ECMA_AST_STMT_DECL_VAR_H_
 #define ECMA_AST_STMT_DECL_VAR_H_
 
-#include "ecma/utils/element.h"
 #include <memory>
+#include "ecma/utils/element.h"
 #include "ecma/ast/tools/visitor.h"
 
 namespace ecma

@@ -1,5 +1,6 @@
 import os
 from commands.base import BaseCommand
+from ast.ast import *
 from core.ast import AST
 from core.utils import *
 
@@ -109,9 +110,20 @@ class NodeGenerator(Writeable):
             w.writeln()
 
     def write_class_constructor(self, w):
+        if self.node.constructor and isinstance(self.node.constructor, (Func)) and self.node.constructor.name == 'raw':
+            self.write_class_constructor_raw(w)
+        else:
+            self.write_class_constructor_gen(w)
+
+    def write_class_constructor_raw(self, w):
+        constructor = self.node.constructor
+
+        w += '{name:s}({args:s});'.format(name = self.node.name, args = ', '.join(constructor.params))
+
+    def write_class_constructor_gen(self, w):
         constructor_args = []
 
-        if self.node.constructor:
+        if self.node.constructor and isinstance(self.node.constructor, (list)):
             constructor = self.node.constructor
             for arg in constructor:
                 for (name, item) in self.node.items.items():

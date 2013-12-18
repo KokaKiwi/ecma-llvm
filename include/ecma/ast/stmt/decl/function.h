@@ -2,6 +2,7 @@
 #define ECMA_AST_STMT_DECL_FUNCTION_H_
 
 #include <memory>
+#include "ecma/ast/statement.h"
 #include "ecma/ast/tools/visitor.h"
 
 namespace ecma

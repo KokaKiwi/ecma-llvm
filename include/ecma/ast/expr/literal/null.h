@@ -1,6 +1,7 @@
 #ifndef ECMA_AST_EXPR_LITERAL_NULL_H_
 #define ECMA_AST_EXPR_LITERAL_NULL_H_
 
+#include "ecma/ast/expression.h"
 #include "ecma/ast/tools/visitor.h"
 
 namespace ecma

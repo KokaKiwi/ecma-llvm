@@ -1,8 +1,9 @@
 #ifndef ECMA_AST_STMT_CTRL_SWITCH_H_
 #define ECMA_AST_STMT_CTRL_SWITCH_H_
 
-#include <memory>
 #include <vector>
+#include <memory>
+#include "ecma/ast/statement.h"
 #include "ecma/ast/tools/visitor.h"
 
 namespace ecma

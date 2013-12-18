@@ -1,8 +1,8 @@
 #ifndef ECMA_AST_MODULE_H_
 #define ECMA_AST_MODULE_H_
 
-#include <memory>
 #include <vector>
+#include <memory>
 #include "ecma/ast/tools/visitor.h"
 
 namespace ecma

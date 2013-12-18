@@ -2,7 +2,6 @@
 #define ECMA_AST_STMT_CTRL_CONTINUE_H_
 
 #include <string>
-#include <memory>
 #include "ecma/ast/tools/visitor.h"
 
 namespace ecma
@@ -24,18 +23,14 @@ namespace ecma
                         {
                         }
 
-                        inline const std::string *name() const
+                        inline const std::string name() const
                         {
-                            return m_name.get();
+                            return m_name;
                         }
-                        inline Continue &name(std::string *name)
+                        inline Continue &name(std::string name)
                         {
-                            m_name.reset(name);
+                            m_name = name;
                             return *this;
-                        }
-                        inline std::string *take_name()
-                        {
-                            return m_name.release();
                         }
 
                         virtual inline void accept(tools::Visitor &visitor) const
@@ -44,7 +39,7 @@ namespace ecma
                         }
 
                     private:
-                        std::unique_ptr<std::string> m_name;
+                        std::string m_name;
                 };
             }
         }

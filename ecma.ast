@@ -839,10 +839,7 @@ for_in_stmt ::=
     parent = 'Statement',
     items = [
         item('name',
-            type = type(
-                'std::string',
-                pointer = true,
-            ),
+            type = 'std::string',
         ),
     ],
     includes = [
@@ -858,7 +855,7 @@ cont_stmt ::=
     }
     'continue' ident(delete) ';' => {
         $0 = new stmt::ctrl::Continue();
-        $0->name(new std::string($2->name()));
+        $0->name($2->name());
         $0->element($1, $3);
     }
 ;
@@ -2256,7 +2253,7 @@ object_property ::=
 
 #[type = 'Expression *']
 object_property_name ::=
-    ident(delete) => {
+    ident => {
         $0 = $1;
     }
     STRING => {

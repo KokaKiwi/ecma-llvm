@@ -722,7 +722,7 @@ cont_stmt(A) ::= CONTINUE(B) SEMICOLON(C).
 cont_stmt(A) ::= CONTINUE(B) ident(C) SEMICOLON(D).
 {
     A = new stmt::ctrl::Continue();
-    A->name(new std::string(C->name()));
+    A->name(C->name());
     A->element(B, D);
 
     delete B;
@@ -2727,8 +2727,6 @@ object_property ::= SET(A) object_property_name LPAREN(B) object_property_set_pa
 object_property_name(A) ::= ident(B).
 {
     A = B;
-
-    delete B;
 }
 
 object_property_name(A) ::= STRING(B).

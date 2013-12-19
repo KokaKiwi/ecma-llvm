@@ -79,6 +79,8 @@ class GenParserCommand(BaseCommand):
                 s += '%start_symbol {:s}\n'.format(rule.name)
             if d.type:
                 s += '%type {name:s} {{ {ty:s} }}\n'.format(name = rule.name, ty = d.type)
+            if not d.keep:
+                s += '%destructor {name:s} {{ delete $$; }}\n'.format(name = rule.name)
 
             for value in rule.values:
                 s += '\n'

@@ -26,5 +26,9 @@
     utils::Messages::ReportError(error.message(), TOKEN->pos(), TOKEN->length() > 0 ? TOKEN->length() - 1 : 0);
 }
 
+%token_destructor {
+    delete $$;
+}
+
 {{ tokens }}
 {{ rules }}

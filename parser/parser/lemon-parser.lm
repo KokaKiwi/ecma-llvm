@@ -26,6 +26,10 @@
     utils::Messages::ReportError(error.message(), TOKEN->pos(), TOKEN->length() > 0 ? TOKEN->length() - 1 : 0);
 }
 
+%token_destructor {
+    delete $$;
+}
+
 %left INSTANCEOF CONTINUE DEBUGGER FUNCTION DEFAULT FINALLY DELETE RETURN SWITCH TYPEOF BREAK CATCH THROW WHILE CASE THIS VOID WITH FOR GET NEW SET TRY VAR DO IN.
 %right ELSE IF.
 %left EXTENDS EXPORT IMPORT CLASS CONST SUPER ENUM.
@@ -36,6 +40,7 @@
 
 /* Rule 'module' */
 %start_symbol module
+%destructor module { delete $$; }
 
 module ::= .
 {
@@ -53,6 +58,7 @@ module ::= source_elements(A).
 
 /* Rule 'ident' */
 %type ident { expr::Ident * }
+%destructor ident { delete $$; }
 
 ident(A) ::= IDENT(B).
 {
@@ -80,6 +86,7 @@ ident(A) ::= GET(B).
 
 /* Rule 'function_decl' */
 %type function_decl { stmt::decl::Function * }
+%destructor function_decl { delete $$; }
 
 function_decl(A) ::= FUNCTION(B) ident(C) LPAREN(F) RPAREN(G) LBRACE(H) function_body(D) RBRACE(E).
 {
@@ -131,6 +138,7 @@ function_decl(A) ::= FUNCTION(B) ident(C) LPAREN(G) formal_params(D) RPAREN(H) L
 
 /* Rule 'function_expr' */
 %type function_expr { expr::Function * }
+%destructor function_expr { delete $$; }
 
 function_expr(A) ::= FUNCTION(B) ident(C) LPAREN(F) RPAREN(G) LBRACE(H) function_body(D) RBRACE(E).
 {
@@ -219,6 +227,7 @@ function_expr(A) ::= FUNCTION(B) LPAREN(F) formal_params(C) RPAREN(G) LBRACE(H) 
 
 /* Rule 'formal_params' */
 %type formal_params { std::vector<std::string> * }
+%destructor formal_params { delete $$; }
 
 formal_params(A) ::= ident(B).
 {
@@ -239,6 +248,7 @@ formal_params(A) ::= formal_params(B) COMMA(D) ident(C).
 
 /* Rule 'function_body' */
 %type function_body { std::vector<std::unique_ptr<Statement>> * }
+%destructor function_body { delete $$; }
 
 function_body(A) ::= .
 {
@@ -252,6 +262,7 @@ function_body(A) ::= source_elements(B).
 
 /* Rule 'source_elements' */
 %type source_elements { std::vector<std::unique_ptr<Statement>> * }
+%destructor source_elements { delete $$; }
 
 source_elements(A) ::= source_element(B).
 {
@@ -267,6 +278,7 @@ source_elements(A) ::= source_elements(B) source_element(C).
 
 /* Rule 'source_element' */
 %type source_element { Statement * }
+%destructor source_element { delete $$; }
 
 source_element(A) ::= stmt(B).
 {
@@ -280,6 +292,7 @@ source_element(A) ::= function_decl(B).
 
 /* Rule 'stmt' */
 %type stmt { Statement * }
+%destructor stmt { delete $$; }
 
 stmt(A) ::= block(B).
 {
@@ -353,6 +366,7 @@ stmt(A) ::= debug_stmt(B).
 
 /* Rule 'block' */
 %type block { stmt::Block * }
+%destructor block { delete $$; }
 
 block(A) ::= LBRACE(B) stmt_list(C) RBRACE(D).
 {
@@ -372,6 +386,7 @@ block(A) ::= LBRACE(B) stmt_list(C) RBRACE(D).
 
 /* Rule 'block_empty' */
 %type block_empty { stmt::Block * }
+%destructor block_empty { delete $$; }
 
 block_empty(A) ::= LBRACE(B) RBRACE(C).
 {
@@ -384,6 +399,7 @@ block_empty(A) ::= LBRACE(B) RBRACE(C).
 
 /* Rule 'block_stmt' */
 %type block_stmt { stmt::Block * }
+%destructor block_stmt { delete $$; }
 
 block_stmt(A) ::= block(B).
 {
@@ -397,6 +413,7 @@ block_stmt(A) ::= block_empty(B).
 
 /* Rule 'stmt_list' */
 %type stmt_list { std::vector<std::unique_ptr<Statement>> * }
+%destructor stmt_list { delete $$; }
 
 stmt_list(A) ::= stmt(B).
 {
@@ -412,6 +429,7 @@ stmt_list(A) ::= stmt_list(B) stmt(C).
 
 /* Rule 'var_stmt' */
 %type var_stmt { stmt::decl::Vars * }
+%destructor var_stmt { delete $$; }
 
 var_stmt(A) ::= VAR(B) var_decls(C) SEMICOLON(D).
 {
@@ -431,6 +449,7 @@ var_stmt(A) ::= VAR(B) var_decls(C) SEMICOLON(D).
 
 /* Rule 'var_decls' */
 %type var_decls { std::vector<std::unique_ptr<stmt::decl::Var>> * }
+%destructor var_decls { delete $$; }
 
 var_decls(A) ::= var_decl(B).
 {
@@ -448,6 +467,7 @@ var_decls(A) ::= var_decls(B) COMMA(D) var_decl(C).
 
 /* Rule 'var_decls_no_in' */
 %type var_decls_no_in { std::vector<std::unique_ptr<stmt::decl::Var>> * }
+%destructor var_decls_no_in { delete $$; }
 
 var_decls_no_in(A) ::= var_decl_no_in(B).
 {
@@ -465,6 +485,7 @@ var_decls_no_in(A) ::= var_decls_no_in(B) COMMA(D) var_decl_no_in(C).
 
 /* Rule 'var_decl' */
 %type var_decl { stmt::decl::Var * }
+%destructor var_decl { delete $$; }
 
 var_decl(A) ::= ident(B).
 {
@@ -485,6 +506,7 @@ var_decl(A) ::= ident(B) init(C).
 
 /* Rule 'var_decl_no_in' */
 %type var_decl_no_in { stmt::decl::Var * }
+%destructor var_decl_no_in { delete $$; }
 
 var_decl_no_in(A) ::= ident(B).
 {
@@ -505,6 +527,7 @@ var_decl_no_in(A) ::= ident(B) init_no_in(C).
 
 /* Rule 'init' */
 %type init { Expression * }
+%destructor init { delete $$; }
 
 init(A) ::= ASSIGN(C) assign_expr(B).
 {
@@ -515,6 +538,7 @@ init(A) ::= ASSIGN(C) assign_expr(B).
 
 /* Rule 'init_no_in' */
 %type init_no_in { Expression * }
+%destructor init_no_in { delete $$; }
 
 init_no_in(A) ::= ASSIGN(C) assign_expr_no_in(B).
 {
@@ -524,6 +548,7 @@ init_no_in(A) ::= ASSIGN(C) assign_expr_no_in(B).
 }
 
 /* Rule 'empty_stmt' */
+%destructor empty_stmt { delete $$; }
 
 empty_stmt ::= SEMICOLON(A).
 {
@@ -532,6 +557,7 @@ empty_stmt ::= SEMICOLON(A).
 
 /* Rule 'expr_stmt' */
 %type expr_stmt { stmt::ExpressionStmt * }
+%destructor expr_stmt { delete $$; }
 
 expr_stmt(A) ::= expr_no_fn(B) SEMICOLON(C).
 {
@@ -543,6 +569,7 @@ expr_stmt(A) ::= expr_no_fn(B) SEMICOLON(C).
 
 /* Rule 'if_stmt' */
 %type if_stmt { stmt::ctrl::If * }
+%destructor if_stmt { delete $$; }
 
 if_stmt(A) ::= IF(B) LPAREN(E) expr(C) RPAREN(F) stmt(D).
 {
@@ -568,6 +595,7 @@ if_stmt(A) ::= IF(B) LPAREN(F) expr(C) RPAREN(G) stmt(D) ELSE(H) stmt(E).
 
 /* Rule 'iter_stmt' */
 %type iter_stmt { Statement * }
+%destructor iter_stmt { delete $$; }
 
 iter_stmt(A) ::= while_stmt(B).
 {
@@ -586,6 +614,7 @@ iter_stmt(A) ::= for_in_stmt(B).
 
 /* Rule 'while_stmt' */
 %type while_stmt { stmt::ctrl::While * }
+%destructor while_stmt { delete $$; }
 
 while_stmt(A) ::= WHILE(B) LPAREN(E) expr(C) RPAREN(F) stmt(D).
 {
@@ -610,6 +639,7 @@ while_stmt(A) ::= DO(B) stmt(C) WHILE(F) LPAREN(G) expr(D) RPAREN(E).
 
 /* Rule 'for_stmt' */
 %type for_stmt { stmt::ctrl::For * }
+%destructor for_stmt { delete $$; }
 
 for_stmt(A) ::= FOR(B) LPAREN(G) for_init(C) SEMICOLON(H) for_cond(D) SEMICOLON(I) for_loop(E) RPAREN(J) stmt(F).
 {
@@ -625,6 +655,7 @@ for_stmt(A) ::= FOR(B) LPAREN(G) for_init(C) SEMICOLON(H) for_cond(D) SEMICOLON(
 
 /* Rule 'for_init' */
 %type for_init { Statement * }
+%destructor for_init { delete $$; }
 
 for_init(A) ::= .
 {
@@ -654,6 +685,7 @@ for_init(A) ::= VAR(C) var_decls_no_in(B).
 
 /* Rule 'for_cond' */
 %type for_cond { Statement * }
+%destructor for_cond { delete $$; }
 
 for_cond(A) ::= .
 {
@@ -668,6 +700,7 @@ for_cond(A) ::= expr(B).
 
 /* Rule 'for_loop' */
 %type for_loop { Statement * }
+%destructor for_loop { delete $$; }
 
 for_loop(A) ::= .
 {
@@ -682,6 +715,7 @@ for_loop(A) ::= expr(B).
 
 /* Rule 'for_in_stmt' */
 %type for_in_stmt { stmt::ctrl::ForIn * }
+%destructor for_in_stmt { delete $$; }
 
 for_in_stmt(A) ::= FOR(B) LPAREN(F) left_hand_expr(C) IN(G) expr(D) RPAREN(H) stmt(E).
 {
@@ -711,6 +745,7 @@ for_in_stmt(A) ::= FOR(B) LPAREN(F) VAR(G) var_decl_no_in(C) IN(H) expr(D) RPARE
 
 /* Rule 'cont_stmt' */
 %type cont_stmt { stmt::ctrl::Continue * }
+%destructor cont_stmt { delete $$; }
 
 cont_stmt(A) ::= CONTINUE(B) SEMICOLON(C).
 {
@@ -734,6 +769,7 @@ cont_stmt(A) ::= CONTINUE(B) ident(C) SEMICOLON(D).
 
 /* Rule 'break_stmt' */
 %type break_stmt { stmt::ctrl::Break * }
+%destructor break_stmt { delete $$; }
 
 break_stmt(A) ::= BREAK(B) SEMICOLON(C).
 {
@@ -757,6 +793,7 @@ break_stmt(A) ::= BREAK(B) ident(C) SEMICOLON(D).
 
 /* Rule 'return_stmt' */
 %type return_stmt { stmt::ctrl::Return * }
+%destructor return_stmt { delete $$; }
 
 return_stmt(A) ::= RETURN(B) SEMICOLON(C).
 {
@@ -779,6 +816,7 @@ return_stmt(A) ::= RETURN(B) expr(C) SEMICOLON(D).
 
 /* Rule 'with_stmt' */
 %type with_stmt { stmt::ctrl::With * }
+%destructor with_stmt { delete $$; }
 
 with_stmt(A) ::= WITH(B) LPAREN(E) expr(C) RPAREN(F) stmt(D).
 {
@@ -792,6 +830,7 @@ with_stmt(A) ::= WITH(B) LPAREN(E) expr(C) RPAREN(F) stmt(D).
 
 /* Rule 'switch_stmt' */
 %type switch_stmt { stmt::ctrl::Switch * }
+%destructor switch_stmt { delete $$; }
 
 switch_stmt(A) ::= SWITCH(B) LPAREN(E) expr(C) RPAREN(F) case_block(D).
 {
@@ -812,6 +851,7 @@ switch_stmt(A) ::= SWITCH(B) LPAREN(E) expr(C) RPAREN(F) case_block(D).
 
 /* Rule 'case_block' */
 %type case_block { stmt::ctrl::CaseBlock * }
+%destructor case_block { delete $$; }
 
 case_block(A) ::= LBRACE(B) RBRACE(C).
 {
@@ -839,6 +879,7 @@ case_block(A) ::= LBRACE(B) case_clauses(C) RBRACE(D).
 
 /* Rule 'case_clauses' */
 %type case_clauses { std::vector<std::unique_ptr<stmt::ctrl::Case>> * }
+%destructor case_clauses { delete $$; }
 
 case_clauses(A) ::= case_clause(B).
 {
@@ -854,6 +895,7 @@ case_clauses(A) ::= case_clauses(B) case_clause(C).
 
 /* Rule 'case_clause' */
 %type case_clause { stmt::ctrl::Case * }
+%destructor case_clause { delete $$; }
 
 case_clause(A) ::= case_key(B) COLON(C).
 {
@@ -878,6 +920,7 @@ case_clause(A) ::= case_key(B) COLON(D) stmt_list(C).
 
 /* Rule 'case_key' */
 %type case_key { stmt::ctrl::CaseKey * }
+%destructor case_key { delete $$; }
 
 case_key(A) ::= CASE(B) expr(C).
 {
@@ -898,6 +941,7 @@ case_key(A) ::= DEFAULT(B).
 
 /* Rule 'throw_stmt' */
 %type throw_stmt { stmt::ctrl::Throw * }
+%destructor throw_stmt { delete $$; }
 
 throw_stmt(A) ::= THROW(B) expr(C) SEMICOLON(D).
 {
@@ -910,6 +954,7 @@ throw_stmt(A) ::= THROW(B) expr(C) SEMICOLON(D).
 
 /* Rule 'try_stmt' */
 %type try_stmt { stmt::ctrl::Try * }
+%destructor try_stmt { delete $$; }
 
 try_stmt(A) ::= TRY(B) block_stmt(C) catch(D).
 {
@@ -941,6 +986,7 @@ try_stmt(A) ::= TRY(B) block_stmt(C) catch(D) finally(E).
 
 /* Rule 'catch' */
 %type catch { stmt::ctrl::Catch * }
+%destructor catch { delete $$; }
 
 catch(A) ::= CATCH(B) LPAREN(E) ident(C) RPAREN(F) block_stmt(D).
 {
@@ -955,6 +1001,7 @@ catch(A) ::= CATCH(B) LPAREN(E) ident(C) RPAREN(F) block_stmt(D).
 
 /* Rule 'finally' */
 %type finally { stmt::ctrl::Finally * }
+%destructor finally { delete $$; }
 
 finally(A) ::= FINALLY(B) block_stmt(C).
 {
@@ -966,6 +1013,7 @@ finally(A) ::= FINALLY(B) block_stmt(C).
 
 /* Rule 'debug_stmt' */
 %type debug_stmt { stmt::Debug * }
+%destructor debug_stmt { delete $$; }
 
 debug_stmt(A) ::= DEBUGGER(B) SEMICOLON(C).
 {
@@ -978,6 +1026,7 @@ debug_stmt(A) ::= DEBUGGER(B) SEMICOLON(C).
 
 /* Rule 'primary_expr' */
 %type primary_expr { Expression * }
+%destructor primary_expr { delete $$; }
 
 primary_expr(A) ::= THIS(B).
 {
@@ -1018,6 +1067,7 @@ primary_expr(A) ::= LPAREN(C) expr(B) RPAREN(D).
 
 /* Rule 'member_expr' */
 %type member_expr { Expression * }
+%destructor member_expr { delete $$; }
 
 member_expr(A) ::= primary_expr(B).
 {
@@ -1074,6 +1124,7 @@ member_expr(A) ::= NEW(B) member_expr(C) arguments(D).
 
 /* Rule 'member_expr_no_fn' */
 %type member_expr_no_fn { Expression * }
+%destructor member_expr_no_fn { delete $$; }
 
 member_expr_no_fn(A) ::= primary_expr(B).
 {
@@ -1125,6 +1176,7 @@ member_expr_no_fn(A) ::= NEW(B) member_expr(C) arguments(D).
 
 /* Rule 'new_expr' */
 %type new_expr { Expression * }
+%destructor new_expr { delete $$; }
 
 new_expr(A) ::= member_expr(B).
 {
@@ -1144,6 +1196,7 @@ new_expr(A) ::= NEW(B) new_expr(C).
 
 /* Rule 'new_expr_no_fn' */
 %type new_expr_no_fn { Expression * }
+%destructor new_expr_no_fn { delete $$; }
 
 new_expr_no_fn(A) ::= member_expr_no_fn(B).
 {
@@ -1163,6 +1216,7 @@ new_expr_no_fn(A) ::= NEW(B) new_expr(C).
 
 /* Rule 'call_expr' */
 %type call_expr { Expression * }
+%destructor call_expr { delete $$; }
 
 call_expr(A) ::= member_expr(B) arguments(C).
 {
@@ -1222,6 +1276,7 @@ call_expr(A) ::= call_expr(B) DOT(D) ident(C).
 
 /* Rule 'call_expr_no_fn' */
 %type call_expr_no_fn { Expression * }
+%destructor call_expr_no_fn { delete $$; }
 
 call_expr_no_fn(A) ::= member_expr_no_fn(B) arguments(C).
 {
@@ -1281,6 +1336,7 @@ call_expr_no_fn(A) ::= call_expr_no_fn(B) DOT(D) ident(C).
 
 /* Rule 'left_hand_expr' */
 %type left_hand_expr { Expression * }
+%destructor left_hand_expr { delete $$; }
 
 left_hand_expr(A) ::= new_expr(B).
 {
@@ -1294,6 +1350,7 @@ left_hand_expr(A) ::= call_expr(B).
 
 /* Rule 'left_hand_expr_no_fn' */
 %type left_hand_expr_no_fn { Expression * }
+%destructor left_hand_expr_no_fn { delete $$; }
 
 left_hand_expr_no_fn(A) ::= new_expr_no_fn(B).
 {
@@ -1307,6 +1364,7 @@ left_hand_expr_no_fn(A) ::= call_expr_no_fn(B).
 
 /* Rule 'postfix_expr' */
 %type postfix_expr { Expression * }
+%destructor postfix_expr { delete $$; }
 
 postfix_expr(A) ::= left_hand_expr(B).
 {
@@ -1331,6 +1389,7 @@ postfix_expr(A) ::= left_hand_expr(B) DECREMENT(C).
 
 /* Rule 'postfix_expr_no_fn' */
 %type postfix_expr_no_fn { Expression * }
+%destructor postfix_expr_no_fn { delete $$; }
 
 postfix_expr_no_fn(A) ::= left_hand_expr_no_fn(B).
 {
@@ -1355,6 +1414,7 @@ postfix_expr_no_fn(A) ::= left_hand_expr_no_fn(B) DECREMENT(C).
 
 /* Rule 'unary_expr' */
 %type unary_expr { Expression * }
+%destructor unary_expr { delete $$; }
 
 unary_expr(A) ::= postfix_expr(B).
 {
@@ -1435,6 +1495,7 @@ unary_expr(A) ::= NOT(B) unary_expr(C).
 
 /* Rule 'unary_expr_no_fn' */
 %type unary_expr_no_fn { Expression * }
+%destructor unary_expr_no_fn { delete $$; }
 
 unary_expr_no_fn(A) ::= postfix_expr_no_fn(B).
 {
@@ -1515,6 +1576,7 @@ unary_expr_no_fn(A) ::= NOT(B) unary_expr(C).
 
 /* Rule 'mul_expr' */
 %type mul_expr { Expression * }
+%destructor mul_expr { delete $$; }
 
 mul_expr(A) ::= unary_expr(B).
 {
@@ -1547,6 +1609,7 @@ mul_expr(A) ::= mul_expr(B) MOD(D) unary_expr(C).
 
 /* Rule 'mul_expr_no_fn' */
 %type mul_expr_no_fn { Expression * }
+%destructor mul_expr_no_fn { delete $$; }
 
 mul_expr_no_fn(A) ::= unary_expr_no_fn(B).
 {
@@ -1579,6 +1642,7 @@ mul_expr_no_fn(A) ::= mul_expr_no_fn(B) MOD(D) unary_expr(C).
 
 /* Rule 'add_expr' */
 %type add_expr { Expression * }
+%destructor add_expr { delete $$; }
 
 add_expr(A) ::= mul_expr(B).
 {
@@ -1603,6 +1667,7 @@ add_expr(A) ::= add_expr(B) MINUS(D) mul_expr(C).
 
 /* Rule 'add_expr_no_fn' */
 %type add_expr_no_fn { Expression * }
+%destructor add_expr_no_fn { delete $$; }
 
 add_expr_no_fn(A) ::= mul_expr_no_fn(B).
 {
@@ -1627,6 +1692,7 @@ add_expr_no_fn(A) ::= add_expr_no_fn(B) MINUS(D) mul_expr(C).
 
 /* Rule 'shift_expr' */
 %type shift_expr { Expression * }
+%destructor shift_expr { delete $$; }
 
 shift_expr(A) ::= add_expr(B).
 {
@@ -1659,6 +1725,7 @@ shift_expr(A) ::= shift_expr(B) ZERO_RIGHT_SHIFT(D) add_expr(C).
 
 /* Rule 'shift_expr_no_fn' */
 %type shift_expr_no_fn { Expression * }
+%destructor shift_expr_no_fn { delete $$; }
 
 shift_expr_no_fn(A) ::= add_expr_no_fn(B).
 {
@@ -1691,6 +1758,7 @@ shift_expr_no_fn(A) ::= shift_expr_no_fn(B) ZERO_RIGHT_SHIFT(D) add_expr(C).
 
 /* Rule 'rel_expr' */
 %type rel_expr { Expression * }
+%destructor rel_expr { delete $$; }
 
 rel_expr(A) ::= shift_expr(B).
 {
@@ -1747,6 +1815,7 @@ rel_expr(A) ::= rel_expr(B) IN(D) shift_expr(C).
 
 /* Rule 'rel_expr_no_fn' */
 %type rel_expr_no_fn { Expression * }
+%destructor rel_expr_no_fn { delete $$; }
 
 rel_expr_no_fn(A) ::= shift_expr_no_fn(B).
 {
@@ -1803,6 +1872,7 @@ rel_expr_no_fn(A) ::= rel_expr_no_fn(B) IN(D) shift_expr(C).
 
 /* Rule 'rel_expr_no_in' */
 %type rel_expr_no_in { Expression * }
+%destructor rel_expr_no_in { delete $$; }
 
 rel_expr_no_in(A) ::= shift_expr(B).
 {
@@ -1851,6 +1921,7 @@ rel_expr_no_in(A) ::= rel_expr_no_in(B) INSTANCEOF(D) shift_expr(C).
 
 /* Rule 'eq_expr' */
 %type eq_expr { Expression * }
+%destructor eq_expr { delete $$; }
 
 eq_expr(A) ::= rel_expr(B).
 {
@@ -1891,6 +1962,7 @@ eq_expr(A) ::= eq_expr(B) STRICT_NOT_EQUAL(D) rel_expr(C).
 
 /* Rule 'eq_expr_no_fn' */
 %type eq_expr_no_fn { Expression * }
+%destructor eq_expr_no_fn { delete $$; }
 
 eq_expr_no_fn(A) ::= rel_expr_no_fn(B).
 {
@@ -1931,6 +2003,7 @@ eq_expr_no_fn(A) ::= eq_expr_no_fn(B) STRICT_NOT_EQUAL(D) rel_expr(C).
 
 /* Rule 'eq_expr_no_in' */
 %type eq_expr_no_in { Expression * }
+%destructor eq_expr_no_in { delete $$; }
 
 eq_expr_no_in(A) ::= rel_expr_no_in(B).
 {
@@ -1971,6 +2044,7 @@ eq_expr_no_in(A) ::= eq_expr_no_in(B) STRICT_NOT_EQUAL(D) rel_expr_no_in(C).
 
 /* Rule 'bit_and_expr' */
 %type bit_and_expr { Expression * }
+%destructor bit_and_expr { delete $$; }
 
 bit_and_expr(A) ::= eq_expr(B).
 {
@@ -1987,6 +2061,7 @@ bit_and_expr(A) ::= bit_and_expr(B) BITWISE_AND(D) eq_expr(C).
 
 /* Rule 'bit_and_expr_no_fn' */
 %type bit_and_expr_no_fn { Expression * }
+%destructor bit_and_expr_no_fn { delete $$; }
 
 bit_and_expr_no_fn(A) ::= eq_expr_no_fn(B).
 {
@@ -2003,6 +2078,7 @@ bit_and_expr_no_fn(A) ::= bit_and_expr_no_fn(B) BITWISE_AND(D) eq_expr(C).
 
 /* Rule 'bit_and_expr_no_in' */
 %type bit_and_expr_no_in { Expression * }
+%destructor bit_and_expr_no_in { delete $$; }
 
 bit_and_expr_no_in(A) ::= eq_expr_no_in(B).
 {
@@ -2019,6 +2095,7 @@ bit_and_expr_no_in(A) ::= bit_and_expr_no_in(B) BITWISE_AND(D) eq_expr_no_in(C).
 
 /* Rule 'bit_xor_expr' */
 %type bit_xor_expr { Expression * }
+%destructor bit_xor_expr { delete $$; }
 
 bit_xor_expr(A) ::= bit_and_expr(B).
 {
@@ -2035,6 +2112,7 @@ bit_xor_expr(A) ::= bit_xor_expr(B) BITWISE_XOR(D) bit_and_expr(C).
 
 /* Rule 'bit_xor_expr_no_fn' */
 %type bit_xor_expr_no_fn { Expression * }
+%destructor bit_xor_expr_no_fn { delete $$; }
 
 bit_xor_expr_no_fn(A) ::= bit_and_expr_no_fn(B).
 {
@@ -2051,6 +2129,7 @@ bit_xor_expr_no_fn(A) ::= bit_xor_expr_no_fn(B) BITWISE_XOR(D) bit_and_expr(C).
 
 /* Rule 'bit_xor_expr_no_in' */
 %type bit_xor_expr_no_in { Expression * }
+%destructor bit_xor_expr_no_in { delete $$; }
 
 bit_xor_expr_no_in(A) ::= bit_and_expr_no_in(B).
 {
@@ -2067,6 +2146,7 @@ bit_xor_expr_no_in(A) ::= bit_xor_expr_no_in(B) BITWISE_XOR(D) bit_and_expr_no_i
 
 /* Rule 'bit_or_expr' */
 %type bit_or_expr { Expression * }
+%destructor bit_or_expr { delete $$; }
 
 bit_or_expr(A) ::= bit_xor_expr(B).
 {
@@ -2083,6 +2163,7 @@ bit_or_expr(A) ::= bit_or_expr(B) BITWISE_OR(D) bit_xor_expr(C).
 
 /* Rule 'bit_or_expr_no_fn' */
 %type bit_or_expr_no_fn { Expression * }
+%destructor bit_or_expr_no_fn { delete $$; }
 
 bit_or_expr_no_fn(A) ::= bit_xor_expr_no_fn(B).
 {
@@ -2099,6 +2180,7 @@ bit_or_expr_no_fn(A) ::= bit_or_expr_no_fn(B) BITWISE_OR(D) bit_xor_expr(C).
 
 /* Rule 'bit_or_expr_no_in' */
 %type bit_or_expr_no_in { Expression * }
+%destructor bit_or_expr_no_in { delete $$; }
 
 bit_or_expr_no_in(A) ::= bit_xor_expr_no_in(B).
 {
@@ -2115,6 +2197,7 @@ bit_or_expr_no_in(A) ::= bit_or_expr_no_in(B) BITWISE_OR(D) bit_xor_expr_no_in(C
 
 /* Rule 'logic_and_expr' */
 %type logic_and_expr { Expression * }
+%destructor logic_and_expr { delete $$; }
 
 logic_and_expr(A) ::= bit_or_expr(B).
 {
@@ -2131,6 +2214,7 @@ logic_and_expr(A) ::= logic_and_expr(B) LOGIC_AND(D) bit_or_expr(C).
 
 /* Rule 'logic_and_expr_no_fn' */
 %type logic_and_expr_no_fn { Expression * }
+%destructor logic_and_expr_no_fn { delete $$; }
 
 logic_and_expr_no_fn(A) ::= bit_or_expr_no_fn(B).
 {
@@ -2147,6 +2231,7 @@ logic_and_expr_no_fn(A) ::= logic_and_expr_no_fn(B) LOGIC_AND(D) bit_or_expr(C).
 
 /* Rule 'logic_and_expr_no_in' */
 %type logic_and_expr_no_in { Expression * }
+%destructor logic_and_expr_no_in { delete $$; }
 
 logic_and_expr_no_in(A) ::= bit_or_expr_no_in(B).
 {
@@ -2163,6 +2248,7 @@ logic_and_expr_no_in(A) ::= logic_and_expr_no_in(B) LOGIC_AND(D) bit_or_expr_no_
 
 /* Rule 'logic_or_expr' */
 %type logic_or_expr { Expression * }
+%destructor logic_or_expr { delete $$; }
 
 logic_or_expr(A) ::= logic_and_expr(B).
 {
@@ -2179,6 +2265,7 @@ logic_or_expr(A) ::= logic_or_expr(B) LOGIC_OR(D) logic_and_expr(C).
 
 /* Rule 'logic_or_expr_no_fn' */
 %type logic_or_expr_no_fn { Expression * }
+%destructor logic_or_expr_no_fn { delete $$; }
 
 logic_or_expr_no_fn(A) ::= logic_and_expr_no_fn(B).
 {
@@ -2195,6 +2282,7 @@ logic_or_expr_no_fn(A) ::= logic_or_expr_no_fn(B) LOGIC_OR(D) logic_and_expr(C).
 
 /* Rule 'logic_or_expr_no_in' */
 %type logic_or_expr_no_in { Expression * }
+%destructor logic_or_expr_no_in { delete $$; }
 
 logic_or_expr_no_in(A) ::= logic_and_expr_no_in(B).
 {
@@ -2211,6 +2299,7 @@ logic_or_expr_no_in(A) ::= logic_or_expr_no_in(B) LOGIC_OR(D) logic_and_expr_no_
 
 /* Rule 'cond_expr' */
 %type cond_expr { Expression * }
+%destructor cond_expr { delete $$; }
 
 cond_expr(A) ::= logic_or_expr(B).
 {
@@ -2228,6 +2317,7 @@ cond_expr(A) ::= logic_or_expr(B) QUESTION(E) assign_expr(C) COLON(F) assign_exp
 
 /* Rule 'cond_expr_no_fn' */
 %type cond_expr_no_fn { Expression * }
+%destructor cond_expr_no_fn { delete $$; }
 
 cond_expr_no_fn(A) ::= logic_or_expr_no_fn(B).
 {
@@ -2245,6 +2335,7 @@ cond_expr_no_fn(A) ::= logic_or_expr_no_fn(B) QUESTION(E) assign_expr(C) COLON(F
 
 /* Rule 'cond_expr_no_in' */
 %type cond_expr_no_in { Expression * }
+%destructor cond_expr_no_in { delete $$; }
 
 cond_expr_no_in(A) ::= logic_or_expr_no_in(B).
 {
@@ -2262,6 +2353,7 @@ cond_expr_no_in(A) ::= logic_or_expr_no_in(B) QUESTION(E) assign_expr(C) COLON(F
 
 /* Rule 'assign_expr' */
 %type assign_expr { Expression * }
+%destructor assign_expr { delete $$; }
 
 assign_expr(A) ::= cond_expr(B).
 {
@@ -2276,6 +2368,7 @@ assign_expr(A) ::= left_hand_expr(B) assign_op(C) assign_expr(D).
 
 /* Rule 'assign_expr_no_fn' */
 %type assign_expr_no_fn { Expression * }
+%destructor assign_expr_no_fn { delete $$; }
 
 assign_expr_no_fn(A) ::= cond_expr_no_fn(B).
 {
@@ -2290,6 +2383,7 @@ assign_expr_no_fn(A) ::= left_hand_expr_no_fn(B) assign_op(C) assign_expr(D).
 
 /* Rule 'assign_expr_no_in' */
 %type assign_expr_no_in { Expression * }
+%destructor assign_expr_no_in { delete $$; }
 
 assign_expr_no_in(A) ::= cond_expr_no_in(B).
 {
@@ -2391,6 +2485,7 @@ assign_op(A) ::= BITWISE_OR_ASSIGN(B).
 
 /* Rule 'expr' */
 %type expr { expr::Expressions * }
+%destructor expr { delete $$; }
 
 expr(A) ::= assign_expr(B).
 {
@@ -2408,6 +2503,7 @@ expr(A) ::= expr(B) COMMA(D) assign_expr(C).
 
 /* Rule 'expr_no_fn' */
 %type expr_no_fn { expr::Expressions * }
+%destructor expr_no_fn { delete $$; }
 
 expr_no_fn(A) ::= assign_expr_no_fn(B).
 {
@@ -2425,6 +2521,7 @@ expr_no_fn(A) ::= expr_no_fn(B) COMMA(D) assign_expr(C).
 
 /* Rule 'expr_no_in' */
 %type expr_no_in { expr::Expressions * }
+%destructor expr_no_in { delete $$; }
 
 expr_no_in(A) ::= assign_expr_no_in(B).
 {
@@ -2442,6 +2539,7 @@ expr_no_in(A) ::= expr_no_in(B) COMMA(D) assign_expr_no_in(C).
 
 /* Rule 'literal' */
 %type literal { Expression * }
+%destructor literal { delete $$; }
 
 literal(A) ::= LIT_NULL(B).
 {
@@ -2495,6 +2593,7 @@ literal(A) ::= REGEXP(B).
 
 /* Rule 'array' */
 %type array { expr::Array * }
+%destructor array { delete $$; }
 
 array(A) ::= LBRACKET(B) RBRACKET(C).
 {
@@ -2570,6 +2669,7 @@ array(A) ::= LBRACKET(D) array_element_list(B) COMMA(E) array_elision(C) RBRACKE
 
 /* Rule 'array_elision' */
 %type array_elision { std::vector<std::unique_ptr<Expression>> * }
+%destructor array_elision { delete $$; }
 
 array_elision(A) ::= COMMA(B).
 {
@@ -2589,6 +2689,7 @@ array_elision(A) ::= array_elision(B) COMMA(C).
 
 /* Rule 'array_element_list' */
 %type array_element_list { std::vector<std::unique_ptr<Expression>> * }
+%destructor array_element_list { delete $$; }
 
 array_element_list(A) ::= assign_expr(B).
 {
@@ -2627,6 +2728,7 @@ array_element_list(A) ::= array_element_list(B) COMMA(E) array_elision(C) assign
 
 /* Rule 'object' */
 %type object { expr::Object * }
+%destructor object { delete $$; }
 
 object(A) ::= LBRACE(B) RBRACE(C).
 {
@@ -2671,6 +2773,7 @@ object(A) ::= LBRACE(B) object_properties(C) COMMA(E) RBRACE(D).
 
 /* Rule 'object_properties' */
 %type object_properties { std::vector<std::unique_ptr<expr::object::Property>> * }
+%destructor object_properties { delete $$; }
 
 object_properties(A) ::= object_property(B).
 {
@@ -2688,6 +2791,7 @@ object_properties(A) ::= object_properties(B) COMMA(D) object_property(C).
 
 /* Rule 'object_property' */
 %type object_property { expr::object::Property * }
+%destructor object_property { delete $$; }
 
 object_property(A) ::= object_property_name(B) COLON(D) assign_expr(C).
 {
@@ -2719,6 +2823,7 @@ object_property ::= SET(A) object_property_name LPAREN(B) object_property_set_pa
 
 /* Rule 'object_property_name' */
 %type object_property_name { Expression * }
+%destructor object_property_name { delete $$; }
 
 object_property_name(A) ::= ident(B).
 {
@@ -2743,6 +2848,7 @@ object_property_name(A) ::= NUMBER(B).
 
 /* Rule 'object_property_set_params' */
 %type object_property_set_params { std::vector<std::string> * }
+%destructor object_property_set_params { delete $$; }
 
 object_property_set_params(A) ::= ident(B).
 {
@@ -2754,6 +2860,7 @@ object_property_set_params(A) ::= ident(B).
 
 /* Rule 'arguments' */
 %type arguments { args::Arguments * }
+%destructor arguments { delete $$; }
 
 arguments(A) ::= LPAREN(B) RPAREN(C).
 {
@@ -2782,6 +2889,7 @@ arguments(A) ::= LPAREN(B) arguments_list(C) RPAREN(D).
 
 /* Rule 'arguments_list' */
 %type arguments_list { std::vector<std::unique_ptr<Expression>> * }
+%destructor arguments_list { delete $$; }
 
 arguments_list(A) ::= assign_expr(B).
 {

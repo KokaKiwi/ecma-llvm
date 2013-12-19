@@ -3,7 +3,6 @@
 #include <memory>
 #include <iostream>
 #include "ecma/lex/exception.h"
-#include "ecma/parser/exception.h"
 #include "ecma/toolchain/source.h"
 #include "ecma/utils/messages.h"
 #include "ecma/ast/ast.h"
@@ -45,16 +44,16 @@ int main(int argc, char **argv)
         {
             module = source->parse(is_debug());
         }
-        catch (parser::UnexpectedToken &e)
-        {
-            e.printMessage();
-            success = false;
-        }
         catch (lex::UnknownTokenException &e)
         {
             e.printMessage();
             success = false;
         }
+    }
+
+    if (utils::Messages::HasErrors())
+    {
+        success = false;
     }
 
     if (module)

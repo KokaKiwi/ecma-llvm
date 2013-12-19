@@ -12,7 +12,8 @@
     #include <string>
     #include "ecma/lex/token.h"
     #include "ecma/parser/parser.h"
-    #include "ecma/parser/exception.h"
+    #include "ecma/parser/error.h"
+    #include "ecma/utils/messages.h"
 
     #include "ecma/ast/ast.h"
 
@@ -21,7 +22,8 @@
 }
 
 %syntax_error {
-    throw parser::UnexpectedToken(TOKEN);
+    parser::ParsingError error("Unexpected token: {token}", TOKEN);
+    utils::Messages::ReportError(error.message(), TOKEN->pos(), TOKEN->length() > 0 ? TOKEN->length() - 1 : 0);
 }
 
 %left INSTANCEOF CONTINUE DEBUGGER FUNCTION DEFAULT FINALLY DELETE RETURN SWITCH TYPEOF BREAK CATCH THROW WHILE CASE THIS VOID WITH FOR GET NEW SET TRY VAR DO IN.

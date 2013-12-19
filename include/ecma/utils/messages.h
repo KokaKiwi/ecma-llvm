@@ -73,6 +73,16 @@ namespace ecma
                 Report(ReportType::Warning, message, pos, length);
             }
 
+            inline static bool HasErrors()
+            {
+                return GetInstance().error > 0;
+            }
+
+            inline static bool HasWarnings()
+            {
+                return GetInstance().warning > 0;
+            }
+
             static void Summary();
 
         private:

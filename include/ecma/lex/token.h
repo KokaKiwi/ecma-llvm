@@ -37,6 +37,11 @@ namespace ecma
                 return m_text;
             }
 
+            inline uint length() const
+            {
+                return m_text.length();
+            }
+
             inline const Position &pos() const
             {
                 return m_pos;

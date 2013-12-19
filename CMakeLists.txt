@@ -76,10 +76,19 @@ list(APPEND ecma_LIBRARIES ${ecma_parser_LIBRARIES})
 add_subdirectory(utils)
 list(APPEND ecma_LIBRARIES ${ecma_utils_LIBRARIES})
 
+## Frontend
+add_subdirectory(frontend)
+include_directories(${ecma_frontend_INCLUDE_DIRS})
+list(APPEND ecma_LIBRARIES ${ecma_frontend_LIBRARIES})
+
 # Binaries
 ## Parser
 add_executable(ecmap parser/main.cpp)
 target_link_libraries(ecmap ${ecma_LIBRARIES})
+
+## Frontend
+add_executable(ecmac frontend/main.cpp)
+target_link_libraries(ecmac ${ecma_LIBRARIES})
 
 # Special rules
 ## Tests

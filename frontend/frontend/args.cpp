@@ -16,6 +16,7 @@ Args::Args()
     this->overview = OVERVIEW;
     this->syntax = SYNTAX;
 
+    // General args
     add("", false, 0, 0, "Show this help and exit.", "-h", "--help");
 }
 

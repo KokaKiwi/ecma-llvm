@@ -1,8 +1,21 @@
 #include <cstdlib>
 #include <iostream>
+#include <vector>
+#include <memory>
 #include "ecma/frontend/args.h"
+#include "ecma/toolchain/source.h"
 
 using namespace ecma;
+
+toolchain::Source *readSource(const std::string &filename = "-")
+{
+    if (filename == "-")
+    {
+        return toolchain::Source::fromStream(std::cin, "stdin");
+    }
+
+    return toolchain::Source::fromFile(filename);
+}
 
 int main(int argc, const char **argv)
 {
@@ -20,13 +33,17 @@ int main(int argc, const char **argv)
         return EXIT_SUCCESS;
     }
 
+    std::vector<std::unique_ptr<toolchain::Source>> sources;
     if (args.lastArgs.size() == 0)
     {
-        // Read from stdin.
+        sources.push_back(std::unique_ptr<toolchain::Source>(readSource()));
     }
     else
     {
-        // Read files.
+        for (auto it: args.lastArgs)
+        {
+            sources.push_back(std::unique_ptr<toolchain::Source>(readSource(*it)));
+        }
     }
 
     return EXIT_SUCCESS;

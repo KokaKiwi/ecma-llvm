@@ -49,7 +49,6 @@ void Parser::parse(lex::Lexer &lexer)
 
             if (token->type() == ECMA_TOKEN(END))
             {
-                delete token;
                 break;
             }
         }

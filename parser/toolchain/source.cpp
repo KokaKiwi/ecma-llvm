@@ -20,8 +20,8 @@ ast::Module *Source::parse(bool debug) const
     lex::Lexer lexer(m_source);
     parser::Parser parser;
 
-    utils::Messages::SetSourceName(name);
-    utils::Messages::SetSource(source);
+    utils::Messages::SetSourceName(m_name);
+    utils::Messages::SetSource(m_source);
     parser.debug(debug).parse(lexer);
 
     return parser.module();

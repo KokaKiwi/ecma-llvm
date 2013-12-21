@@ -13,8 +13,6 @@ Source::Source(const std::string &name, const std::string &source)
     : m_name(name)
     , m_source(source)
 {
-    utils::Messages::SetSourceName(name);
-    utils::Messages::SetSource(source);
 }
 
 ast::Module *Source::parse(bool debug) const
@@ -22,6 +20,8 @@ ast::Module *Source::parse(bool debug) const
     lex::Lexer lexer(m_source);
     parser::Parser parser;
 
+    utils::Messages::SetSourceName(name);
+    utils::Messages::SetSource(source);
     parser.debug(debug).parse(lexer);
 
     return parser.module();

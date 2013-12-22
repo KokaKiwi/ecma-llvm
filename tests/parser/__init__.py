@@ -5,8 +5,8 @@ from glob import glob
 def run_parser(*args):
     return subprocess.call(args)
 
-def test_success(ecmap, path):
-    args = [ecmap, path]
+def test_success(ecmac, path):
+    args = [ecmac, '-P', path]
     ret = True if run_parser(*args) == 0 else False
 
     ret_text = "success" if ret else "fail"
@@ -16,8 +16,8 @@ def test_success(ecmap, path):
 
     return ret
 
-def test_fail(ecmap, path):
-    args = [ecmap, path]
+def test_fail(ecmac, path):
+    args = [ecmac, '-P', path]
     ret = True if run_parser(*args) == 1 else False
 
     ret_text = "success" if ret else "fail"
@@ -28,7 +28,7 @@ def test_fail(ecmap, path):
     return ret
 
 def run_tests(t):
-    ecmap = os.path.join(t.bin_dir, 'ecmap')
+    ecmac = os.path.join(t.bin_dir, 'ecmac')
     tests_dir = os.path.join(t.tests_dir, 'parser')
 
     tests_success = glob(os.path.join(tests_dir, 'success', '*.js'))
@@ -37,11 +37,11 @@ def run_tests(t):
     success = True
 
     for path in tests_success:
-        if not test_success(ecmap, path):
+        if not test_success(ecmac, path):
             success = False
 
     for path in tests_fail:
-        if not test_fail(ecmap, path):
+        if not test_fail(ecmac, path):
             success = False
 
     return success

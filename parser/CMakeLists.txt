@@ -33,6 +33,9 @@ set(ecma_parser_SOURCES
 )
 
 add_library(ecma_parser STATIC ${ecma_parser_SOURCES})
+target_link_libraries(ecma_parser
+    ecma_utils
+)
 
 # Variables
 set(ecma_parser_INCLUDE_DIRS

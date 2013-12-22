@@ -82,10 +82,6 @@ include_directories(${ecma_frontend_INCLUDE_DIRS})
 list(APPEND ecma_LIBRARIES ${ecma_frontend_LIBRARIES})
 
 # Binaries
-## Parser
-add_executable(ecmap parser/main.cpp)
-target_link_libraries(ecmap ${ecma_LIBRARIES})
-
 ## Frontend
 add_executable(ecmac frontend/main.cpp)
 target_link_libraries(ecmac ${ecma_LIBRARIES})
@@ -100,7 +96,7 @@ if (PYTHONINTERP_FOUND)
             ${PROJECT_SOURCE_DIR}/tests/runner.py
             --bin-dir=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
         DEPENDS
-            ecmap
+            ecmac
         WORKING_DIRECTORY
             ${PROJECT_SOURCE_DIR}/tests
     )

@@ -16,6 +16,8 @@ namespace ecma
 
             ast::Module *parse(bool debug = false) const;
 
+            void updateEnv() const;
+
             inline const std::string &name() const
             {
                 return m_name;

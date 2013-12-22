@@ -20,11 +20,16 @@ ast::Module *Source::parse(bool debug) const
     lex::Lexer lexer(m_source);
     parser::Parser parser;
 
-    utils::Messages::SetSourceName(m_name);
-    utils::Messages::SetSource(m_source);
+    updateEnv();
     parser.debug(debug).parse(lexer);
 
     return parser.module();
+}
+
+void Source::updateEnv() const
+{
+    utils::Messages::SetSourceName(m_name);
+    utils::Messages::SetSource(m_source);
 }
 
 Source *Source::fromString(const std::string &source, const std::string &name)

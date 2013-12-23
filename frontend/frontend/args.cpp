@@ -18,6 +18,7 @@ Args::Args()
 
     // General args
     add("", false, 0, 0, "Show this help and exit.", "-h", "--help");
+    add("", false, 1, 0, "Activate some special compiler flags.", "-X");
 }
 
 void Args::printUsage(std::ostream &stream)
@@ -54,4 +55,20 @@ bool Args::check()
     }
 
     return true;
+}
+
+bool Args::hasCompilerFlag(const std::string &search_flag)
+{
+    std::vector<std::string> flags;
+    get("-X")->getStrings(flags);
+
+    for (const std::string &flag: flags)
+    {
+        if (flag == search_flag)
+        {
+            return true;
+        }
+    }
+
+    return false;
 }

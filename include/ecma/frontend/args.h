@@ -1,6 +1,7 @@
 #ifndef ECMA_FRONTEND_ARGS_H_
 #define ECMA_FRONTEND_ARGS_H_
 
+#include <string>
 #include <iostream>
 #include "ezOptionParser.hpp"
 
@@ -15,6 +16,8 @@ namespace ecma
 
             void printUsage(std::ostream &stream = std::cout);
             bool check();
+
+            bool hasCompilerFlag(const std::string &search_flag);
         };
     }
 }

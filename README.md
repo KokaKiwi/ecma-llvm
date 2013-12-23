@@ -18,7 +18,7 @@ How to build
 ~~~
 
 Build files:
-- bin/ecmap: small dev parser executable. Used for parsing unit tests.
+- bin/ecmac: Main frontend executable.
 - lib/*: Core libraries
 
 Requirements

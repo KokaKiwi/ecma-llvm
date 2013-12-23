@@ -67,14 +67,15 @@ configure_file(include/config.cmake.h include/config.h @ONLY)
 include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_BUILD_DIR}/include)
 
+## Utils
+add_subdirectory(utils)
+list(APPEND ecma_LIBRARIES ${ecma_utils_LIBRARIES})
+
 ## Parser
 add_subdirectory(parser)
 include_directories(${ecma_parser_INCLUDE_DIRS})
 list(APPEND ecma_LIBRARIES ${ecma_parser_LIBRARIES})
 
-## Utils
-add_subdirectory(utils)
-list(APPEND ecma_LIBRARIES ${ecma_utils_LIBRARIES})
 
 ## Frontend
 add_subdirectory(frontend)

@@ -12,18 +12,6 @@
 
 using namespace ecma;
 
-static toolchain::Source *readSource(const std::string &filename = "-")
-{
-    if (filename == "-")
-    {
-        return toolchain::Source::fromStream(std::cin, "stdin");
-    }
-    else
-    {
-        return toolchain::Source::fromFile(filename);
-    }
-}
-
 static void registerPhases(std::vector<frontend::Phase *> &phases)
 {
     phases.push_back(new frontend::input::Input());

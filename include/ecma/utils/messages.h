@@ -42,6 +42,7 @@ namespace ecma
             inline Messages()
                 : warning(0)
                 , error(0)
+                , colorsEnabled(true)
             {}
 
             inline static std::shared_ptr<Messages> GetInstancePtr()
@@ -83,6 +84,26 @@ namespace ecma
                 return GetInstance().warning > 0;
             }
 
+            inline static bool HasColorsEnabled()
+            {
+                return GetInstance().colorsEnabled;
+            }
+
+            inline static void SetColorsEnabled(bool colorsEnabled)
+            {
+                GetInstance().colorsEnabled = colorsEnabled;
+            }
+
+            inline static void EnableColors()
+            {
+                SetColorsEnabled(true);
+            }
+
+            inline static void DisableColors()
+            {
+                SetColorsEnabled(false);
+            }
+
             static void Summary();
 
         private:
@@ -91,6 +112,8 @@ namespace ecma
 
             uint warning;
             uint error;
+
+            bool colorsEnabled;
         };
     }
 }

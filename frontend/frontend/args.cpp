@@ -18,6 +18,7 @@ Args::Args()
 
     // General args
     add("", false, 0, 0, "Show this help and exit.", "-h", "--help");
+    add("", false, 0, 0, "Disable color in output.", "--no-color");
     add("", false, 1, 0, "Activate some special compiler flags.", "-X");
 }
 

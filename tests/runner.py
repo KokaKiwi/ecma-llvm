@@ -17,6 +17,7 @@ def main(args):
     t.bin_dir = args.bin_dir
     t.tests_dir = HERE
 
+    print('=== Parser tests ===')
     parser_ret = parser.run_tests(t)
 
     if parser_ret:

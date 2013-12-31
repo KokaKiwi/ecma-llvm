@@ -1,2 +1,2 @@
 
-var a a a a;
+var a a a a; // <~~ Unexpected token: Identifier

@@ -59,11 +59,13 @@ void Messages::Report(Messages::ReportType type, const std::string &message, con
             break;
     }
 
-    std::cerr << ANSI_COLOR_BOLD_WHITE;
+    #define COLOR(code) (HasColorsEnabled() ? code : "")
+
+    std::cerr << COLOR(ANSI_COLOR_BOLD_WHITE);
     std::cerr << GetSourceName() << ":" << pos.first << ":" << pos.second << ": ";
-    std::cerr << color << label << ": ";
-    std::cerr << ANSI_COLOR_BOLD_WHITE << message << std::endl;
-    std::cerr << ANSI_COLOR_RESET;
+    std::cerr << COLOR(color) << label << ": ";
+    std::cerr << COLOR(ANSI_COLOR_BOLD_WHITE) << message << std::endl;
+    std::cerr << COLOR(ANSI_COLOR_RESET);
 
     uint i = pos.first - 1;
     if (i < GetInstance().source.size())
@@ -73,9 +75,11 @@ void Messages::Report(Messages::ReportType type, const std::string &message, con
         std::string size(length, '~');
 
         std::cerr << line << std::endl;
-        std::cerr << pad << ANSI_COLOR_BOLD_GREEN << "^" << size << std::endl;
-        std::cerr << ANSI_COLOR_RESET;
+        std::cerr << pad << COLOR(ANSI_COLOR_BOLD_GREEN) << "^" << size << std::endl;
+        std::cerr << COLOR(ANSI_COLOR_RESET);
     }
+
+    #undef COLOR
 }
 
 void Messages::Summary()

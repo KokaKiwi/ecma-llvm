@@ -66,6 +66,11 @@ int main(int argc, const char **argv)
         return EXIT_SUCCESS;
     }
 
+    if (args.isSet("--no-color"))
+    {
+        utils::Messages::DisableColors();
+    }
+
     bool result = runPhases(args, phases);
 
     for (auto phase: phases)

@@ -57,8 +57,8 @@ def test_fail(ecmac, path):
     error_pattern = re.compile(ERROR_PATTERN)
 
     stderr = str(proc.stderr.read())
-    errors = []
 
+    errors = []
     for line in stderr.splitlines():
         error = error_pattern.search(line)
         if error:

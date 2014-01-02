@@ -11,8 +11,8 @@ namespace ecma
         class ParsingError
         {
         public:
-            inline ParsingError(const std::string &fmt, lex::Token *token)
-                : m_fmt(fmt)
+            inline ParsingError(const std::string &message, lex::Token *token)
+                : m_message(message)
                 , m_token(token)
             {}
 
@@ -21,10 +21,13 @@ namespace ecma
                 return m_token;
             }
 
-            const std::string message() const;
+            inline const std::string message() const
+            {
+                return m_message;
+            }
 
         private:
-            std::string m_fmt;
+            std::string m_message;
             lex::Token *m_token;
         };
     }

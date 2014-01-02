@@ -22,7 +22,7 @@
 }
 
 %syntax_error {
-    parser::ParsingError error("Unexpected token: {token}", TOKEN);
+    parser::ParsingError error("Unexpected token: " + TOKEN->toString(), TOKEN);
     utils::Messages::ReportError(error.message(), TOKEN->pos(), TOKEN->length() > 0 ? TOKEN->length() - 1 : 0);
 }
 

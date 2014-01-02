@@ -24,7 +24,8 @@ Phase::Result Parse::run(Args &args, std::vector<std::unique_ptr<Unit>> &units)
     {
         try
         {
-            auto module = (*it)->source().parse(args.hasCompilerFlag("parse-debug") || args.hasCompilerFlag("debug"));
+            bool debug = args.hasCompilerFlag("parse-debug") || args.hasCompilerFlag("debug");
+            auto module = (*it)->source().parse(debug);
             (*it)->module(module);
         }
         catch (lex::UnknownTokenException &e)

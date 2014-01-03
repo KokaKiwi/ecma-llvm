@@ -5,17 +5,24 @@
 #include "ecma/frontend/args.h"
 #include "ecma/frontend/unit.h"
 #include "ecma/frontend/phase.h"
-#include "ecma/frontend/input/phase.h"
-#include "ecma/frontend/parse/phase.h"
-#include "ecma/toolchain/source.h"
+#include "ecma/frontend/phases.h"
 #include "ecma/utils/messages.h"
 
 using namespace ecma;
 
 static void registerPhases(std::vector<frontend::Phase *> &phases)
 {
+    // Input phase
     phases.push_back(new frontend::input::Input());
+
+    // Parsing phase
     phases.push_back(new frontend::parse::Parse());
+
+    // Compilation phase
+    phases.push_back(new frontend::compile::Compile());
+
+    // Output phase
+    phases.push_back(new frontend::output::Output());
 }
 
 static void initPhases(frontend::Args &args, std::vector<frontend::Phase *> &phases)

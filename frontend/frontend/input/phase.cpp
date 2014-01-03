@@ -4,21 +4,21 @@
 #include "ecma/frontend/args.h"
 #include "ecma/frontend/unit.h"
 #include "ecma/frontend/input/phase.h"
-#include "ecma/toolchain/source.h"
+#include "ecma/parser/toolchain/source.h"
 
 using namespace ecma;
 using namespace ecma::frontend;
 using namespace ecma::frontend::input;
 
-static toolchain::Source *readSource(const std::string &filename = "-")
+static parser::toolchain::Source *readSource(const std::string &filename = "-")
 {
     if (filename == "-")
     {
-        return toolchain::Source::fromStream(std::cin, "stdin");
+        return parser::toolchain::Source::fromStream(std::cin, "-");
     }
     else
     {
-        return toolchain::Source::fromFile(filename);
+        return parser::toolchain::Source::fromFile(filename);
     }
 }
 

@@ -76,9 +76,15 @@ add_subdirectory(parser)
 include_directories(${ecma_parser_INCLUDE_DIRS})
 list(APPEND ecma_LIBRARIES ${ecma_parser_LIBRARIES})
 
+## Compiler
+add_subdirectory(compiler)
+add_definitions(${ecma_compiler_DEFINITIONS})
+include_directories(${ecma_compiler_INCLUDE_DIRS})
+list(APPEND ecma_LIBRARIES ${ecma_compiler_LIBRARIES})
 
 ## Frontend
 add_subdirectory(frontend)
+add_definitions(${ecma_frontend_DEFINITIONS})
 include_directories(${ecma_frontend_INCLUDE_DIRS})
 list(APPEND ecma_LIBRARIES ${ecma_frontend_LIBRARIES})
 

@@ -19,7 +19,7 @@ Args::Args()
     // General args
     add("", false, 0, 0, "Show this help and exit.", "-h", "--help");
     add("", false, 0, 0, "Disable color in output.", "--no-color");
-    add("", false, 1, 0, "Activate some special compiler flags.", "-X");
+    add("", false, 1, 0, "Activate some special compiler flags.", "-Z");
 }
 
 void Args::printUsage(std::ostream &stream)
@@ -61,7 +61,7 @@ bool Args::check()
 bool Args::hasCompilerFlag(const std::string &search_flag)
 {
     std::vector<std::string> flags;
-    get("-X")->getStrings(flags);
+    get("-Z")->getStrings(flags);
 
     for (const std::string &flag: flags)
     {

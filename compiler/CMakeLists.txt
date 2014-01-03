@@ -11,38 +11,29 @@ add_definitions(${LLVM_CPPFLAGS})
 include_directories(${LLVM_INCLUDE_DIR})
 
 # Build library
-set(ecma_frontend_SOURCES
-    frontend/args.cpp
-
-    frontend/input/phase.cpp
-
-    frontend/parse/phase.cpp
-
-    frontend/compile/phase.cpp
-
-    frontend/output/phase.cpp
+set(ecma_compiler_SOURCES
+    compiler.cpp
 )
 
-add_library(ecma_frontend ${ecma_frontend_SOURCES})
-target_link_libraries(ecma_frontend
+add_library(ecma_compiler ${ecma_compiler_SOURCES})
+target_link_libraries(ecma_compiler
     ecma_parser
-    ecma_compiler
     ${LLVM_LIBRARIES_ALL}
     pthread
     dl
 )
 
 # Variables
-set(ecma_frontend_DEFINITIONS
+set(ecma_compiler_DEFINITIONS
     ${LLVM_CPPFLAGS}
 PARENT_SCOPE)
 
-set(ecma_frontend_INCLUDE_DIRS
+set(ecma_compiler_INCLUDE_DIRS
     ${LLVM_INCLUDE_DIR}
 PARENT_SCOPE)
 
-set(ecma_frontend_LIBRARIES
-    ecma_frontend
+set(ecma_compiler_LIBRARIES
+    ecma_compiler
     ${LLVM_LIBRARIES_ALL}
     pthread
     dl

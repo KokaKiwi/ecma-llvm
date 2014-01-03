@@ -2,8 +2,10 @@
 #define ECMA_FRONTEND_UNIT_H_
 
 #include <memory>
-#include "ecma/toolchain/source.h"
+#include <string>
+#include "ecma/parser/toolchain/source.h"
 #include "ecma/ast/module.h"
+#include "llvm_ir.h"
 
 namespace ecma
 {
@@ -12,29 +14,47 @@ namespace ecma
         class Unit
         {
         public:
-            inline Unit(toolchain::Source *source)
+            inline Unit(parser::toolchain::Source *source)
                 : m_source(source)
-                , m_module(nullptr)
             {}
 
-            inline toolchain::Source &source() const
+            inline parser::toolchain::Source &source() const
             {
                 return *m_source;
             }
 
-            inline ast::Module &module() const
+            inline const ast::Module *ast_module() const
             {
-                return *m_module;
+                return m_ast_module.get();
             }
-            inline Unit &module(ast::Module *module)
+            inline Unit &ast_module(ast::Module *ast_module)
             {
-                m_module.reset(module);
+                m_ast_module.reset(ast_module);
                 return *this;
+            }
+            inline ast::Module *take_ast_module()
+            {
+                return m_ast_module.release();
+            }
+
+            inline const llvm::Module *llvm_module() const
+            {
+                return m_llvm_module.get();
+            }
+            inline Unit &llvm_module(llvm::Module *llvm_module)
+            {
+                m_llvm_module.reset(llvm_module);
+                return *this;
+            }
+            inline llvm::Module *take_llvm_module()
+            {
+                return m_llvm_module.release();
             }
 
         private:
-            std::unique_ptr<toolchain::Source> m_source;
-            std::unique_ptr<ast::Module> m_module;
+            std::unique_ptr<parser::toolchain::Source> m_source;
+            std::unique_ptr<ast::Module> m_ast_module;
+            std::unique_ptr<llvm::Module> m_llvm_module;
         };
     }
 }

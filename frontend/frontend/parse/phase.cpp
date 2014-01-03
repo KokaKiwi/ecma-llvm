@@ -18,20 +18,17 @@ void Parse::init(Args &args)
 
 Phase::Result Parse::run(Args &args, std::vector<std::unique_ptr<Unit>> &units)
 {
-    bool success = true;
-
     for (auto it = units.begin(); it != units.end(); ++it)
     {
         try
         {
             bool debug = args.hasCompilerFlag("parse-debug") || args.hasCompilerFlag("debug");
             auto module = (*it)->source().parse(debug);
-            (*it)->module(module);
+            (*it)->ast_module(module);
         }
         catch (lex::UnknownTokenException &e)
         {
             e.printMessage();
-            success = false;
         }
     }
 

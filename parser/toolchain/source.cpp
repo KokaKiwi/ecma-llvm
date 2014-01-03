@@ -2,12 +2,13 @@
 #include <fstream>
 #include "ecma/lex/lexer.h"
 #include "ecma/parser/parser.h"
-#include "ecma/toolchain/source.h"
+#include "ecma/parser/toolchain/source.h"
 #include "ecma/utils/messages.h"
 #include "ecma/ast/ast.h"
 
 using namespace ecma;
-using namespace ecma::toolchain;
+using namespace ecma::parser;
+using namespace ecma::parser::toolchain;
 
 Source::Source(const std::string &name, const std::string &source)
     : m_name(name)
@@ -28,7 +29,7 @@ ast::Module *Source::parse(bool debug) const
 
 void Source::updateEnv() const
 {
-    utils::Messages::SetSourceName(m_name);
+    utils::Messages::SetSourceName(m_name == "-" ? "stdin" : m_name);
     utils::Messages::SetSource(m_source);
 }
 

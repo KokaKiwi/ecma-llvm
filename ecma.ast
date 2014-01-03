@@ -157,6 +157,9 @@
 // Rules
 #[ast(
     name = 'Module',
+    includes = [
+        '"ecma/ast/statement.h"',
+    ],
     items = [
         item('statements',
             type = type(

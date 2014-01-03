@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <memory>
+#include "ecma/ast/statement.h"
 #include "ecma/ast/tools/visitor.h"
 
 namespace ecma

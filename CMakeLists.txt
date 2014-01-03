@@ -18,7 +18,7 @@ if (NOT DEFINED CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
 endif (NOT DEFINED CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
 
 # Compiler
-option(USE_CLANG "Use clang for compilation." ON)
+option(USE_CLANG "Use clang for compilation." OFF)
 
 if (USE_CLANG)
     find_program(CLANG_EXECUTABLE
@@ -36,9 +36,6 @@ endif (USE_CLANG)
 if (USE_CLANG)
     set(CMAKE_C_COMPILER ${CLANG_EXECUTABLE})
     set(CMAKE_CXX_COMPILER ${CLANGXX_EXECUTABLE})
-else (USE_CLANG)
-    set(CMAKE_C_COMPILER gcc)
-    set(CMAKE_CXX_COMPILER g++)
 endif (USE_CLANG)
 
 # Flags

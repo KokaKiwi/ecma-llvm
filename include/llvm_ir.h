@@ -1,5 +1,5 @@
-#ifndef LLVM_IR_H_
-#define LLVM_IR_H_
+#ifndef ECMA_LLVM_IR_H_
+#define ECMA_LLVM_IR_H_
 
 #include "config.h"
 
@@ -71,4 +71,4 @@
 #include <llvm/Value.h>
 #endif
 
-#endif /* LLVM_IR_H_ */
+#endif /* ECMA_LLVM_IR_H_ */

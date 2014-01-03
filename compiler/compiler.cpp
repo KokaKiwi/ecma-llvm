@@ -1,5 +1,5 @@
+#include <llvm/IR/LLVMContext.h>
 #include "ecma/compiler/compiler.h"
-#include "llvm_ir.h"
 
 using namespace ecma;
 using namespace ecma::compiler;

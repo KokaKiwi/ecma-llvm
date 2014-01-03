@@ -5,6 +5,4 @@
 
 #cmakedefine DEBUG
 
-#define LLVM_VERSION_NUMBER @LLVM_VERSION_NUMBER@
-
 #endif /* CONFIG_H_ */

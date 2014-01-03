@@ -24,7 +24,7 @@ Build files:
 Requirements
 ============
 - CMake (Building tools): [http://www.cmake.org](http://www.cmake.org)
-- LLVM libraries (LLVM IR code generation): [http://llvm.org](http://llvm.org)
+- LLVM libraries (LLVM IR code generation) (version needed: 3.3): [http://llvm.org](http://llvm.org)
 - Ragel (Lexer generating): [http://www.complang.org/ragel/](http://www.complang.org/ragel/)
 - Lemon (Parsing generating): [http://www.hwaci.com/sw/lemon/](http://www.hwaci.com/sw/lemon/)
 

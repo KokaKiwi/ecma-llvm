@@ -1,7 +1,7 @@
 #ifndef ECMA_COMPILER_COMPILER_H_
 #define ECMA_COMPILER_COMPILER_H_
 
-#include "llvm_ir.h"
+#include <llvm/IR/Module.h>
 #include "ecma/ast/module.h"
 
 namespace ecma

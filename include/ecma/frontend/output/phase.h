@@ -3,9 +3,7 @@
 
 #include <vector>
 #include <memory>
-#include <llvm/Support/TargetRegistry.h>
 #include <llvm/Target/TargetMachine.h>
-#include "llvm_ir.h"
 #include "ecma/frontend/args.h"
 #include "ecma/frontend/unit.h"
 #include "ecma/frontend/phase.h"

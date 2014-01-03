@@ -55,11 +55,6 @@ else (USE_CLANG)
 endif (USE_CLANG)
 
 # Dependencies
-## LLVM
-find_package(LLVM REQUIRED)
-string(REPLACE "." "" LLVM_VERSION_NUMBER ${LLVM_VERSION})
-configure_file(include/config.cmake.h include/config.h @ONLY)
-
 ## Paths
 include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_BUILD_DIR}/include)
@@ -105,3 +100,5 @@ if (PYTHONINTERP_FOUND)
             ${PROJECT_SOURCE_DIR}/tests
     )
 endif (PYTHONINTERP_FOUND)
+
+configure_file(include/config.cmake.h include/config.h @ONLY)

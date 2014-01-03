@@ -3,9 +3,9 @@
 
 #include <memory>
 #include <string>
+#include <llvm/IR/Module.h>
 #include "ecma/parser/toolchain/source.h"
 #include "ecma/ast/module.h"
-#include "llvm_ir.h"
 
 namespace ecma
 {

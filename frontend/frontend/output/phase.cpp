@@ -6,11 +6,11 @@
 #include <llvm/IR/DataLayout.h>
 #include <llvm/Support/raw_os_ostream.h>
 #include <llvm/Support/FormattedStream.h>
+#include <llvm/Support/TargetRegistry.h>
 #include <llvm/Support/TargetSelect.h>
 #include <llvm/Support/ToolOutputFile.h>
 #include <llvm/Support/Host.h>
 #include <llvm/Target/TargetOptions.h>
-#include "llvm_ir.h"
 #include "ecma/frontend/args.h"
 #include "ecma/frontend/unit.h"
 #include "ecma/frontend/output/phase.h"

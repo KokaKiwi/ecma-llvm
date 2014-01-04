@@ -36,7 +36,7 @@ Phase::Result Compile::run(Args &args, std::vector<std::unique_ptr<Unit>> &units
         {
             name = "stdin";
         }
-        auto module = compiler::Compiler::compile((*it)->ast_module(), name, debug);
+        auto module = compiler::Compiler::compile((*it)->ast_module(), (*it)->llvm_context(), name, debug);
         (*it)->llvm_module(module);
 
         if (!module)

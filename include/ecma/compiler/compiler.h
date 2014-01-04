@@ -1,6 +1,7 @@
 #ifndef ECMA_COMPILER_COMPILER_H_
 #define ECMA_COMPILER_COMPILER_H_
 
+#include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Module.h>
 #include "ecma/ast/module.h"
 
@@ -26,11 +27,11 @@ namespace ecma
                 return m_name;
             }
 
-            llvm::Module *compile(bool debug = false);
+            llvm::Module *compile(llvm::LLVMContext &context, bool debug = false);
 
-            static inline llvm::Module *compile(const ast::Module *module, const std::string &name, bool debug = false)
+            static inline llvm::Module *compile(const ast::Module *module, llvm::LLVMContext &context, const std::string &name, bool debug = false)
             {
-                return Compiler(module, name).compile(debug);
+                return Compiler(module, name).compile(context, debug);
             }
 
         private:

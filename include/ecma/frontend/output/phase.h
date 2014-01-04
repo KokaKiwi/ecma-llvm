@@ -26,7 +26,7 @@ namespace ecma
                 Phase::Result run(Args &args, std::vector<std::unique_ptr<Unit>> &units);
 
             private:
-                bool outputModule(const llvm::Module *module, llvm::formatted_raw_ostream &out, bool asmOutput, bool llvmOutput);
+                bool outputModule(llvm::Module *module, llvm::formatted_raw_ostream &out, bool asmOutput, bool llvmOutput);
 
             private:
                 const llvm::Target *target;

@@ -4,6 +4,7 @@
 #include <memory>
 #include <string>
 #include <llvm/IR/Module.h>
+#include <llvm/IR/LLVMContext.h>
 #include "ecma/parser/toolchain/source.h"
 #include "ecma/ast/module.h"
 
@@ -51,9 +52,17 @@ namespace ecma
                 return m_llvm_module.release();
             }
 
+            inline llvm::LLVMContext &llvm_context()
+            {
+                return m_llvm_context;
+            }
+
         private:
             std::unique_ptr<parser::toolchain::Source> m_source;
+
             std::unique_ptr<ast::Module> m_ast_module;
+
+            llvm::LLVMContext m_llvm_context;
             std::unique_ptr<llvm::Module> m_llvm_module;
         };
     }

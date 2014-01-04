@@ -84,7 +84,7 @@ Phase::Result Output::run(Args &args, std::vector<std::unique_ptr<Unit>> &units)
                 }
             }
 
-            auto module = (*it)->llvm_module();
+            auto module = (*it)->take_llvm_module();
             bool asmOutput = args.isSet("-S");
             bool llvmOutput = args.isSet("--emit-llvm");
 
@@ -109,6 +109,8 @@ Phase::Result Output::run(Args &args, std::vector<std::unique_ptr<Unit>> &units)
                 outputFile.keep();
             }
 
+            (*it)->llvm_module(module);
+
             success = success && compileResult;
         }
     }
@@ -121,12 +123,29 @@ Phase::Result Output::run(Args &args, std::vector<std::unique_ptr<Unit>> &units)
     return Phase::Result::CONTINUE;
 }
 
-bool Output::outputModule(const llvm::Module *module, llvm::formatted_raw_ostream &out, bool asmOutput, bool llvmOutput)
+bool Output::outputModule(llvm::Module *module, llvm::formatted_raw_ostream &out, bool asmOutput, bool llvmOutput)
 {
-    llvm::DataLayout *dataLayout = new llvm::DataLayout(module);
-
     llvm::PassManager passManager;
+
+    module->setTargetTriple(targetMachine->getTargetTriple());
+    module->setDataLayout(targetMachine->getDataLayout()->getStringRepresentation());
+
+    llvm::DataLayout *dataLayout = new llvm::DataLayout(module);
     passManager.add(dataLayout);
+
+    if (!llvmOutput && (asmOutput))
+    {
+        llvm::TargetMachine::CodeGenFileType outputType = llvm::TargetMachine::CGFT_Null;
+
+        if (asmOutput)
+        {
+            outputType = llvm::TargetMachine::CGFT_AssemblyFile;
+        }
+
+        targetMachine->addPassesToEmitFile(passManager, out, outputType);
+    }
+
+    passManager.run(*module);
 
     if (asmOutput && llvmOutput)
     {

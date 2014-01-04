@@ -15,7 +15,7 @@ llvm::Module *Compiler::compile(llvm::LLVMContext &context, bool debug)
 {
     llvm::Module *module = new llvm::Module(name(), context);
 
-    llvm::Function *moduleFunction = llvm::Function::Create(helper::type<void ()>(context), llvm::GlobalVariable::ExternalLinkage, "module_" + name(), module);
+    llvm::Function *moduleFunction = llvm::Function::Create(helper::type<void ()>(context), llvm::GlobalVariable::ExternalLinkage, "ecma.module." + name(), module);
 
     llvm::BasicBlock *entryBlock = llvm::BasicBlock::Create(context, "entry");
     moduleFunction->getBasicBlockList().push_back(entryBlock);

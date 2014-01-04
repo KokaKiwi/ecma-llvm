@@ -42,6 +42,10 @@ set(ecma_frontend_INCLUDE_DIRS
     ${LLVM_INCLUDE_DIR}
 PARENT_SCOPE)
 
+set(ecma_frontend_LIB_DIRS
+    ${LLVM_LIB_DIR}
+PARENT_SCOPE)
+
 set(ecma_frontend_LIBRARIES
     ecma_frontend
     ${LLVM_LIBRARIES_ALL}

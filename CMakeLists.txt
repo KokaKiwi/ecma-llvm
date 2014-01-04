@@ -47,12 +47,14 @@ list(APPEND ecma_LIBRARIES ${ecma_parser_LIBRARIES})
 add_subdirectory(compiler)
 add_definitions(${ecma_compiler_DEFINITIONS})
 include_directories(${ecma_compiler_INCLUDE_DIRS})
+link_directories(${ecma_compiler_LIB_DIRS})
 list(APPEND ecma_LIBRARIES ${ecma_compiler_LIBRARIES})
 
 ## Frontend
 add_subdirectory(frontend)
 add_definitions(${ecma_frontend_DEFINITIONS})
 include_directories(${ecma_frontend_INCLUDE_DIRS})
+link_directories(${ecma_frontend_LIB_DIRS})
 list(APPEND ecma_LIBRARIES ${ecma_frontend_LIBRARIES})
 
 # Binaries

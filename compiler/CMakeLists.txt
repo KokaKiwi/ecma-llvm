@@ -33,6 +33,10 @@ set(ecma_compiler_INCLUDE_DIRS
     ${LLVM_INCLUDE_DIR}
 PARENT_SCOPE)
 
+set(ecma_compiler_LIB_DIRS
+    ${LLVM_LIB_DIR}
+PARENT_SCOPE)
+
 set(ecma_compiler_LIBRARIES
     ecma_compiler
     ${LLVM_LIBRARIES_ALL}

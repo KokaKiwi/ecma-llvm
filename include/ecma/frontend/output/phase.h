@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <memory>
+#include <string>
 #include <llvm/Target/TargetMachine.h>
 #include "ecma/frontend/args.h"
 #include "ecma/frontend/unit.h"
@@ -27,6 +28,9 @@ namespace ecma
 
             private:
                 bool outputModule(llvm::Module *module, llvm::formatted_raw_ostream &out, bool asmOutput, bool llvmOutput);
+                bool outputExecutable(const std::string &output_path, std::vector<std::unique_ptr<Unit>> &units, bool debug = false);
+
+                bool passModule(llvm::Module *module);
 
             private:
                 const llvm::Target *target;

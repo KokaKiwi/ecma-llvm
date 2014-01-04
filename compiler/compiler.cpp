@@ -25,6 +25,10 @@ llvm::Module *Compiler::compile(llvm::LLVMContext &context, bool debug)
 
     irBuilder.CreateRetVoid();
 
-    llvm::verifyModule(*module);
+    if (debug)
+    {
+        llvm::verifyModule(*module);
+    }
+
     return module;
 }

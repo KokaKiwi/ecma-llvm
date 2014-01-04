@@ -15,8 +15,14 @@
 #   LLVM_CMAKE_DIR, the LLVM cmake modules directory.
 
 find_program(LLVM_CONFIG
-    NAMES "${LLVM_PATH}/bin/llvm-config" "llvm-config"
-    DOC "llvm-config executable")
+    NAMES
+        "${LLVM_PATH}/bin/llvm-config"
+        "llvm-config"
+        ${LLVM_CONFIG_NAME}
+        $ENV{LLVM_CONFIG_NAME}
+    DOC
+        "llvm-config executable"
+)
 
 if (LLVM_CONFIG)
     set (LLVM_FOUND TRUE)

@@ -9,6 +9,7 @@ set(PROJECT_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}")
 find_package(LLVM REQUIRED)
 add_definitions(${LLVM_CPPFLAGS})
 include_directories(${LLVM_INCLUDE_DIR})
+link_directories(${LLVM_LIB_DIR})
 
 # Build library
 set(ecma_compiler_SOURCES

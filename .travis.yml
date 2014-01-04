@@ -4,7 +4,6 @@ before_install:
     -   sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
     -   sudo apt-get update -y
     -   sudo apt-get install cmake ragel lemon llvm-3.3
-    -   sudo ln -s /usr/bin/llvm-config-3.3 /usr/bin/llvm-config
     -   if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-4.8; fi
     -   if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
     -   if [ "$CXX" = "clang++" ]; then sudo apt-get install -qq clang-3.3; fi
@@ -15,6 +14,6 @@ compiler:
 script:
     -   mkdir build
     -   cd build
-    -   cmake ..
+    -   cmake -DLLVM_CONFIG_NAME=llvm-config-3.3 ..
     -   make
     -   make test

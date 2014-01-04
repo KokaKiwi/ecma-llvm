@@ -23,6 +23,7 @@ Build files:
 
 Requirements
 ============
+- A C++11 compatible compiler (clang 3.1+ or gcc 4.8+): [http://clang.llvm.org](http://clang.llvm.org) [http://gcc.gnu.org](http://gcc.gnu.org)
 - CMake (Building tools): [http://www.cmake.org](http://www.cmake.org)
 - LLVM libraries (LLVM IR code generation) (version needed: 3.3): [http://llvm.org](http://llvm.org)
 - Ragel (Lexer generating): [http://www.complang.org/ragel/](http://www.complang.org/ragel/)

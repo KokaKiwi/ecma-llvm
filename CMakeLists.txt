@@ -17,27 +17,6 @@ if (NOT DEFINED CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
     set(CMAKE_BUILD_TYPE "Debug")
 endif (NOT DEFINED CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
 
-# Compiler
-option(USE_CLANG "Use clang for compilation." OFF)
-
-if (USE_CLANG)
-    find_program(CLANG_EXECUTABLE
-        clang
-    )
-    find_program(CLANGXX_EXECUTABLE
-        clang++
-    )
-
-    if (NOT CLANG_EXECUTABLE OR NOT CLANGXX_EXECUTABLE)
-        set(USE_CLANG OFF)
-    endif (NOT CLANG_EXECUTABLE OR NOT CLANGXX_EXECUTABLE)
-endif (USE_CLANG)
-
-if (USE_CLANG)
-    set(CMAKE_C_COMPILER ${CLANG_EXECUTABLE})
-    set(CMAKE_CXX_COMPILER ${CLANGXX_EXECUTABLE})
-endif (USE_CLANG)
-
 # Flags
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(COMPILE_FLAGS "-ggdb3")
@@ -48,11 +27,7 @@ endif (CMAKE_BUILD_TYPE STREQUAL "Debug")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${COMPILE_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${COMPILE_FLAGS}")
 
-if (USE_CLANG)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-else (USE_CLANG)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
-endif (USE_CLANG)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 # Dependencies
 ## Paths

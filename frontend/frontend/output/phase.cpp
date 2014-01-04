@@ -218,11 +218,6 @@ bool Output::outputExecutable(const std::string &output_path, std::vector<std::u
 
     if (debug)
     {
-        llvm::verifyModule(module);
-    }
-
-    if (debug)
-    {
         std::string debug_path = output_path + ".debug.ll";
         std::string errorMsg;
         llvm::tool_output_file outputFile(debug_path.c_str(), errorMsg);

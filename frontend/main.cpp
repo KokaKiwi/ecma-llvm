@@ -2,6 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <memory>
+#include <llvm/Support/CommandLine.h>
 #include "ecma/frontend/args.h"
 #include "ecma/frontend/unit.h"
 #include "ecma/frontend/phase.h"
@@ -9,6 +10,15 @@
 #include "ecma/utils/messages.h"
 
 using namespace ecma;
+
+namespace
+{
+    #define ECMA_ARG(type, name, ...) type name(__VA_ARGS__);
+
+    #include "ecma/frontend/args_list.h"
+
+    #undef ECMA_ARG
+}
 
 static void registerPhases(std::vector<frontend::Phase *> &phases)
 {
@@ -23,14 +33,6 @@ static void registerPhases(std::vector<frontend::Phase *> &phases)
 
     // Output phase
     phases.push_back(new frontend::output::Output());
-}
-
-static void initPhases(frontend::Args &args, std::vector<frontend::Phase *> &phases)
-{
-    for (auto phase: phases)
-    {
-        phase->init(args);
-    }
 }
 
 static bool runPhases(frontend::Args &args, std::vector<frontend::Phase *> &phases)
@@ -58,22 +60,17 @@ int main(int argc, const char **argv)
     frontend::Args args;
     std::vector<frontend::Phase *> phases;
 
+    #define ECMA_ARG(type, name, ...) args.name = &name;
+
+    #include "ecma/frontend/args_list.h"
+
+    #undef ECMA_ARG
+
     registerPhases(phases);
-    initPhases(args, phases);
 
-    args.parse(argc, argv);
-    if (!args.check())
-    {
-        return EXIT_FAILURE;
-    }
+    llvm::cl::ParseCommandLineOptions(argc, argv, nullptr);
 
-    if (args.isSet("-h"))
-    {
-        args.printUsage();
-        return EXIT_SUCCESS;
-    }
-
-    if (args.isSet("--no-color"))
+    if (*args.noColor)
     {
         utils::Messages::DisableColors();
     }

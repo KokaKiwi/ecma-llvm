@@ -37,23 +37,18 @@ static std::string temp_filename()
     return std::string(filename);
 }
 
-void Output::init(Args &args)
-{
-    args.add("", false, 1, 0, "Write output to <filename>", "-o", "--output");
-}
-
 Phase::Result Output::run(Args &args, std::vector<std::unique_ptr<Unit>> &units)
 {
-    bool executable = !(args.isSet("-S") || args.isSet("--emit-llvm"));
+    bool executable = !(*args.compileOnly || *args.llvmOutput);
     bool success = true;
     std::string output;
 
-    if (units.size() > 1 && args.isSet("-o") && !executable)
+    if (units.size() > 1 && !args.output->empty() && !executable)
     {
         std::cerr << "Cannot specify -o when generating multiple files." << std::endl;
         return Phase::Result::ERROR;
     }
-    args.get("-o")->getString(output);
+    output = *args.output;
 
     // Init LLVM
     llvm::InitializeNativeTarget();
@@ -84,28 +79,28 @@ Phase::Result Output::run(Args &args, std::vector<std::unique_ptr<Unit>> &units)
         {
             std::string output_path = output;
 
-            if (!args.isSet("-o"))
+            if (args.output->empty())
             {
                 output_path = (*it)->source().name();
                 if (output_path != "-")
                 {
-                    if (args.isSet("-S") && args.isSet("--emit-llvm"))
+                    if (*args.compileOnly && *args.llvmOutput)
                     {
                         output_path += EXT_LLVM;
                     }
-                    else if (args.isSet("-S"))
+                    else if (*args.compileOnly)
                     {
                         output_path += EXT_ASM;
                     }
-                    else if (args.isSet("--emit-llvm"))
+                    else if (*args.llvmOutput)
                     {
                         output_path += EXT_LLVM_BC;
                     }
                 }
             }
 
-            bool asmOutput = args.isSet("-S");
-            bool llvmOutput = args.isSet("--emit-llvm");
+            bool asmOutput = *args.compileOnly;
+            bool llvmOutput = *args.llvmOutput;
 
             bool outputResult;
             if (output_path == "-")
@@ -136,7 +131,7 @@ Phase::Result Output::run(Args &args, std::vector<std::unique_ptr<Unit>> &units)
 
     if (executable)
     {
-        if (!args.isSet("-o"))
+        if (args.output->empty())
         {
             output = "a.out";
         }

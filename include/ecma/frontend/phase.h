@@ -22,7 +22,6 @@ namespace ecma
             inline Phase() {}
             inline virtual ~Phase() {}
 
-            virtual void init(Args &args) = 0;
             virtual Result run(Args &args, std::vector<std::unique_ptr<Unit>> &units) = 0;
         };
     }

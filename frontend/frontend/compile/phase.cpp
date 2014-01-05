@@ -18,12 +18,6 @@ static std::string basename(const std::string &path)
     return path.substr(start, end - start);
 }
 
-void Compile::init(Args &args)
-{
-    args.add("", false, 0, 0, "Compile only; do not assemble or link", "-S");
-    args.add("", false, 0, 0, "Produce an LLVM assembly file if used with -S option;\nproduce an LLVM bitcode file otherwise", "--emit-llvm");
-}
-
 Phase::Result Compile::run(Args &args, std::vector<std::unique_ptr<Unit>> &units)
 {
     bool success = true;

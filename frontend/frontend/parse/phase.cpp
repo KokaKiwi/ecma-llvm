@@ -11,11 +11,6 @@ using namespace ecma;
 using namespace ecma::frontend;
 using namespace ecma::frontend::parse;
 
-void Parse::init(Args &args)
-{
-    args.add("", false, 0, 0, "Run the parse phase.", "-P");
-}
-
 Phase::Result Parse::run(Args &args, std::vector<std::unique_ptr<Unit>> &units)
 {
     for (auto it = units.begin(); it != units.end(); ++it)
@@ -37,5 +32,5 @@ Phase::Result Parse::run(Args &args, std::vector<std::unique_ptr<Unit>> &units)
         return Phase::Result::ERROR;
     }
 
-    return args.isSet("-P") ? Phase::Result::STOP : Phase::Result::CONTINUE;
+    return (*args.parseOnly) ? Phase::Result::STOP : Phase::Result::CONTINUE;
 }

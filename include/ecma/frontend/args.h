@@ -3,21 +3,23 @@
 
 #include <string>
 #include <iostream>
-#include "ezOptionParser.hpp"
+#include <llvm/Support/CommandLine.h>
 
 namespace ecma
 {
     namespace frontend
     {
-        class Args: public ez::ezOptionParser
+        class Args
         {
         public:
-            Args();
-
-            void printUsage(std::ostream &stream = std::cout);
-            bool check();
-
             bool hasCompilerFlag(const std::string &search_flag);
+
+        public:
+            #define ECMA_ARG(type, name, ...) type *name;
+
+            #include "ecma/frontend/args_list.h"
+
+            #undef ECMA_ARG
         };
     }
 }

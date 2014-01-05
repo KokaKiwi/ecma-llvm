@@ -22,7 +22,6 @@ namespace ecma
             class Compile: public Phase
             {
             public:
-                void init(Args &args);
                 Phase::Result run(Args &args, std::vector<std::unique_ptr<Unit>> &units);
             };
         }

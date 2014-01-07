@@ -18,13 +18,13 @@ static std::string basename(const std::string &path)
     return path.substr(start, end - start);
 }
 
-Phase::Result Compile::run(Args &args, std::vector<std::unique_ptr<Unit>> &units)
+Phase::Result Compile::run(std::vector<std::unique_ptr<Unit>> &units)
 {
     bool success = true;
 
     for (auto it = units.begin(); it != units.end(); ++it)
     {
-        bool debug = args.hasCompilerFlag("compile-debug") || args.hasCompilerFlag("debug");
+        bool debug = args::hasCompilerFlag("compile-debug") || args::hasCompilerFlag("debug");
         std::string name = basename((*it)->source().name());
         if (name == "-")
         {

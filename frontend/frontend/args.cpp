@@ -3,18 +3,30 @@
 #include <iostream>
 #include "ecma/frontend/args.h"
 
-using namespace ecma;
-using namespace ecma::frontend;
-
-bool Args::hasCompilerFlag(const std::string &search_flag)
+namespace ecma
 {
-    for (const std::string &flag: *compilerFlags)
+    namespace frontend
     {
-        if (flag == search_flag)
+        namespace args
         {
-            return true;
+            #define ECMA_ARG(type, name, ...) type name(__VA_ARGS__);
+
+            #include "ecma/frontend/args_list.h"
+
+            #undef ECMA_ARG
+
+            bool hasCompilerFlag(const std::string &search_flag)
+            {
+                for (const std::string &flag: args::compilerFlags)
+                {
+                    if (flag == search_flag)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
         }
     }
-
-    return false;
 }

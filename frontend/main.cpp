@@ -11,15 +11,6 @@
 
 using namespace ecma;
 
-namespace
-{
-    #define ECMA_ARG(type, name, ...) type name(__VA_ARGS__);
-
-    #include "ecma/frontend/args_list.h"
-
-    #undef ECMA_ARG
-}
-
 static void registerPhases(std::vector<frontend::Phase *> &phases)
 {
     // Input phase
@@ -35,13 +26,13 @@ static void registerPhases(std::vector<frontend::Phase *> &phases)
     phases.push_back(new frontend::output::Output());
 }
 
-static bool runPhases(frontend::Args &args, std::vector<frontend::Phase *> &phases)
+static bool runPhases(std::vector<frontend::Phase *> &phases)
 {
     std::vector<std::unique_ptr<frontend::Unit>> units;
 
     for (auto phase: phases)
     {
-        switch (phase->run(args, units))
+        switch (phase->run(units))
         {
             case frontend::Phase::Result::STOP:
                 return true;
@@ -57,25 +48,18 @@ static bool runPhases(frontend::Args &args, std::vector<frontend::Phase *> &phas
 
 int main(int argc, const char **argv)
 {
-    frontend::Args args;
     std::vector<frontend::Phase *> phases;
-
-    #define ECMA_ARG(type, name, ...) args.name = &name;
-
-    #include "ecma/frontend/args_list.h"
-
-    #undef ECMA_ARG
 
     registerPhases(phases);
 
     llvm::cl::ParseCommandLineOptions(argc, argv, nullptr);
 
-    if (*args.noColor)
+    if (frontend::args::noColor)
     {
         utils::Messages::DisableColors();
     }
 
-    bool result = runPhases(args, phases);
+    bool result = runPhases(phases);
 
     for (auto phase: phases)
     {

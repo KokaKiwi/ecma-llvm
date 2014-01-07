@@ -11,13 +11,13 @@ using namespace ecma;
 using namespace ecma::frontend;
 using namespace ecma::frontend::parse;
 
-Phase::Result Parse::run(Args &args, std::vector<std::unique_ptr<Unit>> &units)
+Phase::Result Parse::run(std::vector<std::unique_ptr<Unit>> &units)
 {
     for (auto it = units.begin(); it != units.end(); ++it)
     {
         try
         {
-            bool debug = args.hasCompilerFlag("parse-debug") || args.hasCompilerFlag("debug");
+            bool debug = args::hasCompilerFlag("parse-debug") || args::hasCompilerFlag("debug");
             auto module = (*it)->source().parse(debug);
             (*it)->ast_module(module);
         }
@@ -32,5 +32,5 @@ Phase::Result Parse::run(Args &args, std::vector<std::unique_ptr<Unit>> &units)
         return Phase::Result::ERROR;
     }
 
-    return (*args.parseOnly) ? Phase::Result::STOP : Phase::Result::CONTINUE;
+    return (args::parseOnly) ? Phase::Result::STOP : Phase::Result::CONTINUE;
 }

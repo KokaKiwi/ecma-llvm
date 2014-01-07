@@ -9,18 +9,16 @@ namespace ecma
 {
     namespace frontend
     {
-        class Args
+        namespace args
         {
-        public:
-            bool hasCompilerFlag(const std::string &search_flag);
-
-        public:
-            #define ECMA_ARG(type, name, ...) type *name;
+            #define ECMA_ARG(type, name, ...) extern type name;
 
             #include "ecma/frontend/args_list.h"
 
             #undef ECMA_ARG
-        };
+
+            bool hasCompilerFlag(const std::string &search_flag);
+        }
     }
 }
 

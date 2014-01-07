@@ -37,18 +37,18 @@ static std::string temp_filename()
     return std::string(filename);
 }
 
-Phase::Result Output::run(Args &args, std::vector<std::unique_ptr<Unit>> &units)
+Phase::Result Output::run(std::vector<std::unique_ptr<Unit>> &units)
 {
-    bool executable = !(*args.compileOnly || *args.llvmOutput);
+    bool executable = !(args::compileOnly || args::llvmOutput);
     bool success = true;
     std::string output;
 
-    if (units.size() > 1 && !args.output->empty() && !executable)
+    if (units.size() > 1 && !args::output.empty() && !executable)
     {
         std::cerr << "Cannot specify -o when generating multiple files." << std::endl;
         return Phase::Result::ERROR;
     }
-    output = *args.output;
+    output = args::output;
 
     // Init LLVM
     llvm::InitializeNativeTarget();
@@ -79,28 +79,28 @@ Phase::Result Output::run(Args &args, std::vector<std::unique_ptr<Unit>> &units)
         {
             std::string output_path = output;
 
-            if (args.output->empty())
+            if (args::output.empty())
             {
                 output_path = (*it)->source().name();
                 if (output_path != "-")
                 {
-                    if (*args.compileOnly && *args.llvmOutput)
+                    if (args::compileOnly && args::llvmOutput)
                     {
                         output_path += EXT_LLVM;
                     }
-                    else if (*args.compileOnly)
+                    else if (args::compileOnly)
                     {
                         output_path += EXT_ASM;
                     }
-                    else if (*args.llvmOutput)
+                    else if (args::llvmOutput)
                     {
                         output_path += EXT_LLVM_BC;
                     }
                 }
             }
 
-            bool asmOutput = *args.compileOnly;
-            bool llvmOutput = *args.llvmOutput;
+            bool asmOutput = args::compileOnly;
+            bool llvmOutput = args::llvmOutput;
 
             bool outputResult;
             if (output_path == "-")
@@ -131,12 +131,12 @@ Phase::Result Output::run(Args &args, std::vector<std::unique_ptr<Unit>> &units)
 
     if (executable)
     {
-        if (args.output->empty())
+        if (args::output.empty())
         {
             output = "a.out";
         }
 
-        bool debug = args.hasCompilerFlag("output-debug") || args.hasCompilerFlag("debug");
+        bool debug = args::hasCompilerFlag("output-debug") || args::hasCompilerFlag("debug");
         success = success && outputExecutable(output, units, debug);
     }
 

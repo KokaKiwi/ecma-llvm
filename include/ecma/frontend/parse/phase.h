@@ -3,7 +3,6 @@
 
 #include <vector>
 #include <memory>
-#include "ecma/frontend/args.h"
 #include "ecma/frontend/unit.h"
 #include "ecma/frontend/phase.h"
 
@@ -16,7 +15,7 @@ namespace ecma
             class Parse: public Phase
             {
             public:
-                Phase::Result run(Args &args, std::vector<std::unique_ptr<Unit>> &units);
+                Phase::Result run(std::vector<std::unique_ptr<Unit>> &units);
             };
         }
     }

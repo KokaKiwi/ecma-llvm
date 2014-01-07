@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include "ecma/frontend/unit.h"
+#include "ecma/frontend/args.h"
 
 namespace ecma
 {
@@ -22,7 +23,7 @@ namespace ecma
             inline Phase() {}
             inline virtual ~Phase() {}
 
-            virtual Result run(Args &args, std::vector<std::unique_ptr<Unit>> &units) = 0;
+            virtual Result run(std::vector<std::unique_ptr<Unit>> &units) = 0;
         };
     }
 }

@@ -22,16 +22,16 @@ static parser::toolchain::Source *readSource(const std::string &filename = "-")
     }
 }
 
-Phase::Result Input::run(Args &args, std::vector<std::unique_ptr<Unit>> &units)
+Phase::Result Input::run(std::vector<std::unique_ptr<Unit>> &units)
 {
-    if (args.input->size() == 0)
+    if (args::input.size() == 0)
     {
         auto unit = new frontend::Unit(readSource());
         units.push_back(std::unique_ptr<frontend::Unit>(unit));
     }
     else
     {
-        for (auto it: *args.input)
+        for (auto it: args::input)
         {
             auto unit = new frontend::Unit(readSource(it));
             units.push_back(std::unique_ptr<frontend::Unit>(unit));

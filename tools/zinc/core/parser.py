@@ -36,7 +36,7 @@ class Mapping(object):
                 self.create_mapping(idx)
 
         if self.mapping is not None:
-            for i in range(1 + len(self.value.items)):
+            for i in range(1 + len(self.value.items),-1,-1):
                 check_key(i)
 
     def prepare_delete(self):

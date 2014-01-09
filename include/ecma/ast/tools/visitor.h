@@ -15,6 +15,11 @@ namespace ecma
         namespace expr
         {
             class Ident;
+
+            namespace func
+            {
+                class FunctionParam;
+            }
             class Function;
             class This;
             class Index;
@@ -115,6 +120,11 @@ namespace ecma
                 virtual inline void visit(const ecma::ast::expr::Ident &node)
                 {
                     throw std::runtime_error("Unknown AST branch (ecma::ast::expr::Ident).");
+                }
+
+                virtual inline void visit(const ecma::ast::expr::func::FunctionParam &node)
+                {
+                    throw std::runtime_error("Unknown AST branch (ecma::ast::expr::func::FunctionParam).");
                 }
 
                 virtual inline void visit(const ecma::ast::expr::Function &node)

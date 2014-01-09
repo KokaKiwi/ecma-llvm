@@ -6,6 +6,7 @@
 #include "ecma/ast/statement.h"
 #include "ecma/ast/module.h"
 #include "ecma/ast/expr/ident.h"
+#include "ecma/ast/expr/func/functionparam.h"
 #include "ecma/ast/expr/function.h"
 #include "ecma/ast/expr/this.h"
 #include "ecma/ast/expr/index.h"

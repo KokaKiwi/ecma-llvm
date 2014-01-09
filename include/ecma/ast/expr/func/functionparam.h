@@ -1,7 +1,6 @@
-#ifndef ECMA_AST_STMT_DECL_VAR_H_
-#define ECMA_AST_STMT_DECL_VAR_H_
+#ifndef ECMA_AST_EXPR_FUNC_FUNCTIONPARAM_H_
+#define ECMA_AST_EXPR_FUNC_FUNCTIONPARAM_H_
 
-#include <memory>
 #include "ecma/utils/element.h"
 #include "ecma/ast/tools/visitor.h"
 
@@ -9,19 +8,19 @@ namespace ecma
 {
     namespace ast
     {
-        namespace stmt
+        namespace expr
         {
-            namespace decl
+            namespace func
             {
-                class Var: public utils::Element
+                class FunctionParam: public utils::Element
                 {
                     public:
-                        inline Var(std::string name)
+                        inline FunctionParam(std::string name)
                             : utils::Element()
                             , m_name(name)
                         {
                         }
-                        virtual inline ~Var()
+                        virtual inline ~FunctionParam()
                         {
                         }
 
@@ -29,31 +28,17 @@ namespace ecma
                         {
                             return m_name;
                         }
-                        inline Var &name(std::string name)
+                        inline FunctionParam &name(std::string name)
                         {
                             m_name = name;
                             return *this;
-                        }
-
-                        inline const Expression *init() const
-                        {
-                            return m_init.get();
-                        }
-                        inline Var &init(Expression *init)
-                        {
-                            m_init.reset(init);
-                            return *this;
-                        }
-                        inline Expression *take_init()
-                        {
-                            return m_init.release();
                         }
 
                         inline const std::string type() const
                         {
                             return m_type;
                         }
-                        inline Var &type(std::string type)
+                        inline FunctionParam &type(std::string type)
                         {
                             m_type = type;
                             return *this;
@@ -66,7 +51,6 @@ namespace ecma
 
                     private:
                         std::string m_name;
-                        std::unique_ptr<Expression> m_init;
                         std::string m_type;
                 };
             }
@@ -74,4 +58,4 @@ namespace ecma
     }
 }
 
-#endif /* ECMA_AST_STMT_DECL_VAR_H_ */
+#endif /* ECMA_AST_EXPR_FUNC_FUNCTIONPARAM_H_ */

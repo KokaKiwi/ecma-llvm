@@ -55,6 +55,9 @@ ECMA_TOKEN(STATIC, "'static'")
 ECMA_TOKEN(YIELD, "'yield'")
 ECMA_TOKEN(LET, "'let'")
 
+// ecma-llvm keywords
+ECMA_TOKEN(NATIVE, "'native'")
+
 // symbols
 ECMA_TOKEN(ZERO_RIGHT_SHIFT_ASSIGN, "'>>>='")
 ECMA_TOKEN(STRICT_EQUAL, "'==='")

@@ -158,6 +158,9 @@ Token *Lexer::consume()
             "yield"                 =>  { type = ECMA_TOKEN(YIELD); fbreak; };
             "let"                   =>  { type = ECMA_TOKEN(LET); fbreak; };
 
+            # ecma-llvm keywords
+            "native"                =>  { type = ECMA_TOKEN(NATIVE); fbreak; };
+
             # symbols
             ">>>="                  =>  { type = ECMA_TOKEN(ZERO_RIGHT_SHIFT_ASSIGN); fbreak; };
             "==="                   =>  { type = ECMA_TOKEN(STRICT_EQUAL); fbreak; };

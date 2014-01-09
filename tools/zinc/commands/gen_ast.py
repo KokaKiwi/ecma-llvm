@@ -146,6 +146,11 @@ class NodeGenerator(Writeable):
             s = '{varname:s}({name:s})'.format(varname = item.varname, name = item.name)
             init.append(s)
 
+        for (name, item) in self.node.items.items():
+            if item.default is not None:
+                s = '{varname:s}({value:s})'.format(varname = item.varname, value = item.default)
+                init.append(s)
+
         w += 'inline {:s}({:s})'.format(self.node.name, ', '.join(args))
 
         for (i, initializer) in enumerate(init):

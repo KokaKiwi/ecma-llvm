@@ -16,11 +16,11 @@ namespace ecma
         {
             inline llvm::ConstantPointerNull *null(llvm::PointerType *type)
             {
-                return llvm::ConstantPointerNull::get( type );
+                return llvm::ConstantPointerNull::get(type);
             }
 
             template <typename T>
-            inline llvm::ConstantPointerNull *null(llvm::LLVMContext & context )
+            inline llvm::ConstantPointerNull *null(llvm::LLVMContext &context)
             {
                 return helper::null(helper::type<T>(context));
             }

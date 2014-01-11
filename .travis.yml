@@ -6,8 +6,6 @@ before_install:
     -   sudo apt-get install cmake ragel lemon llvm-3.3
     -   if [ "$CXX" = "g++" ]; then sudo apt-get install -qq g++-4.8; fi
     -   if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
-    -   if [ "$CXX" = "clang++" ]; then sudo apt-get install -qq clang-3.3; fi
-    -   if [ "$CXX" = "clang++" ]; then export CXX="clang++" CC="clang"; fi
 compiler:
     -   gcc
     -   clang

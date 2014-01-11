@@ -1,6 +1,8 @@
 import os
 import subprocess
 import re
+import sys
+import textwrap
 from glob import glob
 
 TEST_MSG = '[{test_name:^14s}] {name:32s} ... {status:s}'
@@ -20,6 +22,11 @@ def test_success(ecmac, path):
     basename = os.path.basename(path)
 
     print(TEST_MSG.format(test_name = 'success-test', name = basename, status = ret_text))
+
+    if not ret:
+        stderr = str(proc.stderr.read(), 'utf8')
+        stderr = textwrap.indent(stderr, '  | ')
+        sys.stderr.write(stderr)
 
     return ret
 

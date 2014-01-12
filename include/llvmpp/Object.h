@@ -1,6 +1,7 @@
 #ifndef LLVMPP_OBJECT_H_
 #define LLVMPP_OBJECT_H_
 
+#include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/Value.h>
 #include "llvmpp/Class.h"
 
@@ -14,29 +15,29 @@ namespace llvmpp
             , Value(value)
         {}
 
-        inline Object operator +(const Object &b) const
+        inline Object add(llvm::IRBuilder<> &irBuilder, const Object &other)
         {
-            return Cl->add(*this, b);
+            return Cl->add(irBuilder, *this, other);
         }
 
-        inline Object operator -(const Object &b) const
+        inline Object sub(llvm::IRBuilder<> &irBuilder, const Object &other)
         {
-            return Cl->sub(*this, b);
+            return Cl->sub(irBuilder, *this, other);
         }
 
-        inline Object operator *(const Object &b) const
+        inline Object mul(llvm::IRBuilder<> &irBuilder, const Object &other)
         {
-            return Cl->mul(*this, b);
+            return Cl->mul(irBuilder, *this, other);
         }
 
-        inline Object operator /(const Object &b) const
+        inline Object div(llvm::IRBuilder<> &irBuilder, const Object &other)
         {
-            return Cl->div(*this, b);
+            return Cl->div(irBuilder, *this, other);
         }
 
-        inline Object operator %(const Object &b) const
+        inline Object mod(llvm::IRBuilder<> &irBuilder, const Object &other)
         {
-            return Cl->mod(*this, b);
+            return Cl->mod(irBuilder, *this, other);
         }
 
     protected:

@@ -19,27 +19,27 @@ namespace llvmpp
             return Object(this, nullptr);
         }
 
-        inline virtual Object add(const Object &a, const Object &b) const
+        inline virtual Object add(llvm::IRBuilder<> &irBuilder, const Object &a, const Object &b) const
         {
             return empty();
         }
 
-        inline virtual Object sub(const Object &a, const Object &b) const
+        inline virtual Object sub(llvm::IRBuilder<> &irBuilder, const Object &a, const Object &b) const
         {
             return empty();
         }
 
-        inline virtual Object mul(const Object &a, const Object &b) const
+        inline virtual Object mul(llvm::IRBuilder<> &irBuilder, const Object &a, const Object &b) const
         {
             return empty();
         }
 
-        inline virtual Object div(const Object &a, const Object &b) const
+        inline virtual Object div(llvm::IRBuilder<> &irBuilder, const Object &a, const Object &b) const
         {
             return empty();
         }
 
-        inline virtual Object mod(const Object &a, const Object &b) const
+        inline virtual Object mod(llvm::IRBuilder<> &irBuilder, const Object &a, const Object &b) const
         {
             return empty();
         }

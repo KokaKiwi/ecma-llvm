@@ -2,6 +2,7 @@
 #define LLVMPP_CLASS_H_
 
 #include <llvm/IR/DerivedTypes.h>
+#include <llvm/IR/IRBuilder.h>
 #include <llvm/IR/LLVMContext.h>
 #include <llvm/IR/Type.h>
 #include <llvm/IR/Value.h>
@@ -17,11 +18,11 @@ namespace llvmpp
             : Context(context)
         {}
 
-        virtual Object add(const Object &a, const Object &b) const = 0;
-        virtual Object sub(const Object &a, const Object &b) const = 0;
-        virtual Object mul(const Object &a, const Object &b) const = 0;
-        virtual Object div(const Object &a, const Object &b) const = 0;
-        virtual Object mod(const Object &a, const Object &b) const = 0;
+        virtual Object add(llvm::IRBuilder<> &irBuilder, const Object &a, const Object &b) const = 0;
+        virtual Object sub(llvm::IRBuilder<> &irBuilder, const Object &a, const Object &b) const = 0;
+        virtual Object mul(llvm::IRBuilder<> &irBuilder, const Object &a, const Object &b) const = 0;
+        virtual Object div(llvm::IRBuilder<> &irBuilder, const Object &a, const Object &b) const = 0;
+        virtual Object mod(llvm::IRBuilder<> &irBuilder, const Object &a, const Object &b) const = 0;
 
         inline llvm::Type *GetType() const
         {

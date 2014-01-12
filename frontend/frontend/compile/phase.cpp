@@ -24,13 +24,12 @@ Phase::Result Compile::run(std::vector<std::unique_ptr<Unit>> &units)
 
     for (auto it = units.begin(); it != units.end(); ++it)
     {
-        bool debug = args::hasCompilerFlag("compile-debug") || args::hasCompilerFlag("debug");
         std::string name = basename((*it)->source().name());
         if (name == "-")
         {
             name = "stdin";
         }
-        auto module = compiler::Compiler::compile((*it)->ast_module(), (*it)->llvm_context(), name, debug);
+        auto module = compiler::Compiler::compile((*it)->ast_module(), (*it)->llvm_context(), name);
         (*it)->llvm_module(module);
 
         if (!module)

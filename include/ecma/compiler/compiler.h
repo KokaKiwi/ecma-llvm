@@ -27,11 +27,11 @@ namespace ecma
                 return m_name;
             }
 
-            llvm::Module *compile(llvm::LLVMContext &context, bool debug = false);
+            llvm::Module *compile(llvm::LLVMContext &context);
 
-            static inline llvm::Module *compile(const ast::Module *module, llvm::LLVMContext &context, const std::string &name, bool debug = false)
+            static inline llvm::Module *compile(const ast::Module *module, llvm::LLVMContext &context, const std::string &name)
             {
-                return Compiler(module, name).compile(context, debug);
+                return Compiler(module, name).compile(context);
             }
 
         private:

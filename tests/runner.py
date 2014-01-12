@@ -2,6 +2,7 @@
 import os
 import sys
 import parser
+import compiler
 from argparse import ArgumentParser
 
 HERE = os.path.dirname(os.path.realpath(__file__))
@@ -20,7 +21,10 @@ def main(args):
     print('=== Parser tests ===')
     parser_ret = parser.run_tests(t)
 
-    if parser_ret:
+    print('=== Compiler tests ===')
+    compiler_ret = compiler.run_tests(t)
+
+    if parser_ret and compiler_ret:
         sys.exit(0)
     else:
         sys.exit(1)

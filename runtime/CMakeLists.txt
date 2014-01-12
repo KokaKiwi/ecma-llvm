@@ -4,9 +4,6 @@ cmake_minimum_required(VERSION 2.8)
 set(PROJECT_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 set(PROJECT_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}")
 
-# Flags
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
-
 # Dependencies
 ## LLVM
 find_package(LLVM REQUIRED)
@@ -15,36 +12,35 @@ include_directories(${LLVM_INCLUDE_DIR})
 link_directories(${LLVM_LIB_DIR})
 
 # Build library
-set(ecma_compiler_SOURCES
-    compiler.cpp
-    module.cpp
-    function.cpp
+set(ecma_runtime_SOURCES
+    scope.cpp
+
+    types/env.cpp
+    types/env_entry.cpp
 )
 
-add_library(ecma_compiler ${ecma_compiler_SOURCES})
-target_link_libraries(ecma_compiler
-    ecma_parser
-    ecma_runtime
+add_library(ecma_runtime ${ecma_runtime_SOURCES})
+target_link_libraries(ecma_runtime
     ${LLVM_LIBRARIES_ALL}
     pthread
     dl
 )
 
 # Variables
-set(ecma_compiler_DEFINITIONS
+set(ecma_runtime_DEFINITIONS
     ${LLVM_CPPFLAGS}
 PARENT_SCOPE)
 
-set(ecma_compiler_INCLUDE_DIRS
+set(ecma_runtime_INCLUDE_DIRS
     ${LLVM_INCLUDE_DIR}
 PARENT_SCOPE)
 
-set(ecma_compiler_LIB_DIRS
+set(ecma_runtime_LIB_DIRS
     ${LLVM_LIB_DIR}
 PARENT_SCOPE)
 
-set(ecma_compiler_LIBRARIES
-    ecma_compiler
+set(ecma_runtime_LIBRARIES
+    ecma_runtime
     ${LLVM_LIBRARIES_ALL}
     pthread
     dl

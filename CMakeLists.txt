@@ -43,6 +43,20 @@ add_subdirectory(parser)
 include_directories(${ecma_parser_INCLUDE_DIRS})
 list(APPEND ecma_LIBRARIES ${ecma_parser_LIBRARIES})
 
+## LLVMPP
+add_subdirectory(llvmpp)
+add_definitions(${llvmpp_DEFINITIONS})
+include_directories(${llvmpp_INCLUDE_DIRS})
+link_directories(${llvmpp_LIB_DIRS})
+list(APPEND ecma_LIBRARIES ${llvmpp_LIBRARIES})
+
+## Runtime
+add_subdirectory(runtime)
+add_definitions(${ecma_runtime_DEFINITIONS})
+include_directories(${ecma_runtime_INCLUDE_DIRS})
+link_directories(${ecma_runtime_LIB_DIRS})
+list(APPEND ecma_LIBRARIES ${ecma_runtime_LIBRARIES})
+
 ## Compiler
 add_subdirectory(compiler)
 add_definitions(${ecma_compiler_DEFINITIONS})

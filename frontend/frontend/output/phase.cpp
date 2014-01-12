@@ -20,7 +20,7 @@
 #include <llvm/Support/ToolOutputFile.h>
 #include <llvm/Support/Host.h>
 #include <llvm/Target/TargetOptions.h>
-#include "ecma/compiler/helper/type.h"
+#include "llvmpp/helper/type.h"
 #include "ecma/frontend/args.h"
 #include "ecma/frontend/unit.h"
 #include "ecma/frontend/output/phase.h"
@@ -176,7 +176,7 @@ bool Output::outputModule(llvm::Module *module, llvm::formatted_raw_ostream &out
 
 static void createMain(llvm::LLVMContext &context, llvm::Module *module, std::vector<std::unique_ptr<Unit>> &units)
 {
-    llvm::Function *mainFunction = llvm::Function::Create(compiler::helper::type<int (int, char **)>(context), llvm::GlobalVariable::ExternalLinkage, "main", module);
+    llvm::Function *mainFunction = llvm::Function::Create(llvmpp::helper::type<int (int, char **)>(context), llvm::GlobalVariable::ExternalLinkage, "main", module);
 
     llvm::BasicBlock *entryBlock = llvm::BasicBlock::Create(context, "entry");
     mainFunction->getBasicBlockList().push_back(entryBlock);
@@ -184,7 +184,7 @@ static void createMain(llvm::LLVMContext &context, llvm::Module *module, std::ve
     llvm::IRBuilder<> irBuilder(context);
     irBuilder.SetInsertPoint(entryBlock);
 
-    irBuilder.CreateRet(llvm::ConstantInt::get(compiler::helper::type<int>(context), 0));
+    irBuilder.CreateRet(llvm::ConstantInt::get(llvmpp::helper::type<int>(context), 0));
 }
 
 bool Output::outputExecutable(const std::string &output_path, std::vector<std::unique_ptr<Unit>> &units, bool debug)

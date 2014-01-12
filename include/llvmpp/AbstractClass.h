@@ -3,7 +3,6 @@
 
 #include <llvm/IR/LLVMContext.h>
 #include "llvmpp/Class.h"
-#include "llvmpp/Object.h"
 
 namespace llvmpp
 {
@@ -14,34 +13,29 @@ namespace llvmpp
             : Class(context)
         {}
 
-        inline Object empty() const
+        inline virtual llvm::Value *add(llvm::IRBuilder<> &irBuilder, llvm::Value *a, llvm::Value *b) const
         {
-            return Object(this, nullptr);
+            return nullptr;
         }
 
-        inline virtual Object add(llvm::IRBuilder<> &irBuilder, const Object &a, const Object &b) const
+        inline virtual llvm::Value *sub(llvm::IRBuilder<> &irBuilder, llvm::Value *a, llvm::Value *b) const
         {
-            return empty();
+            return nullptr;
         }
 
-        inline virtual Object sub(llvm::IRBuilder<> &irBuilder, const Object &a, const Object &b) const
+        inline virtual llvm::Value *mul(llvm::IRBuilder<> &irBuilder, llvm::Value *a, llvm::Value *b) const
         {
-            return empty();
+            return nullptr;
         }
 
-        inline virtual Object mul(llvm::IRBuilder<> &irBuilder, const Object &a, const Object &b) const
+        inline virtual llvm::Value *div(llvm::IRBuilder<> &irBuilder, llvm::Value *a, llvm::Value *b) const
         {
-            return empty();
+            return nullptr;
         }
 
-        inline virtual Object div(llvm::IRBuilder<> &irBuilder, const Object &a, const Object &b) const
+        inline virtual llvm::Value *mod(llvm::IRBuilder<> &irBuilder, llvm::Value *a, llvm::Value *b) const
         {
-            return empty();
-        }
-
-        inline virtual Object mod(llvm::IRBuilder<> &irBuilder, const Object &a, const Object &b) const
-        {
-            return empty();
+            return nullptr;
         }
     };
 }

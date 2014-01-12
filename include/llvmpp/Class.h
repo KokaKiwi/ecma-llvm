@@ -9,8 +9,6 @@
 
 namespace llvmpp
 {
-    class Object;
-
     class Class
     {
     public:
@@ -18,11 +16,11 @@ namespace llvmpp
             : Context(context)
         {}
 
-        virtual Object add(llvm::IRBuilder<> &irBuilder, const Object &a, const Object &b) const = 0;
-        virtual Object sub(llvm::IRBuilder<> &irBuilder, const Object &a, const Object &b) const = 0;
-        virtual Object mul(llvm::IRBuilder<> &irBuilder, const Object &a, const Object &b) const = 0;
-        virtual Object div(llvm::IRBuilder<> &irBuilder, const Object &a, const Object &b) const = 0;
-        virtual Object mod(llvm::IRBuilder<> &irBuilder, const Object &a, const Object &b) const = 0;
+        virtual llvm::Value *add(llvm::IRBuilder<> &irBuilder, llvm::Value *a, llvm::Value *b) const = 0;
+        virtual llvm::Value *sub(llvm::IRBuilder<> &irBuilder, llvm::Value *a, llvm::Value *b) const = 0;
+        virtual llvm::Value *mul(llvm::IRBuilder<> &irBuilder, llvm::Value *a, llvm::Value *b) const = 0;
+        virtual llvm::Value *div(llvm::IRBuilder<> &irBuilder, llvm::Value *a, llvm::Value *b) const = 0;
+        virtual llvm::Value *mod(llvm::IRBuilder<> &irBuilder, llvm::Value *a, llvm::Value *b) const = 0;
 
         inline llvm::Type *GetType() const
         {

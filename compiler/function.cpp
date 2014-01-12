@@ -35,8 +35,7 @@ void Function::compile(llvm::LLVMContext &context, const std::vector<std::unique
     llvm::Value *envValue = args++;
     envValue->setName("env");
 
-    llvm::BasicBlock *entryBlock = llvm::BasicBlock::Create(context, "entry");
-    function->getBasicBlockList().push_back(entryBlock);
+    llvm::BasicBlock *entryBlock = llvm::BasicBlock::Create(context, "entry", function);
 
     llvm::IRBuilder<> irBuilder(context);
     irBuilder.SetInsertPoint(entryBlock);

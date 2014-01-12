@@ -3,7 +3,6 @@
 #include <llvm/IR/DerivedTypes.h>
 #include "ecma/runtime/types/env_entry.h"
 #include "llvmpp/helper/type.h"
-#include "llvmpp/Object.h"
 
 using namespace ecma;
 using namespace ecma::runtime;

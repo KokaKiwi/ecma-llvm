@@ -26,8 +26,7 @@ target_link_libraries(ecma_compiler
     ecma_parser
     ecma_runtime
     ${LLVM_LIBRARIES_ALL}
-    pthread
-    dl
+    ${LLVM_LDFLAGS}
 )
 
 # Variables
@@ -46,6 +45,5 @@ PARENT_SCOPE)
 set(ecma_compiler_LIBRARIES
     ecma_compiler
     ${LLVM_LIBRARIES_ALL}
-    pthread
-    dl
+    ${LLVM_LDFLAGS}
 PARENT_SCOPE)

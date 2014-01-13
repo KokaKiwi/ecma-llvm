@@ -19,8 +19,7 @@ link_directories(${LLVM_LIB_DIR})
 # add_library(llvmpp ${llvmpp_SOURCES})
 # target_link_libraries(llvmpp
 #     ${LLVM_LIBRARIES_ALL}
-#     pthread
-#     dl
+#     ${LLVM_LDFLAGS}
 # )
 
 # Variables
@@ -39,6 +38,5 @@ PARENT_SCOPE)
 set(llvmpp_LIBRARIES
     # llvmpp
     ${LLVM_LIBRARIES_ALL}
-    pthread
-    dl
+    ${LLVM_LDFLAGS}
 PARENT_SCOPE)

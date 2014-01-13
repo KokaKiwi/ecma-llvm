@@ -22,8 +22,7 @@ set(ecma_runtime_SOURCES
 add_library(ecma_runtime ${ecma_runtime_SOURCES})
 target_link_libraries(ecma_runtime
     ${LLVM_LIBRARIES_ALL}
-    pthread
-    dl
+    ${LLVM_LDFLAGS}
 )
 
 # Variables
@@ -42,6 +41,5 @@ PARENT_SCOPE)
 set(ecma_runtime_LIBRARIES
     ecma_runtime
     ${LLVM_LIBRARIES_ALL}
-    pthread
-    dl
+    ${LLVM_LDFLAGS}
 PARENT_SCOPE)

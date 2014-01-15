@@ -8,4 +8,6 @@ __pycache__
 # Misc stuff
 .*
 !.gitignore
+!.editorconfig
+!.travis.yml
 *~

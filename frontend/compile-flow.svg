@@ -149,4 +149,16 @@
     <polygon style="fill: #000000" points="863.074,393.118 870.428,384.698 870.013,390.272 874.223,393.95 "/>
     <polygon style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" points="863.074,393.118 870.428,384.698 870.013,390.272 874.223,393.95 "/>
   </g>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="800" y="460">
+    <tspan x="800" y="460">-P flag</tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="800" y="560">
+    <tspan x="800" y="560">-A flag</tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="800" y="760">
+    <tspan x="800" y="760">-c flag</tspan>
+  </text>
+  <text font-size="12.7998" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="800" y="660">
+    <tspan x="800" y="660">-S flag</tspan>
+  </text>
 </svg>

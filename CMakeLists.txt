@@ -93,3 +93,15 @@ if (PYTHONINTERP_FOUND)
 endif (PYTHONINTERP_FOUND)
 
 configure_file(include/config.cmake.h include/config.h @ONLY)
+
+## Doc
+find_program(PDFLATEX pdflatex)
+if (PDFLATEX)
+    add_custom_target(doc
+        COMMAND
+            ${PDFLATEX}
+            ${PROJECT_SOURCE_DIR}/doc/compile-flow.tex
+        WORKING_DIRECTORY
+            ${PROJECT_SOURCE_DIR}/doc
+    )
+endif (PDFLATEX)

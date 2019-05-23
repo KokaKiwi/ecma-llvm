@@ -1,3 +1,5 @@
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FKokaKiwi%2Fecma-llvm.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FKokaKiwi%2Fecma-llvm?ref=badge_shield)
+
 A small pseudo-ECMAScript (more Javascript) compiler.
 
 It's not targeted to be a fully-featured JS compiler, it's more a test of the LLVM library.
@@ -10,3 +12,7 @@ Requirements:
 
 Links:
 - Castel language (by the guy who introduced me to LLVM :D): http://castel.github.com/
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FKokaKiwi%2Fecma-llvm.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FKokaKiwi%2Fecma-llvm?ref=badge_large)
